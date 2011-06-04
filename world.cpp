@@ -32,13 +32,13 @@ void World::addGround()
   body->CreateFixture(&shape,0);
 }
 
-void World::addBall()
+void World::addBall(float x, float y)
 {
   Q_ASSERT(world);
 
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
-  bodyDef.position.Set(0,3);
+  bodyDef.position.Set(x,y);
 
   b2PolygonShape shape;
   shape.SetAsBox(.5,.5);

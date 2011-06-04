@@ -17,7 +17,7 @@ public:
   void initialize();
   Bodies bodies;
   void addGround();
-  void addBall();
+  void addBall(float x, float y);
 
 public slots:
   void stepWorld();

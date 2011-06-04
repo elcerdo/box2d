@@ -10,7 +10,8 @@ Printer::Printer(QObject *parent)
   world = new World(this);
   world->initialize();
   world->addGround();
-  world->addBall();
+  world->addBall(0,1);
+  world->addBall(.5,0);
 
   timer = new QTimer(this);
   timer->setInterval(1000./60.);
@@ -41,7 +42,7 @@ void Printer::displayWorld() {
   for (World::Bodies::const_iterator ibody=world->bodies.begin(); ibody!=world->bodies.end(); ibody++) {
     const b2Body *body = *ibody;
     allSleep &= !body->IsAwake();
-    qDebug() << "awake" << body->IsAwake() << "x" << body->GetPosition().x << "y" << body->GetPosition().y << "angle" << body->GetAngle();
+    qDebug() << "awake" << body->IsAwake() << "x" << body->GetPosition().x << "y" << body->GetPosition().y << "angle" << body->GetAngle()*180/M_PI;
   }
   if (stepLeft<=0  || allSleep) {
     emit done();
