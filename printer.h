@@ -2,7 +2,6 @@
 #define __PRINTER_H__
 
 #include <QObject>
-#include <QTimer>
 #include "world.h"
 
 #include <QDebug>
@@ -15,7 +14,6 @@ public:
   void start(int step);
 
 public slots:
-  void bang();
   void displayWorld();
 
 signals:
@@ -23,7 +21,6 @@ signals:
 
 protected:
   World *world;
-  QTimer *timer;
   int stepLeft;
 };
 

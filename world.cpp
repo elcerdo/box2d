@@ -3,8 +3,13 @@
 #include <QDebug>
 
 World::World(QObject *parent)
-: QObject(parent), gravity(0,-10), world(NULL)
+: QObject(parent), world(NULL), timer(NULL)
 {
+  timer = new QTimer(this);
+  timer->setInterval(1000./60.);
+  timer->setSingleShot(false);
+
+  connect(timer,SIGNAL(timeout()),this,SLOT(stepWorld()));
 }
 
 World::~World()
@@ -12,7 +17,7 @@ World::~World()
   if (world) delete world;
 }
 
-void World::initialize()
+void World::initialize(const b2Vec2 &gravity)
 {
   Q_ASSERT(world==NULL);
   world = new b2World(gravity,true);
@@ -30,6 +35,13 @@ void World::addGround()
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&shape,0);
+}
+
+void World::setStepping(bool stepping)
+{
+  Q_ASSERT(world);
+  if (stepping) timer->start();
+  else timer->stop();
 }
 
 void World::addBall(float x, float y)
@@ -50,8 +62,14 @@ void World::addBall(float x, float y)
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&fixtureDef);
+}
 
-  bodies.push_back(body);
+World::Bodies World::getBodies()
+{
+  Bodies bodies;
+  for (b2Body* body=world->GetBodyList(); body!=NULL; body=body->GetNext())
+    bodies.push_back(body);
+  return bodies;
 }
 
 void World::stepWorld()
