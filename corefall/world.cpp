@@ -31,7 +31,7 @@ void World::addGround()
   bodyDef.position.Set(0,-10);
 
   b2PolygonShape shape;
-  shape.SetAsBox(10,10);
+  shape.SetAsBox(50,10);
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&shape,0);
@@ -44,7 +44,7 @@ void World::setStepping(bool stepping)
   else timer->stop();
 }
 
-void World::addBall(float x, float y)
+void World::addBox(float x, float y)
 {
   Q_ASSERT(world);
 
@@ -54,6 +54,26 @@ void World::addBall(float x, float y)
 
   b2PolygonShape shape;
   shape.SetAsBox(.5,.5);
+
+  b2FixtureDef fixtureDef;
+  fixtureDef.shape = &shape;
+  fixtureDef.density = 1;
+  fixtureDef.friction = .3;
+
+  b2Body* body = world->CreateBody(&bodyDef);
+  body->CreateFixture(&fixtureDef);
+}
+
+void World::addBall(float x, float y)
+{
+  Q_ASSERT(world);
+
+  b2BodyDef bodyDef;
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position.Set(x,y);
+
+  b2CircleShape shape;
+  shape.m_radius = 1;
 
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &shape;
@@ -77,5 +97,5 @@ void World::stepWorld()
   qDebug() << "stepping";
   world->Step(1./60.,6,2);
   world->ClearForces();
-  emit worldStepped();
+  emit worldStepped(this);
 }

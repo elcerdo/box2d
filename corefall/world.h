@@ -16,6 +16,7 @@ public:
 
   void initialize(const b2Vec2 &gravity);
   void addGround();
+  void addBox(float x, float y);
   void addBall(float x, float y);
   Bodies getBodies();
 public slots:
@@ -23,7 +24,7 @@ public slots:
 protected slots:
   void stepWorld();
 signals:
-  void worldStepped();
+  void worldStepped(World*);
 protected:
   b2World *world;
   QTimer *timer;

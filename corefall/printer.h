@@ -11,17 +11,12 @@ Q_OBJECT
 public:
   Printer(QObject *parent=NULL);
 
-  void start(int step);
-
 public slots:
-  void displayWorld();
+  void displayWorld(World* world);
 
 signals:
   void done();
 
-protected:
-  World *world;
-  int stepLeft;
 };
 
 #endif
