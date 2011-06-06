@@ -127,7 +127,6 @@ b2Body* World::addBall(float x, float y)
 
 void World::stepWorld()
 {
-  qDebug() << "stepping";
   world->Step(1./60.,6,2);
   world->ClearForces();
   emit worldStepped(this);

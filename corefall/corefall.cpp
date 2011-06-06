@@ -21,15 +21,15 @@ int main(int argc,char * argv[])
   }
 
 
-  Printer printer;
+  //Printer printer;
   Drawer drawer;
   drawer.resize(500,500);
   drawer.show();
 
   world.setStepping(true);
 
-  QObject::connect(&world,SIGNAL(worldStepped(World*)),&printer,SLOT(displayWorld(World*)));
   QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
+  //QObject::connect(&world,SIGNAL(worldStepped(World*)),&printer,SLOT(displayWorld(World*)));
   //QObject::connect(&printer,SIGNAL(done()),&app,SLOT(quit()));
 
   return app.exec();
