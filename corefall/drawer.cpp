@@ -1,6 +1,7 @@
 #include "drawer.h"
 #include "common.h"
 #include <QPainter>
+#include <QColor>
 
 Drawer::Drawer(QWidget *parent)
 : QWidget(parent), world(NULL)
@@ -27,6 +28,9 @@ void Drawer::paintEvent(QPaintEvent* event)
     const b2Body *body = *ibody;
     painter.translate(toQPointF(body->GetPosition()));
     painter.rotate(body->GetAngle()*180/M_PI);
+
+    if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
+    else painter.setBrush(QBrush(QColor::fromRgbF(0,1,0,.3)));
 
     for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
       if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {
