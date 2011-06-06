@@ -3,7 +3,7 @@
 #include <QDebug>
 
 World::World(QObject *parent)
-: QObject(parent), world(NULL), timer(NULL)
+: QObject(parent), world(NULL), timer(NULL), time(0)
 {
   timer = new QTimer(this);
   timer->setInterval(1000./60.);
@@ -15,6 +15,16 @@ World::World(QObject *parent)
 World::~World()
 {
   if (world) delete world;
+}
+
+void World::resetTime()
+{
+  time = 0;
+}
+
+float World::getTime() const
+{
+  return time;
 }
 
 void World::initialize(const b2Vec2 &gravity)
@@ -70,6 +80,11 @@ b2Joint* World::addHingeJoint(b2Body* a,b2Body *b, const b2Vec2 &pos, bool colli
   return joint;
 }
 
+void World::destroyJoint(b2Joint* joint)
+{
+  Q_ASSERT(world);
+  world->DestroyJoint(joint);
+}
 
 void World::setStepping(bool stepping)
 {
@@ -104,11 +119,16 @@ b2Joint* World::getFirstJoint()
 
 b2Body* World::addBox(float x, float y, float width, float height)
 {
+  return addBox(b2Vec2(x,y),width,height);
+}
+
+b2Body* World::addBox(const b2Vec2 &pos, float width, float height)
+{
   Q_ASSERT(world);
 
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
-  bodyDef.position.Set(x,y);
+  bodyDef.position = pos;
 
   b2PolygonShape shape;
   shape.SetAsBox(width/2.,height/2.);
@@ -126,11 +146,16 @@ b2Body* World::addBox(float x, float y, float width, float height)
 
 b2Body* World::addBall(float x, float y, float radius)
 {
+  return addBall(b2Vec2(x,y),radius);
+}
+
+b2Body* World::addBall(const b2Vec2 &pos, float radius)
+{
   Q_ASSERT(world);
 
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
-  bodyDef.position.Set(x,y);
+  bodyDef.position = pos;
 
   b2CircleShape shape;
   shape.m_radius = radius;
@@ -148,7 +173,9 @@ b2Body* World::addBall(float x, float y, float radius)
 
 void World::stepWorld()
 {
-  world->Step(1./60.,6,2);
+  static const float dt = 1./60.;
+  time += dt;
+  world->Step(dt,6,2);
   world->ClearForces();
   emit worldStepped(this);
 }
