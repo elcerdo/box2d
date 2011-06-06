@@ -47,5 +47,11 @@ void Drawer::paintEvent(QPaintEvent* event)
     painter.restore();
   }
 
+  painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
+  for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
+    painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
+  }
+
+
 }
 

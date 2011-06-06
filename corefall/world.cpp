@@ -38,6 +38,18 @@ b2Body* World::addGround()
   return body;
 }
 
+b2Joint* World::addDistanceJoint(b2Body* a, b2Body* b, const b2Vec2 &ca, const b2Vec2 &cb, bool collide)
+{
+  Q_ASSERT(world);
+
+  b2DistanceJointDef jointDef;
+  jointDef.Initialize(a,b,ca,cb);
+  jointDef.collideConnected = collide;
+
+  b2Joint *joint = world->CreateJoint(&jointDef);
+  return joint;
+}
+
 void World::setStepping(bool stepping)
 {
   Q_ASSERT(world);
@@ -51,13 +63,25 @@ int World::getBodyCount() const
   return world->GetBodyCount();
 }
 
+int World::getJointCount() const
+{
+  Q_ASSERT(world);
+  return world->GetJointCount();
+}
+
 b2Body* World::getFirstBody()
 {
   Q_ASSERT(world);
   return world->GetBodyList();
 }
 
-b2Body* World::addBox(float x, float y)
+b2Joint* World::getFirstJoint()
+{
+  Q_ASSERT(world);
+  return world->GetJointList();
+}
+
+b2Body* World::addBox(float x, float y, float width, float height)
 {
   Q_ASSERT(world);
 
@@ -66,12 +90,13 @@ b2Body* World::addBox(float x, float y)
   bodyDef.position.Set(x,y);
 
   b2PolygonShape shape;
-  shape.SetAsBox(.5,.5);
+  shape.SetAsBox(width/2.,height/2.);
 
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &shape;
   fixtureDef.density = 1;
   fixtureDef.friction = .3;
+  fixtureDef.restitution = .6;
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&fixtureDef);
