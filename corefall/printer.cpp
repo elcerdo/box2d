@@ -13,7 +13,7 @@ void Printer::displayWorld(World *world) {
   bool allSleep = true;
   for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
     allSleep &= !body->IsAwake();
-    qDebug() << "awake" << body->IsAwake() << "position" << body->GetPosition() << "angle" << body->GetAngle()*180/M_PI;
+    qDebug() << "awake" << body->IsAwake() << "position" << body->GetPosition() << "angle" << body->GetAngle()*180/b2_pi;
     for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
       qDebug() << "**" << "shapetype" << fixture->GetShape()->GetType();
       if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {

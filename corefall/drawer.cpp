@@ -63,7 +63,7 @@ void Drawer::paintEvent(QPaintEvent* event)
   for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
     painter.save();
     painter.translate(toQPointF(body->GetPosition()));
-    painter.rotate(body->GetAngle()*180/M_PI);
+    painter.rotate(body->GetAngle()*180/b2_pi);
 
     if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
     else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));

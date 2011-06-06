@@ -50,6 +50,27 @@ b2Joint* World::addDistanceJoint(b2Body* a, b2Body* b, const b2Vec2 &ca, const b
   return joint;
 }
 
+b2Joint* World::addHingeJoint(b2Body* a,b2Body *b, const b2Vec2 &pos, bool collide, float torque, float speed)
+{
+  Q_ASSERT(world);
+
+  b2RevoluteJointDef jointDef;
+  jointDef.Initialize(a,b,pos);
+  jointDef.enableLimit = false;
+  jointDef.enableMotor = false;
+  jointDef.collideConnected = collide;
+
+  if (torque>=0) {
+    jointDef.enableMotor = true;
+    jointDef.maxMotorTorque = torque;
+    jointDef.motorSpeed = speed;
+  }
+
+  b2Joint *joint = world->CreateJoint(&jointDef);
+  return joint;
+}
+
+
 void World::setStepping(bool stepping)
 {
   Q_ASSERT(world);
@@ -103,7 +124,7 @@ b2Body* World::addBox(float x, float y, float width, float height)
   return body;
 }
 
-b2Body* World::addBall(float x, float y)
+b2Body* World::addBall(float x, float y, float radius)
 {
   Q_ASSERT(world);
 
@@ -112,7 +133,7 @@ b2Body* World::addBall(float x, float y)
   bodyDef.position.Set(x,y);
 
   b2CircleShape shape;
-  shape.m_radius = 1;
+  shape.m_radius = radius;
 
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &shape;

@@ -14,10 +14,11 @@ public:
   void initialize(const b2Vec2 &gravity);
   b2Body* addGround();
   b2Body* addBox(float x, float y,float width=1,float height=1);
-  b2Body* addBall(float x, float y);
+  b2Body* addBall(float x, float y, float radius=1);
   int getBodyCount() const;
   b2Body* getFirstBody();
   b2Joint* addDistanceJoint(b2Body* a, b2Body* b, const b2Vec2 &ca, const b2Vec2 &cb, bool collide=false);
+  b2Joint* addHingeJoint(b2Body* a,b2Body *b, const b2Vec2 &pos, bool collide=false, float torque=-1, float speed=0);
   int getJointCount() const;
   b2Joint *getFirstJoint();
 public slots:
