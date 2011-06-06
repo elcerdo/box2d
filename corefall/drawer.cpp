@@ -22,15 +22,13 @@ void Drawer::paintEvent(QPaintEvent* event)
   painter.translate(rect().width()/2.,rect().height()/2.);
   painter.scale(10,-10);
 
-  World::Bodies bodies = world->getBodies();
-  for (World::Bodies::const_iterator ibody=bodies.begin(); ibody!=bodies.end(); ibody++) {
+  for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
     painter.save();
-    const b2Body *body = *ibody;
     painter.translate(toQPointF(body->GetPosition()));
     painter.rotate(body->GetAngle()*180/M_PI);
 
     if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
-    else painter.setBrush(QBrush(QColor::fromRgbF(0,1,0,.3)));
+    else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
 
     for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
       if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {

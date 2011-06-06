@@ -23,7 +23,7 @@ void World::initialize(const b2Vec2 &gravity)
   world = new b2World(gravity,true);
 }
 
-void World::addGround()
+b2Body* World::addGround()
 {
   Q_ASSERT(world);
 
@@ -35,6 +35,7 @@ void World::addGround()
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&shape,0);
+  return body;
 }
 
 void World::setStepping(bool stepping)
@@ -44,7 +45,19 @@ void World::setStepping(bool stepping)
   else timer->stop();
 }
 
-void World::addBox(float x, float y)
+int World::getBodyCount() const
+{
+  Q_ASSERT(world);
+  return world->GetBodyCount();
+}
+
+b2Body* World::getFirstBody()
+{
+  Q_ASSERT(world);
+  return world->GetBodyList();
+}
+
+b2Body* World::addBox(float x, float y)
 {
   Q_ASSERT(world);
 
@@ -62,9 +75,10 @@ void World::addBox(float x, float y)
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&fixtureDef);
+  return body;
 }
 
-void World::addBall(float x, float y)
+b2Body* World::addBall(float x, float y)
 {
   Q_ASSERT(world);
 
@@ -79,17 +93,11 @@ void World::addBall(float x, float y)
   fixtureDef.shape = &shape;
   fixtureDef.density = 1;
   fixtureDef.friction = .3;
+  fixtureDef.restitution = .6;
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&fixtureDef);
-}
-
-World::Bodies World::getBodies()
-{
-  Bodies bodies;
-  for (b2Body* body=world->GetBodyList(); body!=NULL; body=body->GetNext())
-    bodies.push_back(body);
-  return bodies;
+  return body;
 }
 
 void World::stepWorld()

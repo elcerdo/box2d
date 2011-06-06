@@ -8,12 +8,10 @@ Printer::Printer(QObject *parent)
 }
 
 void Printer::displayWorld(World *world) {
-  World::Bodies bodies = world->getBodies();
   qDebug();
-  qDebug() << "found" << bodies.size() << "body(ies)";
+  qDebug() << "found" << world->getBodyCount() << "body(ies)";
   bool allSleep = true;
-  for (World::Bodies::const_iterator ibody=bodies.begin(); ibody!=bodies.end(); ibody++) {
-    const b2Body *body = *ibody;
+  for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
     allSleep &= !body->IsAwake();
     qDebug() << "awake" << body->IsAwake() << "position" << body->GetPosition() << "angle" << body->GetAngle()*180/M_PI;
     for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {

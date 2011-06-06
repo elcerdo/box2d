@@ -3,22 +3,20 @@
 
 #include <QObject>
 #include <QTimer>
-#include <QList>
-#include <Box2D/Box2D.h>
+#include "Box2D/Box2D.h"
 
 class World : public QObject {
 Q_OBJECT
 public:
-  typedef QList<b2Body*> Bodies;
-
   World(QObject *parent=NULL);
   ~World();
 
   void initialize(const b2Vec2 &gravity);
-  void addGround();
-  void addBox(float x, float y);
-  void addBall(float x, float y);
-  Bodies getBodies();
+  b2Body* addGround();
+  b2Body* addBox(float x, float y);
+  b2Body* addBall(float x, float y);
+  int getBodyCount() const;
+  b2Body* getFirstBody();
 public slots:
   void setStepping(bool stepping);
 protected slots:
