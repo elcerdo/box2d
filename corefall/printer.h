@@ -4,8 +4,6 @@
 #include <QObject>
 #include "world.h"
 
-#include <QDebug>
-
 class Printer : public QObject {
 Q_OBJECT
 public:

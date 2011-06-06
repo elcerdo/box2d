@@ -1,11 +1,5 @@
 #include "printer.h"
-
-#include <QDebug>
-#include <QCoreApplication>
-
-QDebug& operator<<(QDebug &os, const b2Vec2 &vect) {
-  return os << "(" << vect.x << "," << vect.y << ")";
-}
+#include "common.h"
 
 Printer::Printer(QObject *parent)
 : QObject(parent)
