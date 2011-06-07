@@ -171,6 +171,198 @@ b2Body* World::addBall(const b2Vec2 &pos, float radius)
   return body;
 }
 
+const float motorRadius = 1.5;
+const float mainLength  = 20.;
+const float mainHeight  = 2;
+const float upperExtension = 3;
+const float legWidth = 3;
+const float legHeight = 5;
+const float footHeight = 4;
+const int   nLegs = 4;
+
+void World::buildLegPair(const b2Vec2 &center, b2Body* main, b2Body* motor,int category)
+{
+  Q_ASSERT(world);
+
+  { // left leg
+    b2Vec2 baseVec = center+b2Vec2(-mainLength/2.,0);
+
+    b2Body* upperPart = NULL;
+    {
+      b2BodyDef bodyDef;
+      bodyDef.type = b2_dynamicBody;
+      bodyDef.position = baseVec;
+
+      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,motorRadius+upperExtension),b2Vec2(-legWidth,0)};
+      b2PolygonShape shape;
+      shape.Set(points,3);
+
+      b2FixtureDef fixtureDef;
+      fixtureDef.shape = &shape;
+      fixtureDef.density = 1;
+      fixtureDef.friction = 0;
+      fixtureDef.restitution = 0;
+      fixtureDef.filter.categoryBits = 1 << (category+1);
+      fixtureDef.filter.maskBits = 1;
+
+      b2Body* body = world->CreateBody(&bodyDef);
+      body->CreateFixture(&fixtureDef);
+
+      upperPart = body;
+    }
+    this->addHingeJoint(upperPart,main,baseVec);
+    this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,motorRadius+upperExtension));
+
+    b2Body* lowerPart = NULL;
+    {
+      b2BodyDef bodyDef;
+      bodyDef.type = b2_dynamicBody;
+      bodyDef.position = baseVec+b2Vec2(0,-legHeight);
+
+      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(-legWidth,0),b2Vec2(0,-footHeight)};
+      b2PolygonShape shape;
+      shape.Set(points,3);
+
+      b2FixtureDef fixtureDef;
+      fixtureDef.shape = &shape;
+      fixtureDef.density = 1;
+      fixtureDef.friction = 1;
+      fixtureDef.restitution = 0;
+      fixtureDef.filter.categoryBits = 1 << (category+1);
+      fixtureDef.filter.maskBits = 1;
+
+      b2Body* body = world->CreateBody(&bodyDef);
+      body->CreateFixture(&fixtureDef);
+
+      lowerPart = body;
+    }
+    this->addDistanceJoint(upperPart,lowerPart,baseVec                      ,baseVec + b2Vec2(0,-legHeight)        );
+    this->addDistanceJoint(upperPart,lowerPart,baseVec + b2Vec2(-legWidth,0),baseVec + b2Vec2(-legWidth,-legHeight));
+    this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,-legHeight));
+  }
+
+  //this->rotateEngine(engine,b2_pi);
+
+  { // right leg
+    b2Vec2 baseVec = center+b2Vec2(mainLength/2.,0);
+
+    b2Body* upperPart = NULL;
+    {
+      b2BodyDef bodyDef;
+      bodyDef.type = b2_dynamicBody;
+      bodyDef.position = baseVec;
+
+      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(legWidth,0),b2Vec2(0,motorRadius+upperExtension)};
+      b2PolygonShape shape;
+      shape.Set(points,3);
+
+      b2FixtureDef fixtureDef;
+      fixtureDef.shape = &shape;
+      fixtureDef.density = 1;
+      fixtureDef.friction = 0;
+      fixtureDef.restitution = 0;
+      fixtureDef.filter.categoryBits = 1 << (category+1);
+      fixtureDef.filter.maskBits = 1;
+
+      b2Body* body = world->CreateBody(&bodyDef);
+      body->CreateFixture(&fixtureDef);
+
+      upperPart = body;
+    }
+    this->addHingeJoint(upperPart,main,baseVec);
+    this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,motorRadius+upperExtension),true);
+
+    b2Body* lowerPart = NULL;
+    {
+      b2BodyDef bodyDef;
+      bodyDef.type = b2_dynamicBody;
+      bodyDef.position = baseVec+b2Vec2(0,-legHeight);
+
+      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,-footHeight),b2Vec2(legWidth,0)};
+      b2PolygonShape shape;
+      shape.Set(points,3);
+
+      b2FixtureDef fixtureDef;
+      fixtureDef.shape = &shape;
+      fixtureDef.density = 1;
+      fixtureDef.friction = 1;
+      fixtureDef.restitution = 0;
+      fixtureDef.filter.categoryBits = 1 << (category+1);
+      fixtureDef.filter.maskBits = 1;
+
+      b2Body* body = world->CreateBody(&bodyDef);
+      body->CreateFixture(&fixtureDef);
+
+      lowerPart = body;
+    }
+    this->addDistanceJoint(upperPart,lowerPart,baseVec                     ,baseVec + b2Vec2(0,-legHeight)        ,true);
+    this->addDistanceJoint(upperPart,lowerPart,baseVec + b2Vec2(legWidth,0),baseVec + b2Vec2(legWidth,-legHeight),true);
+    this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,-legHeight),true);
+  }
+}
+
+b2Body* World::buildRobot(const b2Vec2 &base, b2Body* ground)
+{
+  Q_ASSERT(world);
+
+  const b2Vec2 center = base+b2Vec2(0,legHeight+footHeight);
+
+  b2Body* main = NULL;
+  {
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = center;
+
+    b2Vec2 points[] = {b2Vec2(mainLength/2.,0),b2Vec2(0,mainHeight/2.),b2Vec2(-mainLength/2.,0),b2Vec2(0,-mainHeight/2.)};
+    b2PolygonShape shape;
+    shape.Set(points,4);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = 1;
+    fixtureDef.friction = 0;
+    fixtureDef.restitution = 0;
+
+    b2Body* body = world->CreateBody(&bodyDef);
+    body->CreateFixture(&fixtureDef);
+
+    main = body;
+  }
+  b2Joint* fix0 = this->addHingeJoint(main,ground,center-b2Vec2(mainLength/3.,0));
+  b2Joint* fix1 = this->addHingeJoint(main,ground,center+b2Vec2(mainLength/3.,0));
+
+  b2Body* motor = this->addBall(center,motorRadius);
+  b2RevoluteJoint* engine = static_cast<b2RevoluteJoint*>(this->addHingeJoint(motor,main,motor->GetWorldCenter(),false,10000,0));
+
+  for (int kk=0; kk<nLegs; kk++) {
+    rotateEngine(engine,kk*2*b2_pi/nLegs);
+    buildLegPair(center,main,motor,kk);
+  }
+
+  this->destroyJoint(fix0);
+  this->destroyJoint(fix1);
+  engine->SetMotorSpeed(b2_pi/2.);
+  return main;
+}
+
+void World::rotateEngine(b2RevoluteJoint *engine, float angle, float tol)
+{
+  Q_ASSERT(world);
+
+  const float tau = 2;
+  const float startTime = this->getTime();
+  while (true) {
+    float error = engine->GetJointAngle() - angle;
+    if (fabs(error)<tol) break;
+    engine->SetMotorSpeed(-error/tau);
+    this->stepWorld();
+  }
+  const float endTime = this->getTime();
+
+  //qDebug() << "angle" << engine->GetJointAngle()*180/b2_pi << "time" << (endTime-startTime);
+}
+
+
 void World::stepWorld()
 {
   static const float dt = 1./60.;
