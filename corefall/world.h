@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include "Box2D/Box2D.h"
+#include "robot.h"
 
 class World : public QObject {
 Q_OBJECT
@@ -17,7 +17,7 @@ public:
   b2Body* addBox(float x, float y, float width=1, float height=1);
   b2Body* addBall(const b2Vec2 &pos, float radius);
   b2Body* addBall(float x, float y, float radius=1);
-  b2Body* buildRobot(const b2Vec2 &center, b2Body* ground);
+  Robot addRobot(const b2Vec2 &center, b2Body* ground);
   int getBodyCount() const;
   b2Body* getFirstBody();
 

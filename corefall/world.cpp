@@ -271,7 +271,7 @@ void World::buildLegPair(const b2Vec2 &center, b2Body* main, b2Body* motor,int c
   }
 }
 
-b2Body* World::buildRobot(const b2Vec2 &base, b2Body* ground)
+Robot World::addRobot(const b2Vec2 &base, b2Body* ground)
 {
   Q_ASSERT(world);
 
@@ -312,8 +312,11 @@ b2Body* World::buildRobot(const b2Vec2 &base, b2Body* ground)
   this->destroyJoint(fix0);
   this->destroyJoint(fix1);
   engine->SetMotorSpeed(b2_pi/2.);
-  //engine->SetMotorSpeed(0);
-  return main;
+
+  Robot robot;
+  robot.main = main;
+  robot.engine = engine;
+  return robot;
 }
 
 void World::rotateEngine(b2RevoluteJoint *engine, float angle, float tol)
