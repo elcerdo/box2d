@@ -1,5 +1,6 @@
 #include "world.h"
 
+#include "common.h"
 #include <QDebug>
 
 World::World(QObject *parent)
@@ -38,10 +39,10 @@ b2Body* World::addGround()
   Q_ASSERT(world);
 
   b2BodyDef bodyDef;
-  bodyDef.position.Set(0,-10);
+  bodyDef.position.Set(0,-2);
 
   b2PolygonShape shape;
-  shape.SetAsBox(50,10);
+  shape.SetAsBox(100,2);
 
   b2Body* body = world->CreateBody(&bodyDef);
   body->CreateFixture(&shape,0);
@@ -172,132 +173,101 @@ b2Body* World::addBall(const b2Vec2 &pos, float radius)
 }
 
 const float motorRadius = 1.5;
-const float mainLength  = 20.;
+const float mainLength  = 10.;
 const float mainHeight  = 2;
 const float upperExtension = 3;
 const float legWidth = 3;
 const float legHeight = 5;
-const float footHeight = 4;
-const int   nLegs = 4;
+const float legAngle = 15/180.*b2_pi;
+const float footHeight = 5;
+const int   legNumber = 4;
+
+void World::buildLeg(const b2Vec2 &base, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category)
+{
+  Q_ASSERT(world);
+
+  b2Body* upperPart = NULL;
+  {
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = base;
+
+    b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,0),b2Vec2(0,0)};
+    if (ex.x>0) {
+      points[1] = legWidth*ex;
+      points[2] = (motorRadius+upperExtension)*ey;
+    } else {
+      points[2] = legWidth*ex;
+      points[1] = (motorRadius+upperExtension)*ey;
+    }
+    b2PolygonShape shape;
+    shape.Set(points,3);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = .2;
+    fixtureDef.friction = 0;
+    fixtureDef.restitution = 0;
+    fixtureDef.filter.categoryBits = 1 << (category+1);
+    fixtureDef.filter.maskBits = 1;
+
+    b2Body* body = world->CreateBody(&bodyDef);
+    body->CreateFixture(&fixtureDef);
+
+    upperPart = body;
+  }
+  this->addHingeJoint(upperPart,main,base);
+  this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()-b2Vec2(0,motorRadius),base+(motorRadius+upperExtension)*ey);
+
+  b2Body* lowerPart = NULL;
+  {
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = base-legHeight*ey;
+
+    b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,0),b2Vec2(0,0)};
+    if (ex.x>0) {
+      points[1] = -footHeight*ey;
+      points[2] = legWidth*ex;
+    } else {
+      points[2] = -footHeight*ey;
+      points[1] = legWidth*ex;
+    }
+    b2PolygonShape shape;
+    shape.Set(points,3);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = .2;
+    fixtureDef.friction = 1;
+    fixtureDef.restitution = 0;
+    fixtureDef.filter.categoryBits = 1 << (category+1);
+    fixtureDef.filter.maskBits = 1;
+
+    b2Body* body = world->CreateBody(&bodyDef);
+    body->CreateFixture(&fixtureDef);
+
+    lowerPart = body;
+  }
+  this->addDistanceJoint(upperPart,lowerPart,base,base-legHeight*ey);
+  this->addDistanceJoint(upperPart,lowerPart,base+legWidth*ex,base+legWidth*ex-legHeight*ey);
+  this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()-b2Vec2(0,motorRadius),base-legHeight*ey);
+}
 
 void World::buildLegPair(const b2Vec2 &center, b2Body* main, b2Body* motor,int category)
 {
   Q_ASSERT(world);
 
   { // left leg
-    b2Vec2 baseVec = center+b2Vec2(-mainLength/2.,0);
-
-    b2Body* upperPart = NULL;
-    {
-      b2BodyDef bodyDef;
-      bodyDef.type = b2_dynamicBody;
-      bodyDef.position = baseVec;
-
-      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,motorRadius+upperExtension),b2Vec2(-legWidth,0)};
-      b2PolygonShape shape;
-      shape.Set(points,3);
-
-      b2FixtureDef fixtureDef;
-      fixtureDef.shape = &shape;
-      fixtureDef.density = 1;
-      fixtureDef.friction = 0;
-      fixtureDef.restitution = 0;
-      fixtureDef.filter.categoryBits = 1 << (category+1);
-      fixtureDef.filter.maskBits = 1;
-
-      b2Body* body = world->CreateBody(&bodyDef);
-      body->CreateFixture(&fixtureDef);
-
-      upperPart = body;
-    }
-    this->addHingeJoint(upperPart,main,baseVec);
-    this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,motorRadius+upperExtension));
-
-    b2Body* lowerPart = NULL;
-    {
-      b2BodyDef bodyDef;
-      bodyDef.type = b2_dynamicBody;
-      bodyDef.position = baseVec+b2Vec2(0,-legHeight);
-
-      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(-legWidth,0),b2Vec2(0,-footHeight)};
-      b2PolygonShape shape;
-      shape.Set(points,3);
-
-      b2FixtureDef fixtureDef;
-      fixtureDef.shape = &shape;
-      fixtureDef.density = 1;
-      fixtureDef.friction = 1;
-      fixtureDef.restitution = 0;
-      fixtureDef.filter.categoryBits = 1 << (category+1);
-      fixtureDef.filter.maskBits = 1;
-
-      b2Body* body = world->CreateBody(&bodyDef);
-      body->CreateFixture(&fixtureDef);
-
-      lowerPart = body;
-    }
-    this->addDistanceJoint(upperPart,lowerPart,baseVec                      ,baseVec + b2Vec2(0,-legHeight)        );
-    this->addDistanceJoint(upperPart,lowerPart,baseVec + b2Vec2(-legWidth,0),baseVec + b2Vec2(-legWidth,-legHeight));
-    this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,-legHeight));
+    const b2Vec2 ex(-cos(legAngle),sin(legAngle));
+    const b2Vec2 ey(sin(legAngle),cos(legAngle));
+    buildLeg(center-b2Vec2(mainLength/2.,0),ex,ey,main,motor,category);
   }
 
-  //this->rotateEngine(engine,b2_pi);
-
   { // right leg
-    b2Vec2 baseVec = center+b2Vec2(mainLength/2.,0);
-
-    b2Body* upperPart = NULL;
-    {
-      b2BodyDef bodyDef;
-      bodyDef.type = b2_dynamicBody;
-      bodyDef.position = baseVec;
-
-      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(legWidth,0),b2Vec2(0,motorRadius+upperExtension)};
-      b2PolygonShape shape;
-      shape.Set(points,3);
-
-      b2FixtureDef fixtureDef;
-      fixtureDef.shape = &shape;
-      fixtureDef.density = 1;
-      fixtureDef.friction = 0;
-      fixtureDef.restitution = 0;
-      fixtureDef.filter.categoryBits = 1 << (category+1);
-      fixtureDef.filter.maskBits = 1;
-
-      b2Body* body = world->CreateBody(&bodyDef);
-      body->CreateFixture(&fixtureDef);
-
-      upperPart = body;
-    }
-    this->addHingeJoint(upperPart,main,baseVec);
-    this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,motorRadius+upperExtension),true);
-
-    b2Body* lowerPart = NULL;
-    {
-      b2BodyDef bodyDef;
-      bodyDef.type = b2_dynamicBody;
-      bodyDef.position = baseVec+b2Vec2(0,-legHeight);
-
-      b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,-footHeight),b2Vec2(legWidth,0)};
-      b2PolygonShape shape;
-      shape.Set(points,3);
-
-      b2FixtureDef fixtureDef;
-      fixtureDef.shape = &shape;
-      fixtureDef.density = 1;
-      fixtureDef.friction = 1;
-      fixtureDef.restitution = 0;
-      fixtureDef.filter.categoryBits = 1 << (category+1);
-      fixtureDef.filter.maskBits = 1;
-
-      b2Body* body = world->CreateBody(&bodyDef);
-      body->CreateFixture(&fixtureDef);
-
-      lowerPart = body;
-    }
-    this->addDistanceJoint(upperPart,lowerPart,baseVec                     ,baseVec + b2Vec2(0,-legHeight)        ,true);
-    this->addDistanceJoint(upperPart,lowerPart,baseVec + b2Vec2(legWidth,0),baseVec + b2Vec2(legWidth,-legHeight),true);
-    this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()+b2Vec2(0,motorRadius),baseVec + b2Vec2(0,-legHeight),true);
+    const b2Vec2 ex(cos(legAngle),sin(legAngle));
+    const b2Vec2 ey(-sin(legAngle),cos(legAngle));
+    buildLeg(center+b2Vec2(mainLength/2.,0),ex,ey,main,motor,category);
   }
 }
 
@@ -305,7 +275,7 @@ b2Body* World::buildRobot(const b2Vec2 &base, b2Body* ground)
 {
   Q_ASSERT(world);
 
-  const b2Vec2 center = base+b2Vec2(0,legHeight+footHeight);
+  const b2Vec2 center = base+b2Vec2(0,(legHeight+footHeight)*1.1);
 
   b2Body* main = NULL;
   {
@@ -334,14 +304,15 @@ b2Body* World::buildRobot(const b2Vec2 &base, b2Body* ground)
   b2Body* motor = this->addBall(center,motorRadius);
   b2RevoluteJoint* engine = static_cast<b2RevoluteJoint*>(this->addHingeJoint(motor,main,motor->GetWorldCenter(),false,10000,0));
 
-  for (int kk=0; kk<nLegs; kk++) {
-    rotateEngine(engine,kk*2*b2_pi/nLegs);
+  for (int kk=0; kk<legNumber; kk++) {
+    rotateEngine(engine,kk*2*b2_pi/legNumber);
     buildLegPair(center,main,motor,kk);
   }
 
   this->destroyJoint(fix0);
   this->destroyJoint(fix1);
   engine->SetMotorSpeed(b2_pi/2.);
+  //engine->SetMotorSpeed(0);
   return main;
 }
 

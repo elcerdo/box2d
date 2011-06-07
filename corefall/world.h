@@ -32,6 +32,7 @@ public:
   float getTime() const;
 protected:
   void buildLegPair(const b2Vec2 &center, b2Body* main, b2Body* motor, int category);
+  void buildLeg(const b2Vec2 &base, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category);
 public slots:
   void setStepping(bool stepping);
   void stepWorld();
