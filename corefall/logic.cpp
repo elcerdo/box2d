@@ -19,7 +19,8 @@ void Logic::analyseWorld(World* world)
     lastTransitionTime = world->getTime();
     break;
   case FALLING:
-    if (world->allBodiesAsleep() || world->getTime()-lastTransitionTime>15) {
+    if (world->getTime()-lastTransitionTime>15) throw BadRobot(BadRobot::TOO_LONG);
+    if (world->allBodiesAsleep() || robot.main->GetLinearVelocity().Length()<1e-1) {
       state = RUNNING;
       cout << "**** TO RUNNING ****" << endl;
       cout << "time = " << (world->getTime()-lastTransitionTime) << endl;

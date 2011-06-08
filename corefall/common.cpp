@@ -12,6 +12,8 @@ const char* BadRobot::what() const throw()
     return "rotation took too long";
   case TOO_LONG:
     return "transition took too long";
+  case BAD_BEHAVIOR:
+    return "bad robot behavior";
   }
 }
 QPointF toQPointF(const b2Vec2 &vect)

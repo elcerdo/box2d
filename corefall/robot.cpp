@@ -3,6 +3,7 @@
 #include "pickling/chooseser.h"
 #include "common.h"
 #include <iostream>
+#include <QDebug>
 using std::cout;
 using std::endl;
 
@@ -74,6 +75,9 @@ void RobotTimer::analyseWorld(World* world)
   Record record;
   record.position = robot.main->GetPosition();
   record.speed = robot.main->GetLinearVelocity();
+  record.angle = robot.main->GetAngle()*180/b2_pi;
+
+  if (fabs(record.angle)>25) throw BadRobot(BadRobot::BAD_BEHAVIOR);
 
   if (record.position.x<xmin || record.position.x>xmax) {
     if (started && !stopped) {

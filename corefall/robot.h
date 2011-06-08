@@ -47,6 +47,7 @@ protected:
   struct Record {
     b2Vec2 position;
     b2Vec2 speed;
+    float angle;
   };
   typedef QList<Record> Records;
   Records records;

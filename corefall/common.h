@@ -8,7 +8,7 @@
 
 class BadRobot : public std::exception {
 public:
-  enum Type {BAD_ROTATION,TOO_LONG};
+  enum Type {BAD_ROTATION,TOO_LONG,BAD_BEHAVIOR};
   BadRobot(Type type);
   const char* what() const throw();
 protected:
