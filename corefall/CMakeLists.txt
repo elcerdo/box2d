@@ -1,6 +1,6 @@
 
 set(sources world.cpp printer.cpp drawer.cpp common.cpp corefall.cpp)
-set(headers world.h   printer.h   drawer.h   common.h)
+set(headers world.h   printer.h   drawer.h)
 
 qt4_wrap_cpp(sources_moc ${headers})
 
