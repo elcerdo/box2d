@@ -1,10 +1,11 @@
 #include "printer.h"
 #include "common.h"
 
+#include <QDebug>
+
 Printer::Printer(QObject *parent)
 : QObject(parent)
 {
-
 }
 
 void Printer::displayWorld(World *world) {

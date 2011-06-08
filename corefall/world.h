@@ -17,7 +17,8 @@ public:
   b2Body* addBox(float x, float y, float width=1, float height=1);
   b2Body* addBall(const b2Vec2 &pos, float radius);
   b2Body* addBall(float x, float y, float radius=1);
-  Robot addRobot(const b2Vec2 &center, b2Body* ground);
+  Robot addRobot(const b2Vec2 &center, const RobotDef &robotDef, b2Body* ground);
+  bool allBodiesAsleep() const;
   int getBodyCount() const;
   b2Body* getFirstBody();
 
@@ -31,8 +32,8 @@ public:
   void rotateEngine(b2RevoluteJoint *engine, float angle, float tol=1e-2);
   float getTime() const;
 protected:
-  void buildLegPair(const b2Vec2 &center, b2Body* main, b2Body* motor, int category);
-  void buildLeg(const b2Vec2 &base, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category);
+  void buildLegPair(const b2Vec2 &center, const RobotDef &robotDef, b2Body* main, b2Body* motor, int category);
+  void buildLeg(const b2Vec2 &base, const RobotDef &robotDef, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category);
 public slots:
   void setStepping(bool stepping);
   void stepWorld();

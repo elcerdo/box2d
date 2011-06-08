@@ -7,7 +7,7 @@ World::World(QObject *parent)
 : QObject(parent), world(NULL), timer(NULL), time(0)
 {
   timer = new QTimer(this);
-  timer->setInterval(1000./60.);
+  timer->setInterval(1000./300.);
   timer->setSingleShot(false);
 
   connect(timer,SIGNAL(timeout()),this,SLOT(stepWorld()));
@@ -172,17 +172,7 @@ b2Body* World::addBall(const b2Vec2 &pos, float radius)
   return body;
 }
 
-const float motorRadius = 1.5;
-const float mainLength  = 10.;
-const float mainHeight  = 2;
-const float upperExtension = 3;
-const float legWidth = 3;
-const float legHeight = 5;
-const float legAngle = 15/180.*b2_pi;
-const float footHeight = 5;
-const int   legNumber = 4;
-
-void World::buildLeg(const b2Vec2 &base, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category)
+void World::buildLeg(const b2Vec2 &base, const RobotDef &robotDef, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category)
 {
   Q_ASSERT(world);
 
@@ -194,11 +184,11 @@ void World::buildLeg(const b2Vec2 &base, const b2Vec2 &ex, const b2Vec2 &ey, b2B
 
     b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,0),b2Vec2(0,0)};
     if (ex.x>0) {
-      points[1] = legWidth*ex;
-      points[2] = (motorRadius+upperExtension)*ey;
+      points[1] = robotDef.legWidth*ex;
+      points[2] = (robotDef.motorRadius+robotDef.upperExtension)*ey;
     } else {
-      points[2] = legWidth*ex;
-      points[1] = (motorRadius+upperExtension)*ey;
+      points[2] = robotDef.legWidth*ex;
+      points[1] = (robotDef.motorRadius+robotDef.upperExtension)*ey;
     }
     b2PolygonShape shape;
     shape.Set(points,3);
@@ -217,21 +207,21 @@ void World::buildLeg(const b2Vec2 &base, const b2Vec2 &ex, const b2Vec2 &ey, b2B
     upperPart = body;
   }
   this->addHingeJoint(upperPart,main,base);
-  this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()-b2Vec2(0,motorRadius),base+(motorRadius+upperExtension)*ey);
+  this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()-b2Vec2(0,robotDef.motorRadius),base+(robotDef.motorRadius+robotDef.upperExtension)*ey);
 
   b2Body* lowerPart = NULL;
   {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position = base-legHeight*ey;
+    bodyDef.position = base-robotDef.legHeight*ey;
 
     b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,0),b2Vec2(0,0)};
     if (ex.x>0) {
-      points[1] = -footHeight*ey;
-      points[2] = legWidth*ex;
+      points[1] = -robotDef.footHeight*ey;
+      points[2] = robotDef.legWidth*ex;
     } else {
-      points[2] = -footHeight*ey;
-      points[1] = legWidth*ex;
+      points[2] = -robotDef.footHeight*ey;
+      points[1] = robotDef.legWidth*ex;
     }
     b2PolygonShape shape;
     shape.Set(points,3);
@@ -249,33 +239,33 @@ void World::buildLeg(const b2Vec2 &base, const b2Vec2 &ex, const b2Vec2 &ey, b2B
 
     lowerPart = body;
   }
-  this->addDistanceJoint(upperPart,lowerPart,base,base-legHeight*ey);
-  this->addDistanceJoint(upperPart,lowerPart,base+legWidth*ex,base+legWidth*ex-legHeight*ey);
-  this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()-b2Vec2(0,motorRadius),base-legHeight*ey);
+  this->addDistanceJoint(upperPart,lowerPart,base,base-robotDef.legHeight*ey);
+  this->addDistanceJoint(upperPart,lowerPart,base+robotDef.legWidth*ex,base+robotDef.legWidth*ex-robotDef.legHeight*ey);
+  this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()-b2Vec2(0,robotDef.motorRadius),base-robotDef.legHeight*ey);
 }
 
-void World::buildLegPair(const b2Vec2 &center, b2Body* main, b2Body* motor,int category)
+void World::buildLegPair(const b2Vec2 &center, const RobotDef &robotDef, b2Body* main, b2Body* motor,int category)
 {
   Q_ASSERT(world);
 
   { // left leg
-    const b2Vec2 ex(-cos(legAngle),sin(legAngle));
-    const b2Vec2 ey(sin(legAngle),cos(legAngle));
-    buildLeg(center-b2Vec2(mainLength/2.,0),ex,ey,main,motor,category);
+    const b2Vec2 ex(-cos(robotDef.legAngle),sin(robotDef.legAngle));
+    const b2Vec2 ey(sin(robotDef.legAngle),cos(robotDef.legAngle));
+    buildLeg(center-b2Vec2(robotDef.mainLength/2.,0),robotDef,ex,ey,main,motor,category);
   }
 
   { // right leg
-    const b2Vec2 ex(cos(legAngle),sin(legAngle));
-    const b2Vec2 ey(-sin(legAngle),cos(legAngle));
-    buildLeg(center+b2Vec2(mainLength/2.,0),ex,ey,main,motor,category);
+    const b2Vec2 ex(cos(robotDef.legAngle),sin(robotDef.legAngle));
+    const b2Vec2 ey(-sin(robotDef.legAngle),cos(robotDef.legAngle));
+    buildLeg(center+b2Vec2(robotDef.mainLength/2.,0),robotDef,ex,ey,main,motor,category);
   }
 }
 
-Robot World::addRobot(const b2Vec2 &base, b2Body* ground)
+Robot World::addRobot(const b2Vec2 &base, const RobotDef &robotDef, b2Body* ground)
 {
   Q_ASSERT(world);
 
-  const b2Vec2 center = base+b2Vec2(0,(legHeight+footHeight)*1.1);
+  const b2Vec2 center = base+b2Vec2(0,(robotDef.legHeight+robotDef.footHeight)*1.1);
 
   b2Body* main = NULL;
   {
@@ -283,7 +273,7 @@ Robot World::addRobot(const b2Vec2 &base, b2Body* ground)
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = center;
 
-    b2Vec2 points[] = {b2Vec2(mainLength/2.,0),b2Vec2(0,mainHeight/2.),b2Vec2(-mainLength/2.,0),b2Vec2(0,-mainHeight/2.)};
+    b2Vec2 points[] = {b2Vec2(robotDef.mainLength/2.,0),b2Vec2(0,robotDef.mainHeight/2.),b2Vec2(-robotDef.mainLength/2.,0),b2Vec2(0,-robotDef.mainHeight/2.)};
     b2PolygonShape shape;
     shape.Set(points,4);
 
@@ -298,25 +288,21 @@ Robot World::addRobot(const b2Vec2 &base, b2Body* ground)
 
     main = body;
   }
-  b2Joint* fix0 = this->addHingeJoint(main,ground,center-b2Vec2(mainLength/3.,0));
-  b2Joint* fix1 = this->addHingeJoint(main,ground,center+b2Vec2(mainLength/3.,0));
+  b2Joint* fix0 = this->addHingeJoint(main,ground,center-b2Vec2(robotDef.mainLength/3.,0));
+  b2Joint* fix1 = this->addHingeJoint(main,ground,center+b2Vec2(robotDef.mainLength/3.,0));
 
-  b2Body* motor = this->addBall(center,motorRadius);
+  b2Body* motor = this->addBall(center,robotDef.motorRadius);
   b2RevoluteJoint* engine = static_cast<b2RevoluteJoint*>(this->addHingeJoint(motor,main,motor->GetWorldCenter(),false,10000,0));
 
-  for (int kk=0; kk<legNumber; kk++) {
-    rotateEngine(engine,kk*2*b2_pi/legNumber);
-    buildLegPair(center,main,motor,kk);
+  for (int kk=0; kk<robotDef.legNumber; kk++) {
+    rotateEngine(engine,kk*2*b2_pi/robotDef.legNumber);
+    buildLegPair(center,robotDef,main,motor,kk);
   }
 
   this->destroyJoint(fix0);
   this->destroyJoint(fix1);
-  engine->SetMotorSpeed(b2_pi/2.);
 
-  Robot robot;
-  robot.main = main;
-  robot.engine = engine;
-  return robot;
+  return Robot(robotDef,main,engine);
 }
 
 void World::rotateEngine(b2RevoluteJoint *engine, float angle, float tol)
@@ -330,12 +316,21 @@ void World::rotateEngine(b2RevoluteJoint *engine, float angle, float tol)
     if (fabs(error)<tol) break;
     engine->SetMotorSpeed(-error/tau);
     this->stepWorld();
+    if (this->getTime()-startTime>20*tau) throw BadRobot(BadRobot::BAD_ROTATION);
   }
   const float endTime = this->getTime();
 
   //qDebug() << "angle" << engine->GetJointAngle()*180/b2_pi << "time" << (endTime-startTime);
 }
 
+bool World::allBodiesAsleep() const
+{
+  bool allSleep = true;
+  for (const b2Body* body=world->GetBodyList(); body!=NULL; body=body->GetNext()) {
+    allSleep &= !body->IsAwake();
+  }
+  return allSleep;
+}
 
 void World::stepWorld()
 {
