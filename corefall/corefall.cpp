@@ -2,9 +2,21 @@
 #include "printer.h"
 #include "drawer.h"
 #include "world.h"
+#include "pickling/chooseser.h"
+
+void test()
+{
+  Tab dict;
+  dict["patate"] = 42.;
+  dict["coco"] = "pierre";
+  
+  DumpValToFile(dict,"patate.pck");
+}
 
 int main(int argc,char * argv[])
 {
+  test();
+
   QApplication app(argc,argv);
 
   World world;

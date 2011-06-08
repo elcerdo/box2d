@@ -1,7 +1,7 @@
 
-find_package(Threads REQUIRED)
-
 add_definitions(-DLINUX_ -DOC_NEW_STYLE_INCLUDES)
+
+find_package(Threads REQUIRED)
 
 add_library(pickling 
     m2pythontools.cc
