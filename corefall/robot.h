@@ -2,6 +2,7 @@
 #define __ROBOT_H__
 
 #include <QObject>
+#include "pickling/chooseser.h"
 #include "Box2D/Box2D.h"
 
 class World; // forward
@@ -10,6 +11,7 @@ struct RobotDef {
   RobotDef();
 
   void loadFromFile(const std::string &filename);
+  Tab  getDict() const;
   void print() const;
 
   float motorRadius;
@@ -41,13 +43,16 @@ public:
 public slots:
   void analyseWorld(World* world);
   void printReport() const;
+  void saveReport(const std::string &filename) const;
 signals:
   void done();
 protected:
   struct Record {
     b2Vec2 position;
     b2Vec2 speed;
-    float angle;
+    float bodyangle;
+    float engineangle;
+    float time;
   };
   typedef QList<Record> Records;
   Records records;

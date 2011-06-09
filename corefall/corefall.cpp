@@ -19,7 +19,7 @@ int main(int argc,char * argv[])
 
   Robot robot = world.addRobot(b2Vec2(-30,0),robotDef,ground);
   RobotTimer robotTimer(robot);
-  robotTimer.setRange(-20,20);
+  robotTimer.setRange(0,50);
 
   Drawer drawer;
   drawer.resize(1000,500);

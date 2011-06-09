@@ -1,6 +1,5 @@
 #include "robot.h"
 
-#include "pickling/chooseser.h"
 #include "common.h"
 #include <iostream>
 #include <QDebug>
@@ -35,9 +34,20 @@ void RobotDef::loadFromFile(const std::string &filename)
   legAngle = dict["legAngle"];
   footHeight = dict["footHeight"];
   legNumber = dict["legNumber"];
-  //data["patate"] = 42.;
-  //data["coco"] = "pierre";
-  //DumpValToFile(dict,"patate.pck");
+}
+
+Tab RobotDef::getDict() const {
+  Tab dict;
+  dict["motorRadius"] = motorRadius;
+  dict["mainLength"] = mainLength;
+  dict["mainHeight"] = mainHeight;
+  dict["upperExtension"] = upperExtension;
+  dict["legWidth"] = legWidth;
+  dict["legHeight"] = legHeight;
+  dict["legAngle"] = legAngle;
+  dict["footHeight"] = footHeight;
+  dict["legNumber"] = legNumber;
+  return dict;
 }
 
 void RobotDef::print() const
@@ -75,14 +85,17 @@ void RobotTimer::analyseWorld(World* world)
   Record record;
   record.position = robot.main->GetPosition();
   record.speed = robot.main->GetLinearVelocity();
-  record.angle = robot.main->GetAngle()*180/b2_pi;
+  record.bodyangle = robot.main->GetAngle()*180/b2_pi;
+  record.engineangle = robot.engine->GetJointAngle()*180/b2_pi;
+  record.time = world->getTime();
 
-  if (fabs(record.angle)>25) throw BadRobot(BadRobot::BAD_BEHAVIOR);
+  if (fabs(record.bodyangle)>25) throw BadRobot(BadRobot::BAD_BEHAVIOR);
 
   if (record.position.x<xmin || record.position.x>xmax) {
     if (started && !stopped) {
       cout << "**** RECORDING FINISHED ****" << endl;
       stopped = true;
+      saveReport("perf.pck");
       printReport();
       emit done();
     }
@@ -102,9 +115,42 @@ void RobotTimer::setRange(float xmin, float xmax)
   this->xmax = xmax;
 }
 
+void RobotTimer::saveReport(const std::string &filename) const
+{
+  cout << "**** SAVING PERFORMANCES ****" << endl;
+  cout << "filename = " << filename << endl;
+
+  Tab dict;
+  dict["definition"] = robot.robotDef.getDict();
+
+  Arr posx,posy;
+  Arr spex,spey;
+  Arr bodyangle;
+  Arr engineangle;
+  Arr time;
+  for (Records::const_iterator irecord=records.begin(); irecord!=records.end(); irecord++) {
+    posx.append(irecord->position.x);
+    posy.append(irecord->position.y);
+    spex.append(irecord->speed.x);
+    spey.append(irecord->speed.y);
+    bodyangle.append(irecord->bodyangle);
+    engineangle.append(irecord->engineangle);
+    time.append(irecord->time);
+  }
+  dict["posx"] = posx;
+  dict["posy"] = posy;
+  dict["spex"] = spex;
+  dict["spey"] = spey;
+  dict["bodyangle"] = bodyangle;
+  dict["engineangle"] = engineangle;
+  dict["time"] = time;
+
+  DumpValToFile(dict,filename);
+}
+
 void RobotTimer::printReport() const
 {
-  cout << "**** PERFORMANCES ****" << endl;
+  cout << "**** PRINTING PERFORMANCES ****" << endl;
   cout << "nrecord = " << records.size() << endl;
 
   b2Vec2 meanSpeed(0,0);
