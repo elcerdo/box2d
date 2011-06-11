@@ -3,11 +3,11 @@
 #include "common.h"
 #include <QDebug>
 
-World::World(QObject *parent)
+World::World(float dt, QObject *parent)
 : QObject(parent), world(NULL), timer(NULL), time(0)
 {
   timer = new QTimer(this);
-  timer->setInterval(1000./300.);
+  timer->setInterval(dt);
   timer->setSingleShot(false);
 
   connect(timer,SIGNAL(timeout()),this,SLOT(stepWorld()));

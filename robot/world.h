@@ -8,7 +8,7 @@
 class World : public QObject {
 Q_OBJECT
 public:
-  World(QObject *parent=NULL);
+  World(float dt, QObject *parent=NULL);
   ~World();
 
   void initialize(const b2Vec2 &gravity);

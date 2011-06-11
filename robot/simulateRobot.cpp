@@ -19,7 +19,7 @@ int main(int argc,char * argv[])
 
   QApplication app(argc,argv);
 
-  World world;
+  World world(1000./60.);
   world.initialize(b2Vec2(0,-10));
 
   RobotTimer robotTimer;
