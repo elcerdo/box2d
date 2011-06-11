@@ -2,8 +2,8 @@
 #define __ROBOT_H__
 
 #include <QObject>
+#include "common.h"
 #include "pickling/chooseser.h"
-#include "Box2D/Box2D.h"
 
 class World; // forward
 
@@ -36,14 +36,15 @@ struct Robot {
 class RobotTimer : public QObject {
 Q_OBJECT
 public:
-  RobotTimer(const Robot &robot, QObject *parent=NULL);
+  RobotTimer(const Robot* robot=NULL, QObject *parent=NULL);
   ~RobotTimer();
 
+  void setRobot(const Robot* robot);
   void setRange(float xmin, float xmax);
 public slots:
   void analyseWorld(World* world);
   void printReport() const;
-  void saveReport(const std::string &filename) const;
+  void saveReport(const std::string &filename,const BadRobot &badRobot) const;
 signals:
   void done();
 protected:
@@ -57,7 +58,7 @@ protected:
   typedef QList<Record> Records;
   Records records;
 
-  const Robot &robot;
+  const Robot* robot;
   float xmin,xmax;
   bool started,stopped;
 };

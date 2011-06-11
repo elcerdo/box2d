@@ -1,8 +1,7 @@
 #include "robot.h"
 
-#include "common.h"
+#include "world.h"
 #include <iostream>
-#include <QDebug>
 using std::cout;
 using std::endl;
 
@@ -70,32 +69,37 @@ Robot::Robot(const RobotDef &robotDef, b2Body* main, b2RevoluteJoint *engine)
 {
 }
 
-RobotTimer::RobotTimer(const Robot &robot, QObject *parent)
-: QObject(parent), robot(robot), xmin(0), xmax(0), started(false), stopped(false)
+RobotTimer::RobotTimer(const Robot* robot, QObject *parent)
+: QObject(parent), robot(NULL), xmin(0), xmax(0), started(false), stopped(false)
 {
 }
 
 RobotTimer::~RobotTimer()
 {
-  if (started && !stopped) printReport();
+}
+
+void RobotTimer::setRobot(const Robot* robot)
+{
+  this->robot = robot;
 }
 
 void RobotTimer::analyseWorld(World* world)
 {
+  Q_ASSERT(robot);
+
   Record record;
-  record.position = robot.main->GetPosition();
-  record.speed = robot.main->GetLinearVelocity();
-  record.bodyangle = robot.main->GetAngle()*180/b2_pi;
-  record.engineangle = robot.engine->GetJointAngle()*180/b2_pi;
+  record.position = robot->main->GetPosition();
+  record.speed = robot->main->GetLinearVelocity();
+  record.bodyangle = robot->main->GetAngle()*180/b2_pi;
+  record.engineangle = robot->engine->GetJointAngle()*180/b2_pi;
   record.time = world->getTime();
 
-  if (fabs(record.bodyangle)>25) throw BadRobot(BadRobot::BAD_BEHAVIOR);
+  if (fabs(record.bodyangle)>25) throw BadRobot(robot->robotDef,BadRobot::BAD_BEHAVIOR);
 
   if (record.position.x<xmin || record.position.x>xmax) {
     if (started && !stopped) {
       cout << "**** RECORDING FINISHED ****" << endl;
       stopped = true;
-      saveReport("perf.pck");
       printReport();
       emit done();
     }
@@ -115,13 +119,16 @@ void RobotTimer::setRange(float xmin, float xmax)
   this->xmax = xmax;
 }
 
-void RobotTimer::saveReport(const std::string &filename) const
+void RobotTimer::saveReport(const std::string &filename,const BadRobot &badRobot) const
 {
   cout << "**** SAVING PERFORMANCES ****" << endl;
+  cout << "status = " << badRobot.getType() << " (" << badRobot.what() << ")" << endl;
   cout << "filename = " << filename << endl;
 
   Tab dict;
-  dict["definition"] = robot.robotDef.getDict();
+  dict["definition"] = badRobot.getRobotDef().getDict();
+  dict["status"] = badRobot.getType();
+  dict["status_string"] = badRobot.what();
 
   Arr posx,posy;
   Arr spex,spey;

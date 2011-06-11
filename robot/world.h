@@ -29,7 +29,7 @@ public:
   b2Joint *getFirstJoint();
 
   void resetTime();
-  void rotateEngine(b2RevoluteJoint *engine, float angle, float tol=1e-2);
+  void rotateEngine(Robot &robot, float angle, float tol=1e-2);
   float getTime() const;
 protected:
   void buildLegPair(const b2Vec2 &center, const RobotDef &robotDef, b2Body* main, b2Body* motor, int category);
