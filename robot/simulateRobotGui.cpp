@@ -1,4 +1,5 @@
-#include <QCoreApplication>
+#include <QApplication>
+#include "drawer.h"
 #include "world.h"
 #include "logic.h"
 #include "robot.h"
@@ -16,9 +17,9 @@ int main(int argc,char * argv[])
   robotDef.loadFromFile(input_filename);
   robotDef.print();
 
-  QCoreApplication app(argc,argv);
+  QApplication app(argc,argv);
 
-  World world(0);
+  World world(1000./60.);
   world.initialize(b2Vec2(0,-10));
 
   RobotTimer robotTimer;
@@ -32,6 +33,12 @@ int main(int argc,char * argv[])
     robotTimer.setRobot(&robot);
     logic.setRobot(&robot);
 
+    Drawer drawer;
+    drawer.resize(1000,500);
+    drawer.show();
+
+
+    QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&robotTimer,SLOT(analyseWorld(World*)));
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&logic,SLOT(analyseWorld(World*)));
     QObject::connect(&robotTimer,SIGNAL(done()),&app,SLOT(quit()));
