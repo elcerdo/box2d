@@ -4,15 +4,19 @@
 #include <exception>
 #include <QPointF>
 #include "Box2D/Box2D.h"
-#include "world.h"
+
+class RobotDef; // forward
 
 class BadRobot : public std::exception {
 public:
-  enum Type {BAD_ROTATION,TOO_LONG,BAD_BEHAVIOR};
-  BadRobot(Type type);
+  enum Type {NO_ERROR,BAD_ROTATION,TOO_LONG,BAD_BEHAVIOR};
+  BadRobot(const RobotDef& robotDef, Type type);
   const char* what() const throw();
+  const Type getType() const throw();
+  const RobotDef &getRobotDef() const throw();
 protected:
   Type type;
+  const RobotDef& robotDef;
 };
 
 template <class stream>

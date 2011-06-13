@@ -3,11 +3,11 @@
 #include "common.h"
 #include <QDebug>
 
-World::World(QObject *parent)
+World::World(float dt, QObject *parent)
 : QObject(parent), world(NULL), timer(NULL), time(0)
 {
   timer = new QTimer(this);
-  timer->setInterval(1000./300.);
+  timer->setInterval(dt);
   timer->setSingleShot(false);
 
   connect(timer,SIGNAL(timeout()),this,SLOT(stepWorld()));
@@ -294,29 +294,30 @@ Robot World::addRobot(const b2Vec2 &base, const RobotDef &robotDef, b2Body* grou
   b2Body* motor = this->addBall(center,robotDef.motorRadius);
   b2RevoluteJoint* engine = static_cast<b2RevoluteJoint*>(this->addHingeJoint(motor,main,motor->GetWorldCenter(),false,10000,0));
 
+  Robot robot = Robot(robotDef,main,engine); 
   for (int kk=0; kk<robotDef.legNumber; kk++) {
-    rotateEngine(engine,kk*2*b2_pi/robotDef.legNumber);
+    rotateEngine(robot,kk*2*b2_pi/robotDef.legNumber);
     buildLegPair(center,robotDef,main,motor,kk);
   }
 
   this->destroyJoint(fix0);
   this->destroyJoint(fix1);
 
-  return Robot(robotDef,main,engine);
+  return robot;
 }
 
-void World::rotateEngine(b2RevoluteJoint *engine, float angle, float tol)
+void World::rotateEngine(Robot &robot, float angle, float tol)
 {
   Q_ASSERT(world);
 
   const float tau = 2;
   const float startTime = this->getTime();
   while (true) {
-    float error = engine->GetJointAngle() - angle;
+    float error = robot.engine->GetJointAngle() - angle;
     if (fabs(error)<tol) break;
-    engine->SetMotorSpeed(-error/tau);
+    robot.engine->SetMotorSpeed(-error/tau);
     this->stepWorld();
-    if (this->getTime()-startTime>20*tau) throw BadRobot(BadRobot::BAD_ROTATION);
+    if (this->getTime()-startTime>20*tau) throw BadRobot(robot.robotDef,BadRobot::BAD_ROTATION);
   }
   const float endTime = this->getTime();
 
