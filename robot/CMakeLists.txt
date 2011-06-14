@@ -36,3 +36,10 @@ add_executable(simulateRobot
     )
 target_link_libraries(simulateRobot QtCore Box2D pickling)
 
+install(TARGETS simulateRobot
+    RUNTIME DESTINATION bin
+    )
+
+install(PROGRAMS generateRobot.py parseRobot.py
+    DESTINATION bin
+    )
