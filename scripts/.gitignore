@@ -1,1 +1,5 @@
 *.pck
+run.*
+gen.*
+*.pdf
+*.tar.gz
