@@ -35,7 +35,7 @@ for kk in $(seq ${kkmax}); do
     let "success++"
     echo "success"
     rm "${definition_file}"
-    test ${success} -ge 100 && break
+    test ${success} -ge 200 && break
 done
 
 echo "kk=${kk} success=${success} failed=${failed}"

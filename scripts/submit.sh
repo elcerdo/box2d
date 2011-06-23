@@ -5,7 +5,7 @@ set -u
 maindir="$(pwd)"
 outputdir="$(mktemp --tmpdir=${maindir} -d gen.XXXX)"
 runid="${outputdir##*.}"
-kkmax=10
+kkmax=100
 
 echo "runid is ${runid}"
 

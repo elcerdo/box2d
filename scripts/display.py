@@ -4,6 +4,7 @@
 import os 
 import sys 
 import cPickle as pickle
+import shutil
 
 from pylab import *
 
@@ -23,9 +24,23 @@ for kk,filename in enumerate(results):
     meanspeed = array(data["spex"]).mean()
     definitions.append((meanspeed,data["definition"],filename))
 
+
+speeds = [speed for speed,definition,filename in definitions]
 definitions.sort(key=lambda x:x[0],reverse=True)
+best_definitions = definitions[:50]
+
+bestdir = "best"
+if os.path.isdir(bestdir): shutil.rmtree(bestdir)
+os.mkdir(bestdir)
 
 print "champions"
-print '\n'.join("%f %s" % (speed,filename) for speed,definition,filename in definitions[:30])
+for kk,(speed,definition,filename) in enumerate(best_definitions):
+    print "%02d %f %s" % (kk,speed,filename)
+    shutil.copy(filename,os.path.join(bestdir,"performances.%02d.pck" % kk))
 
+figure()
+hist(speeds,bins=100,range=(0,15))
+savefig("speed.pdf")
+
+show()
 
