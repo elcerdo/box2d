@@ -36,7 +36,7 @@ add_executable(simulateRobot
     )
 target_link_libraries(simulateRobot QtCore Box2D pickling)
 
-install(TARGETS simulateRobot
+install(TARGETS simulateRobot simulateRobotGui
     RUNTIME DESTINATION bin
     )
 

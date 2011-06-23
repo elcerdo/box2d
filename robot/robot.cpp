@@ -35,6 +35,24 @@ void RobotDef::loadFromFile(const std::string &filename)
   legNumber = dict["legNumber"];
 }
 
+void RobotDef::loadFromPerf(const std::string &filename)
+{
+  Val data;
+  LoadValFromFile(filename,data);
+  Tab casted = data;
+  Tab dict = casted["definition"];
+
+  motorRadius = dict["motorRadius"];
+  mainLength  = dict["mainLength"];
+  mainHeight  = dict["mainHeight"];
+  upperExtension = dict["upperExtension"];
+  legWidth = dict["legWidth"];
+  legHeight = dict["legHeight"];
+  legAngle = dict["legAngle"];
+  footHeight = dict["footHeight"];
+  legNumber = dict["legNumber"];
+}
+
 Tab RobotDef::getDict() const {
   Tab dict;
   dict["motorRadius"] = motorRadius;

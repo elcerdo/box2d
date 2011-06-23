@@ -11,6 +11,7 @@ struct RobotDef {
   RobotDef();
 
   void loadFromFile(const std::string &filename);
+  void loadFromPerf(const std::string &filename);
   Tab  getDict() const;
   void print() const;
 

@@ -6,15 +6,15 @@
 
 int main(int argc,char * argv[])
 {
-  if (argc<3) {
-    cerr << "simulateRobot definition.pck performance.pck" << endl;
+  if (argc<2) {
+    cerr << "simulateRobot performance.pck" << endl;
     exit(2);
   }
   std::string input_filename = argv[1];
-  std::string output_filename = argv[2];
+  std::string output_filename = "patate.pck";
 
   RobotDef robotDef;
-  robotDef.loadFromFile(input_filename);
+  robotDef.loadFromPerf(input_filename);
   robotDef.print();
 
   QApplication app(argc,argv);
