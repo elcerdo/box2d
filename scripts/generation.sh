@@ -2,7 +2,7 @@
 #
 #PBS -r n
 #PBS -l nodes=1:ppn=1:x86_64
-#PBS -l walltime=5:00:00
+#PBS -l walltime=1:00:00
 #PBS -j oe
 
 set -u
@@ -35,7 +35,7 @@ for kk in $(seq ${kkmax}); do
     let "success++"
     echo "success"
     rm "${definition_file}"
-    test ${success} -ge 1000 && break
+    test ${success} -ge 100 && break
 done
 
 echo "kk=${kk} success=${success} failed=${failed}"
