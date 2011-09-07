@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setApplicationName("volley");
     }
 
-    World world(1./60.);
+    World world(1./30.);
     world.initialize(b2Vec2(0,-10));
 
     { // build court

@@ -29,6 +29,24 @@ void Drawer::displayWorld(World* world)
   update();
 }
 
+void Drawer::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key()==Qt::Key_F) {
+	setWindowState(windowState() ^ Qt::WindowFullScreen);
+	event->accept();
+	return;
+    }
+
+    event->ignore();
+}
+
+void Drawer::keyReleaseEvent(QKeyEvent* event)
+{
+    qDebug() << "released" << event->key();
+
+    event->ignore();
+}
+
 void Drawer::mousePressEvent(QMouseEvent* event)
 {
   if (event->button()==panningButton) {

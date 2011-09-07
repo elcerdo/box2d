@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QWidget>
+#include <QKeyEvent>
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -18,6 +19,8 @@ public slots:
   void displayWorld(World* world);
 
 protected:
+  void keyPressEvent(QKeyEvent* event);
+  void keyReleaseEvent(QKeyEvent* event);
   void paintEvent(QPaintEvent* event);
   void mousePressEvent(QMouseEvent* event);
   void mouseMoveEvent(QMouseEvent* event);
