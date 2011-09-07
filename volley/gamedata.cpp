@@ -30,6 +30,21 @@ void GameData::buildCourt(World &world)
     right_player = world.addPlayer(court_width/4.,0,player_radius);
 }
 
+// left player stuff
+void GameData::leftPlayerStart()
+{
+    qDebug() << "left player start";
+
+    left_player->SetTransform(b2Vec2(-court_width/4.,0),0);
+    right_player->SetTransform(b2Vec2(court_width/4.,0),0);
+    left_player->SetLinearVelocity(b2Vec2(0,0));
+    right_player->SetLinearVelocity(b2Vec2(0,0));
+
+    ball->SetTransform(b2Vec2(-court_width/4.,5),0);
+    ball->SetLinearVelocity(b2Vec2(0,0));
+    ball->SetAngularVelocity(0);
+}
+
 void GameData::leftPlayerGoLeft()
 {
     left_player->SetLinearVelocity(b2Vec2(-player_speed,0));
@@ -48,6 +63,21 @@ void GameData::leftPlayerStopLeft()
 void GameData::leftPlayerStopRight()
 {
     if (left_player->GetLinearVelocity().x>0) left_player->SetLinearVelocity(b2Vec2(0,0));
+}
+
+// right player stuff
+void GameData::rightPlayerStart()
+{
+    qDebug() << "right player start";
+
+    left_player->SetTransform(b2Vec2(-court_width/4.,0),0);
+    right_player->SetTransform(b2Vec2(court_width/4.,0),0);
+    left_player->SetLinearVelocity(b2Vec2(0,0));
+    right_player->SetLinearVelocity(b2Vec2(0,0));
+
+    ball->SetTransform(b2Vec2(court_width/4.,5),0);
+    ball->SetLinearVelocity(b2Vec2(0,0));
+    ball->SetAngularVelocity(0);
 }
 
 void GameData::rightPlayerGoLeft()

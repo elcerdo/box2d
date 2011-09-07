@@ -7,15 +7,19 @@
 static const Qt::MouseButton panningButton = Qt::MidButton;
 
 // standard keys
+static const int leftPlayerStartKey = Qt::Key_Space;
 static const int leftPlayerLeftKey = Qt::Key_A;
 static const int leftPlayerRightKey = Qt::Key_Z;
+static const int rightPlayerStartKey = Qt::Key_M;
 static const int rightPlayerLeftKey = Qt::Key_Left;
 static const int rightPlayerRightKey = Qt::Key_Right;
 static const int fullscreenKey = Qt::Key_F;
 
 //// alternate keys
+//static const int leftPlayerStartKey = Qt::Key_S;
 //static const int leftPlayerLeftKey = Qt::Key_D;
 //static const int leftPlayerRightKey = Qt::Key_F;
+//static const int rightPlayerStartKey = Qt::Key_J;
 //static const int rightPlayerLeftKey = Qt::Key_G;
 //static const int rightPlayerRightKey = Qt::Key_H;
 //static const int fullscreenKey = Qt::Key_Space;
@@ -54,6 +58,18 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
     if (event->key()==fullscreenKey) {
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
+	event->accept();
+	return;
+    }
+
+    if (event->key()==leftPlayerStartKey) {
+	data.leftPlayerStart();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==rightPlayerStartKey) {
+	data.rightPlayerStart();
 	event->accept();
 	return;
     }

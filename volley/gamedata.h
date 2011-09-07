@@ -9,6 +9,9 @@ class GameData : public QObject {
 public:
     GameData(World& world, QObject* parent=NULL);
 
+    void leftPlayerStart();
+    void rightPlayerStart();
+
     void leftPlayerGoLeft();
     void leftPlayerGoRight();
     void leftPlayerStopLeft();
