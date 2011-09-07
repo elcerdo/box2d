@@ -32,6 +32,20 @@ Drawer::Drawer(GameData& data,QWidget *parent)
     QSettings settings;
     scale = settings.value("drawer/scale",50.).toFloat();
     panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
+
+    qDebug() << "******************";
+    qDebug() << "left player";
+    qDebug() << "start" << QKeySequence(leftPlayerStartKey).toString();
+    qDebug() << "left" << QKeySequence(leftPlayerLeftKey).toString();
+    qDebug() << "right" << QKeySequence(leftPlayerRightKey).toString();
+    qDebug() << "******************";
+    qDebug() << "right player";
+    qDebug() << "start" << QKeySequence(rightPlayerStartKey).toString();
+    qDebug() << "right" << QKeySequence(rightPlayerLeftKey).toString();
+    qDebug() << "right" << QKeySequence(rightPlayerRightKey).toString();
+    qDebug() << "******************";
+    qDebug() << "fullscreen" << QKeySequence(fullscreenKey).toString();
+    qDebug() << "******************";
 }
 
 Drawer::~Drawer()
