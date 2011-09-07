@@ -1,6 +1,7 @@
 #ifndef __DRAWER_H__
 #define __DRAWER_H__
 
+#include <QImage>
 #include <QDebug>
 #include <QWidget>
 #include <QKeyEvent>
@@ -36,6 +37,7 @@ protected:
   QPointF panningPositionCurrent;
   float scale;
   GameData &data;
+  QImage ballImage;
 };
 
 #endif

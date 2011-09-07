@@ -26,6 +26,11 @@ int GameData::courtHeight() const
     return court_height;
 }
 
+const b2Body* GameData::getBall() const
+{
+    return ball;
+}
+
 void GameData::buildCourt(World &world)
 {
     left_ground = world.addGround(-court_width/4.-.5,-.5,court_width/2.+1,1);

@@ -27,7 +27,7 @@ static const int fullscreenKey = Qt::Key_F;
 //scale is in pixel/m
 
 Drawer::Drawer(GameData& data,QWidget *parent)
-: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), data(data)
+: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), data(data), ballImage(":/images/ball.png")
 {
     QSettings settings;
     scale = settings.value("drawer/scale",50.).toFloat();
@@ -46,6 +46,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
     qDebug() << "******************";
     qDebug() << "fullscreen" << QKeySequence(fullscreenKey).toString();
     qDebug() << "******************";
+
+    qDebug() << ballImage.width();
 }
 
 Drawer::~Drawer()
@@ -191,8 +193,25 @@ void Drawer::paintEvent(QPaintEvent* event)
   if (!world) return;
  
   QPainter painter(this);
-
   { // draw scene
+      painter.save();
+      painter.translate(rect().width()/2.,rect().height()/2.);
+      painter.translate(panningPosition);
+      if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
+      painter.scale(scale,-scale);
+
+      { // draw ball
+	  const b2Body *ball = data.getBall();
+	  painter.save();
+	  painter.translate(toQPointF(ball->GetPosition()));
+	  painter.rotate(ball->GetAngle()*180/b2_pi);
+	  painter.drawImage(QRectF(-.5,-.5,1,1),ballImage);
+	  painter.restore();
+      }
+      painter.restore();
+  }
+
+  { // debug draw scene
       painter.save();
       painter.translate(rect().width()/2.,rect().height()/2.);
       painter.translate(panningPosition);

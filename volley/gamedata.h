@@ -27,6 +27,8 @@ public:
     int courtWidth() const;
     int courtHeight() const;
 
+    const b2Body* getBall() const;
+
 public slots:
     void stabilizePlayers(World*);
     void checkPoints(World*);

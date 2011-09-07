@@ -31,12 +31,17 @@ set(headers
     world.h   drawer.h
     gamedata.h
     )
+set(ressources
+    data.qrc
+    )
 
 qt4_wrap_cpp(sources_moc ${headers})
+qt4_add_resources(sources_rcc ${ressources})
 
 add_executable(volley
     ${sources}
     ${sources_moc}
+    ${sources_rcc}
     )
 target_link_libraries(volley ${QT_LIBRARIES} Box2D)
 
