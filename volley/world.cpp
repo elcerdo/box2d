@@ -227,7 +227,6 @@ void World::stepWorld()
     emit preStepWorld(this);
     world->Step(dt,6,2);
     world->ClearForces();
-    emit testMark();
     emit postStepWorld(this);
     emit worldStepped(this);
 }

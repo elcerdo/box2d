@@ -191,39 +191,63 @@ void Drawer::paintEvent(QPaintEvent* event)
   if (!world) return;
  
   QPainter painter(this);
-  painter.translate(rect().width()/2.,rect().height()/2.);
-  painter.translate(panningPosition);
-  if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
-  painter.scale(scale,-scale);
 
-  for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
-    painter.save();
-    painter.translate(toQPointF(body->GetPosition()));
-    painter.rotate(body->GetAngle()*180/b2_pi);
+  { // draw scene
+      painter.save();
+      painter.translate(rect().width()/2.,rect().height()/2.);
+      painter.translate(panningPosition);
+      if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
+      painter.scale(scale,-scale);
 
-    if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
-    else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
+      // draw bodies
+      for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
+	painter.save();
+	painter.translate(toQPointF(body->GetPosition()));
+	painter.rotate(body->GetAngle()*180/b2_pi);
 
-    for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
-      if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {
-	const b2PolygonShape* shape = static_cast<const b2PolygonShape*>(fixture->GetShape());
-	int vertexCount = shape->GetVertexCount();
-	QPolygonF polygon;
-	for (int kk=0; kk<vertexCount; kk++) { polygon << toQPointF(shape->GetVertex(kk)); }
-	painter.drawPolygon(polygon);
-      } else if (fixture->GetShape()->GetType()==b2Shape::e_circle) {
-	const b2CircleShape* shape = static_cast<const b2CircleShape*>(fixture->GetShape());
-	painter.drawEllipse(QRectF(-shape->m_radius,-shape->m_radius,2.*shape->m_radius,2.*shape->m_radius));
-	painter.drawLine(QPointF(0,0),QPointF(shape->m_radius,0));
-      } else Q_ASSERT(false);
-    }
+	if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
+	else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
 
-    painter.restore();
+	for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
+	  if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {
+	    const b2PolygonShape* shape = static_cast<const b2PolygonShape*>(fixture->GetShape());
+	    int vertexCount = shape->GetVertexCount();
+	    QPolygonF polygon;
+	    for (int kk=0; kk<vertexCount; kk++) { polygon << toQPointF(shape->GetVertex(kk)); }
+	    painter.drawPolygon(polygon);
+	  } else if (fixture->GetShape()->GetType()==b2Shape::e_circle) {
+	    const b2CircleShape* shape = static_cast<const b2CircleShape*>(fixture->GetShape());
+	    painter.drawEllipse(QRectF(-shape->m_radius,-shape->m_radius,2.*shape->m_radius,2.*shape->m_radius));
+	    painter.drawLine(QPointF(0,0),QPointF(shape->m_radius,0));
+	  } else Q_ASSERT(false);
+	}
+
+	painter.restore();
+      }
+
+      { // draw joints
+	  painter.save();
+	  painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
+	  for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
+	    painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
+	  }
+	  painter.restore();
+      }
+      painter.restore();
   }
 
-  painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
-  for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
-    painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
+  { // draw overlay
+      painter.save();
+      QFont font;
+      font.setBold(true);
+      font.setPixelSize(100);
+      painter.setFont(font);
+      QRectF score(width()/2.-150,10,300,100);
+      painter.setBrush(QColor("yellow"));
+      painter.drawRect(score);
+      painter.setBrush(QColor("black"));
+      painter.drawText(score,Qt::AlignCenter,QString("%1 - %2").arg(data.leftPlayerScore()).arg(data.rightPlayerScore()));
+      painter.restore();
   }
 
 

@@ -21,9 +21,15 @@ public:
     void rightPlayerStopLeft();
     void rightPlayerStopRight();
 
+    int leftPlayerScore() const;
+    int rightPlayerScore() const;
+
+    int courtWidth() const;
+    int courtHeight() const;
+
 public slots:
     void stabilizePlayers(World*);
-    void pointMarked();
+    void checkPoints(World*);
 
 protected:
     void buildCourt(World& world);

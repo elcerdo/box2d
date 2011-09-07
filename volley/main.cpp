@@ -13,15 +13,15 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setApplicationName("volley");
     }
 
-    World world(1./30.);
+    World world(1./50.);
     world.initialize(b2Vec2(0,-10));
 
     GameData data(world);
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));
+    QObject::connect(&world,SIGNAL(preStepWorld(World*)),&data,SLOT(checkPoints(World*)));
 
     Drawer drawer(data);
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
-    QObject::connect(&world,SIGNAL(testMark()),&data,SLOT(pointMarked()));
     drawer.resize(800,600);
     drawer.show();
 

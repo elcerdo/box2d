@@ -3,7 +3,7 @@
 #include <QDebug>
 
 static const float court_width = 20;
-static const float court_height = 20;
+static const float court_height = 30;
 static const float court_net_height = 1;
 static const float court_net_width = 0.05;
 static const float player_radius = 1.2;
@@ -13,6 +13,16 @@ GameData::GameData(World& world, QObject* parent)
     : QObject(parent)
 {
     buildCourt(world);
+}
+
+int GameData::courtWidth() const
+{
+    return court_width;
+}
+
+int GameData::courtHeight() const
+{
+    return court_height;
 }
 
 void GameData::buildCourt(World &world)
@@ -105,6 +115,16 @@ void GameData::rightPlayerStopRight()
     if (right_player->GetLinearVelocity().x>0) right_player->SetLinearVelocity(b2Vec2(0,0));
 }
 
+int GameData::leftPlayerScore() const
+{
+    return score_left_player;
+}
+
+int GameData::rightPlayerScore() const
+{
+    return score_right_player;
+}
+
 void GameData::stabilizePlayers(World* world)
 {
     Q_UNUSED(world);
@@ -139,21 +159,20 @@ void GameData::stabilizePlayers(World* world)
 
 }
 
-void GameData::pointMarked()
+void GameData::checkPoints(World* world)
 {
-  for(b2ContactEdge* ce = ball->GetContactList(); ce; ce = ce->next){
-    b2Contact* contact = ce->contact;
-    const b2Body* body1 = contact->GetFixtureA()->GetBody();
-    const b2Body* body2 = contact->GetFixtureB()->GetBody();
-    if(body1 == right_ground){
-      score_left_player++;
-      qDebug() << "Score : " << score_left_player << " a " << score_right_player;
-      leftPlayerStart();
+    Q_UNUSED(world);
+    for(b2ContactEdge* ce = ball->GetContactList(); ce; ce = ce->next){
+	b2Contact* contact = ce->contact;
+	const b2Body* body1 = contact->GetFixtureA()->GetBody();
+	const b2Body* body2 = contact->GetFixtureB()->GetBody();
+	if(body1 == right_ground){
+	    score_left_player++;
+	    leftPlayerStart();
+	}
+	if(body1 == left_ground){
+	    score_right_player++;
+	    rightPlayerStart();
+	}
     }
-    if(body1 == left_ground){
-      score_right_player++;
-      qDebug() << "Score : " << score_left_player << " a " << score_right_player;
-      rightPlayerStart();
-    }
-  }
 }

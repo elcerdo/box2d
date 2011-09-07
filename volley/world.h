@@ -43,8 +43,6 @@ signals:
   void preStepWorld(World*);
   void postStepWorld(World*);
   void worldStepped(World*);
-  void testMark();
-
 protected:
   b2World *world;
   QTimer *timer;
