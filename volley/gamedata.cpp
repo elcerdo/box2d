@@ -46,6 +46,7 @@ void GameData::leftPlayerStart()
     ball->SetTransform(b2Vec2(-court_width/4.,5),0);
     ball->SetLinearVelocity(b2Vec2(0,0));
     ball->SetAngularVelocity(0);
+    ball->SetAwake(true);
 }
 
 void GameData::leftPlayerGoLeft()
@@ -81,6 +82,7 @@ void GameData::rightPlayerStart()
     ball->SetTransform(b2Vec2(court_width/4.,5),0);
     ball->SetLinearVelocity(b2Vec2(0,0));
     ball->SetAngularVelocity(0);
+    ball->SetAwake(true);
 }
 
 void GameData::rightPlayerGoLeft()
