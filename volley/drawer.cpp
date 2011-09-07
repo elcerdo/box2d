@@ -120,7 +120,7 @@ void Drawer::wheelEvent(QWheelEvent* event)
 void Drawer::paintEvent(QPaintEvent* event)
 {
   if (!world) return;
-
+ 
   QPainter painter(this);
   painter.translate(rect().width()/2.,rect().height()/2.);
   painter.translate(panningPosition);

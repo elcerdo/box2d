@@ -41,6 +41,8 @@ public slots:
   void stepWorld();
 signals:
   void worldStepped(World*);
+  void testMark();
+
 protected:
   b2World *world;
   QTimer *timer;

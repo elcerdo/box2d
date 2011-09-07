@@ -226,5 +226,6 @@ void World::stepWorld()
     time += dt;
     world->Step(dt,6,2);
     world->ClearForces();
+    emit testMark();
     emit worldStepped(this);
 }

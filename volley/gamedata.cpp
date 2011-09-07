@@ -50,3 +50,16 @@ void GameData::leftPlayerStopRight()
 {
     left_player->SetLinearVelocity(b2Vec2(0,0));
 }
+
+void GameData::pointMarked()
+{
+  for(b2ContactEdge* ce = ball->GetContactList(); ce; ce = ce->next){
+    b2Contact* contact = ce->contact;
+    const b2Body* body1 = contact->GetFixtureA()->GetBody();
+    const b2Body* body2 = contact->GetFixtureB()->GetBody();
+    if(body1 == right_ground)
+      cout << "Point player 1" << endl;
+    if(body1 == left_ground)
+      cout << "Point player 2" << endl;
+  }
+}

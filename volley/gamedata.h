@@ -12,6 +12,9 @@ public:
     void leftPlayerStopLeft();
     void leftPlayerStopRight();
 
+
+    void pointMarked();
+
 protected:
     void buildCourt(World& world);
     b2Body* left_ground;
