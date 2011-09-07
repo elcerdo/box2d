@@ -33,15 +33,20 @@ void World::initialize(const b2Vec2 &gravity)
     world = new b2World(gravity,true);
 }
 
-b2Body* World::addGround()
+b2Body* World::addGround(float x, float y, float width, float height)
+{
+    return addGround(b2Vec2(x,y),width,height);
+}
+
+b2Body* World::addGround(const b2Vec2 &pos, float width, float height)
 {
     Q_ASSERT(world);
 
     b2BodyDef bodyDef;
-    bodyDef.position.Set(0,-2);
+    bodyDef.position = pos;
 
     b2PolygonShape shape;
-    shape.SetAsBox(100,2);
+    shape.SetAsBox(width/2.,height/2.);
 
     b2Body* body = world->CreateBody(&bodyDef);
     body->CreateFixture(&shape,0);

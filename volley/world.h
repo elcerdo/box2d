@@ -5,6 +5,9 @@
 #include <QTimer>
 #include <Box2D/Box2D.h>
 
+//time unit second
+//distance unit meter
+
 class World : public QObject {
 Q_OBJECT
 public:
@@ -12,11 +15,12 @@ public:
   ~World();
 
   void initialize(const b2Vec2 &gravity);
-  b2Body* addGround();
-  b2Body* addBox(const b2Vec2 &pos, float width=1, float height=1);
-  b2Body* addBox(float x, float y, float width=1, float height=1);
+  b2Body* addGround(const b2Vec2 &pos, float width, float height);
+  b2Body* addGround(float x, float y, float width, float height);
+  b2Body* addBox(const b2Vec2 &pos, float width, float height);
+  b2Body* addBox(float x, float y, float width, float height);
   b2Body* addBall(const b2Vec2 &pos, float radius);
-  b2Body* addBall(float x, float y, float radius=1);
+  b2Body* addBall(float x, float y, float radius);
   bool allBodiesAsleep() const;
   int getBodyCount() const;
   b2Body* getFirstBody();

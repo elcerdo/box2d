@@ -5,8 +5,10 @@
 
 static const Qt::MouseButton panningButton = Qt::MidButton;
 
+//scale is in pixel/m
+
 Drawer::Drawer(QWidget *parent)
-: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(10.)
+: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(50.)
 {
 }
 
