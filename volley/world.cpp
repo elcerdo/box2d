@@ -163,8 +163,16 @@ b2Body* World::addPlayer(const b2Vec2 &pos, float radius)
     bodyDef.type = b2_kinematicBody;
     bodyDef.position = pos;
 
-    b2CircleShape shape;
-    shape.m_radius = radius;
+    b2PolygonShape shape;
+    {
+	const int nverts = 8;
+	b2Vec2 verts[nverts];
+	for (int kk=0; kk<nverts; kk++) {
+	    float angle = b2_pi*kk/(nverts-1);
+	    verts[kk] = b2Vec2(radius*cos(angle),radius*sin(angle));
+	}
+	shape.Set(verts,nverts);
+    }
 
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
