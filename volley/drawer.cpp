@@ -8,8 +8,8 @@ static const Qt::MouseButton panningButton = Qt::MidButton;
 
 //scale is in pixel/m
 
-Drawer::Drawer(QWidget *parent)
-: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.)
+Drawer::Drawer(GameData& data,QWidget *parent)
+: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), data(data)
 {
     QSettings settings;
     scale = settings.value("drawer/scale",50.).toFloat();
@@ -31,8 +31,27 @@ void Drawer::displayWorld(World* world)
 
 void Drawer::keyPressEvent(QKeyEvent* event)
 {
+    if (event->isAutoRepeat()) {
+	event->ignore();
+	return;
+    }
+
+    qDebug() << "pressed" << event->key();
+
     if (event->key()==Qt::Key_F) {
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
+	event->accept();
+	return;
+    }
+
+    if (event->key()==Qt::Key_A) {
+	data.leftPlayerGoLeft();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==Qt::Key_Z) {
+	data.leftPlayerGoRight();
 	event->accept();
 	return;
     }
@@ -42,7 +61,24 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
 void Drawer::keyReleaseEvent(QKeyEvent* event)
 {
+    if (event->isAutoRepeat()) {
+	event->ignore();
+	return;
+    }
+
     qDebug() << "released" << event->key();
+
+    if (event->key()==Qt::Key_A) {
+	data.leftPlayerStopLeft();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==Qt::Key_Z) {
+	data.leftPlayerStopRight();
+	event->accept();
+	return;
+    }
 
     event->ignore();
 }

@@ -8,11 +8,12 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include "world.h"
+#include "gamedata.h"
 
 class Drawer : public QWidget {
 Q_OBJECT
 public:
-  Drawer(QWidget *parent=NULL);
+  Drawer(GameData &data,QWidget *parent=NULL);
   ~Drawer();
 
 public slots:
@@ -34,7 +35,7 @@ protected:
   QPointF panningPositionStart;
   QPointF panningPositionCurrent;
   float scale;
-
+  GameData &data;
 };
 
 #endif
