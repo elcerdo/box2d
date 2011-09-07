@@ -150,6 +150,33 @@ b2Body* World::addBox(const b2Vec2 &pos, float width, float height)
     return body;
 }
 
+b2Body* World::addPlayer(float x, float y, float radius)
+{
+    return addPlayer(b2Vec2(x,y),radius);
+}
+
+b2Body* World::addPlayer(const b2Vec2 &pos, float radius)
+{
+    Q_ASSERT(world);
+
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_kinematicBody;
+    bodyDef.position = pos;
+
+    b2CircleShape shape;
+    shape.m_radius = radius;
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = 1;
+    fixtureDef.friction = .3;
+    fixtureDef.restitution = .6;
+
+    b2Body* body = world->CreateBody(&bodyDef);
+    body->CreateFixture(&fixtureDef);
+    return body;
+}
+
 b2Body* World::addBall(float x, float y, float radius)
 {
     return addBall(b2Vec2(x,y),radius);

@@ -21,6 +21,8 @@ public:
   b2Body* addBox(float x, float y, float width, float height);
   b2Body* addBall(const b2Vec2 &pos, float radius);
   b2Body* addBall(float x, float y, float radius);
+  b2Body* addPlayer(const b2Vec2 &pos, float radius);
+  b2Body* addPlayer(float x, float y, float radius);
   bool allBodiesAsleep() const;
   int getBodyCount() const;
   b2Body* getFirstBody();

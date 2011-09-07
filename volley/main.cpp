@@ -20,13 +20,16 @@ int main(int argc, char *argv[]) {
 	const float court_height = 20;
 	const float court_net_height = 1;
 
-	b2Body* left_ground = world.addGround(-court_width/4.,-.5,court_width/2.,1);
-	b2Body* right_ground = world.addGround(court_width/4.,-.5,court_width/2.,1);
-	b2Body* ceiling = world.addGround(0,court_height+.5,court_width,1);
+	b2Body* left_ground = world.addGround(-court_width/4.-.5,-.5,court_width/2.+1,1);
+	b2Body* right_ground = world.addGround(court_width/4.+.5,-.5,court_width/2.+1,1);
+	b2Body* ceiling = world.addGround(0,court_height+.5,court_width+2,1);
 	b2Body* left_wall = world.addGround(court_width/2.+.5,court_height/2.,1,court_height+2.);
 	b2Body* right_wall = world.addGround(-court_width/2.-.5,court_height/2.,1,court_height+2.);
 	b2Body* net = world.addGround(0,court_net_height/2.,0.05,court_net_height);
 	b2Body* ball = world.addBall(0,4,.1);
+
+	b2Body* left_player = world.addPlayer(-court_width/4.,.5,1);
+	left_player->SetLinearVelocity(b2Vec2(2,.0));
     }
 
     Drawer drawer;
