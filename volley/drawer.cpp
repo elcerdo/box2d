@@ -2,14 +2,25 @@
 #include "common.h"
 #include <QPainter>
 #include <QColor>
+#include <QSettings>
 
 static const Qt::MouseButton panningButton = Qt::MidButton;
 
 //scale is in pixel/m
 
 Drawer::Drawer(QWidget *parent)
-: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(50.)
+: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.)
 {
+    QSettings settings;
+    scale = settings.value("drawer/scale",50.).toFloat();
+    panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
+}
+
+Drawer::~Drawer()
+{
+    QSettings settings;
+    settings.setValue("drawer/scale",scale);
+    settings.setValue("drawer/panningPosition",panningPosition);
 }
 
 void Drawer::displayWorld(World* world)

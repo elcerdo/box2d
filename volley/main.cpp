@@ -6,10 +6,16 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc,argv);
 
+    { // set details for QSettings
+	QCoreApplication::setOrganizationName("softpower");
+	QCoreApplication::setOrganizationDomain("softpower.ord");
+	QCoreApplication::setApplicationName("volley");
+    }
+
     World world(1./60.);
     world.initialize(b2Vec2(0,-10));
 
-    {
+    { // build court
 	const float court_width = 20;
 	const float court_height = 20;
 	const float court_net_height = 1;

@@ -12,6 +12,7 @@ class Drawer : public QWidget {
 Q_OBJECT
 public:
   Drawer(QWidget *parent=NULL);
+  ~Drawer();
 
 public slots:
   void displayWorld(World* world);
