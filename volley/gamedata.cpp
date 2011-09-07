@@ -5,9 +5,10 @@
 static const float court_width = 20;
 static const float court_height = 30;
 static const float court_net_height = 1;
-static const float court_net_width = 0.05;
+static const float court_net_width = 0.2;
 static const float player_radius = 1.2;
 static const float player_speed = 8;
+static const float ball_radius = .5;
 
 GameData::GameData(World& world, QObject* parent) 
     : QObject(parent)
@@ -34,7 +35,7 @@ void GameData::buildCourt(World &world)
     right_wall = world.addGround(-court_width/2.-.5,court_height/2.,1,court_height+2.);
     net = world.addGround(0,court_net_height/2.,court_net_width,court_net_height);
 
-    ball = world.addBall(0,4,.1);
+    ball = world.addBall(0,4,ball_radius);
 
     left_player = world.addPlayer(-court_width/4.,0,player_radius);
     right_player = world.addPlayer(court_width/4.,0,player_radius);
