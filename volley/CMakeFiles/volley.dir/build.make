@@ -217,15 +217,44 @@ volley/CMakeFiles/volley.dir/moc_drawer.cxx.o.provides: volley/CMakeFiles/volley
 volley/CMakeFiles/volley.dir/moc_drawer.cxx.o.provides.build: volley/CMakeFiles/volley.dir/moc_drawer.cxx.o
 .PHONY : volley/CMakeFiles/volley.dir/moc_drawer.cxx.o.provides.build
 
-volley/moc_world.cxx: volley/world.h
+volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o: volley/CMakeFiles/volley.dir/flags.make
+volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o: volley/moc_gamedata.cxx
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/fbaldacci/Programmation/coolstuff/box2d/CMakeFiles $(CMAKE_PROGRESS_8)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o"
+	cd /home/fbaldacci/Programmation/coolstuff/box2d/volley && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/volley.dir/moc_gamedata.cxx.o -c /home/fbaldacci/Programmation/coolstuff/box2d/volley/moc_gamedata.cxx
+
+volley/CMakeFiles/volley.dir/moc_gamedata.cxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/volley.dir/moc_gamedata.cxx.i"
+	cd /home/fbaldacci/Programmation/coolstuff/box2d/volley && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/fbaldacci/Programmation/coolstuff/box2d/volley/moc_gamedata.cxx > CMakeFiles/volley.dir/moc_gamedata.cxx.i
+
+volley/CMakeFiles/volley.dir/moc_gamedata.cxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/volley.dir/moc_gamedata.cxx.s"
+	cd /home/fbaldacci/Programmation/coolstuff/box2d/volley && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/fbaldacci/Programmation/coolstuff/box2d/volley/moc_gamedata.cxx -o CMakeFiles/volley.dir/moc_gamedata.cxx.s
+
+volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.requires:
+.PHONY : volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.requires
+
+volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.provides: volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.requires
+	$(MAKE) -f volley/CMakeFiles/volley.dir/build.make volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.provides.build
+.PHONY : volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.provides
+
+volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.provides.build: volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o
+.PHONY : volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.provides.build
+
+volley/moc_world.cxx: volley/world.h
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/fbaldacci/Programmation/coolstuff/box2d/CMakeFiles $(CMAKE_PROGRESS_9)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating moc_world.cxx"
 	cd /home/fbaldacci/Programmation/coolstuff/box2d/volley && /usr/bin/moc -I/usr/include -I/usr/include/QtGui -I/usr/include/QtCore -I/home/fbaldacci/Programmation/coolstuff/box2d -DQT_GUI_LIB -DQT_CORE_LIB -o /home/fbaldacci/Programmation/coolstuff/box2d/volley/moc_world.cxx /home/fbaldacci/Programmation/coolstuff/box2d/volley/world.h
 
 volley/moc_drawer.cxx: volley/drawer.h
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/fbaldacci/Programmation/coolstuff/box2d/CMakeFiles $(CMAKE_PROGRESS_9)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/fbaldacci/Programmation/coolstuff/box2d/CMakeFiles $(CMAKE_PROGRESS_10)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating moc_drawer.cxx"
 	cd /home/fbaldacci/Programmation/coolstuff/box2d/volley && /usr/bin/moc -I/usr/include -I/usr/include/QtGui -I/usr/include/QtCore -I/home/fbaldacci/Programmation/coolstuff/box2d -DQT_GUI_LIB -DQT_CORE_LIB -o /home/fbaldacci/Programmation/coolstuff/box2d/volley/moc_drawer.cxx /home/fbaldacci/Programmation/coolstuff/box2d/volley/drawer.h
+
+volley/moc_gamedata.cxx: volley/gamedata.h
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/fbaldacci/Programmation/coolstuff/box2d/CMakeFiles $(CMAKE_PROGRESS_11)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold "Generating moc_gamedata.cxx"
+	cd /home/fbaldacci/Programmation/coolstuff/box2d/volley && /usr/bin/moc -I/usr/include -I/usr/include/QtGui -I/usr/include/QtCore -I/home/fbaldacci/Programmation/coolstuff/box2d -DQT_GUI_LIB -DQT_CORE_LIB -o /home/fbaldacci/Programmation/coolstuff/box2d/volley/moc_gamedata.cxx /home/fbaldacci/Programmation/coolstuff/box2d/volley/gamedata.h
 
 # Object files for target volley
 volley_OBJECTS = \
@@ -235,7 +264,8 @@ volley_OBJECTS = \
 "CMakeFiles/volley.dir/common.cpp.o" \
 "CMakeFiles/volley.dir/main.cpp.o" \
 "CMakeFiles/volley.dir/moc_world.cxx.o" \
-"CMakeFiles/volley.dir/moc_drawer.cxx.o"
+"CMakeFiles/volley.dir/moc_drawer.cxx.o" \
+"CMakeFiles/volley.dir/moc_gamedata.cxx.o"
 
 # External object files for target volley
 volley_EXTERNAL_OBJECTS =
@@ -247,6 +277,7 @@ volley/volley: volley/CMakeFiles/volley.dir/common.cpp.o
 volley/volley: volley/CMakeFiles/volley.dir/main.cpp.o
 volley/volley: volley/CMakeFiles/volley.dir/moc_world.cxx.o
 volley/volley: volley/CMakeFiles/volley.dir/moc_drawer.cxx.o
+volley/volley: volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o
 volley/volley: /usr/lib64/libQtGui.so
 volley/volley: /usr/lib64/libQtCore.so
 volley/volley: Box2D/libBox2D.a
@@ -267,7 +298,8 @@ volley_OBJECTS = \
 "CMakeFiles/volley.dir/common.cpp.o" \
 "CMakeFiles/volley.dir/main.cpp.o" \
 "CMakeFiles/volley.dir/moc_world.cxx.o" \
-"CMakeFiles/volley.dir/moc_drawer.cxx.o"
+"CMakeFiles/volley.dir/moc_drawer.cxx.o" \
+"CMakeFiles/volley.dir/moc_gamedata.cxx.o"
 
 # External object files for target volley
 volley_EXTERNAL_OBJECTS =
@@ -279,6 +311,7 @@ volley/CMakeFiles/CMakeRelink.dir/volley: volley/CMakeFiles/volley.dir/common.cp
 volley/CMakeFiles/CMakeRelink.dir/volley: volley/CMakeFiles/volley.dir/main.cpp.o
 volley/CMakeFiles/CMakeRelink.dir/volley: volley/CMakeFiles/volley.dir/moc_world.cxx.o
 volley/CMakeFiles/CMakeRelink.dir/volley: volley/CMakeFiles/volley.dir/moc_drawer.cxx.o
+volley/CMakeFiles/CMakeRelink.dir/volley: volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o
 volley/CMakeFiles/CMakeRelink.dir/volley: /usr/lib64/libQtGui.so
 volley/CMakeFiles/CMakeRelink.dir/volley: /usr/lib64/libQtCore.so
 volley/CMakeFiles/CMakeRelink.dir/volley: Box2D/libBox2D.a
@@ -298,6 +331,7 @@ volley/CMakeFiles/volley.dir/requires: volley/CMakeFiles/volley.dir/common.cpp.o
 volley/CMakeFiles/volley.dir/requires: volley/CMakeFiles/volley.dir/main.cpp.o.requires
 volley/CMakeFiles/volley.dir/requires: volley/CMakeFiles/volley.dir/moc_world.cxx.o.requires
 volley/CMakeFiles/volley.dir/requires: volley/CMakeFiles/volley.dir/moc_drawer.cxx.o.requires
+volley/CMakeFiles/volley.dir/requires: volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o.requires
 .PHONY : volley/CMakeFiles/volley.dir/requires
 
 volley/CMakeFiles/volley.dir/clean:
@@ -306,6 +340,7 @@ volley/CMakeFiles/volley.dir/clean:
 
 volley/CMakeFiles/volley.dir/depend: volley/moc_world.cxx
 volley/CMakeFiles/volley.dir/depend: volley/moc_drawer.cxx
+volley/CMakeFiles/volley.dir/depend: volley/moc_gamedata.cxx
 	cd /home/fbaldacci/Programmation/coolstuff/box2d && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/fbaldacci/Programmation/coolstuff/box2d /home/fbaldacci/Programmation/coolstuff/box2d/volley /home/fbaldacci/Programmation/coolstuff/box2d /home/fbaldacci/Programmation/coolstuff/box2d/volley /home/fbaldacci/Programmation/coolstuff/box2d/volley/CMakeFiles/volley.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : volley/CMakeFiles/volley.dir/depend
 

@@ -23,27 +23,31 @@ static const uint qt_meta_data_World[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       2,       // signalCount
+       4,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
        7,    6,    6,    6, 0x05,
       28,    6,    6,    6, 0x05,
+      50,    6,    6,    6, 0x05,
+      71,    6,    6,    6, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      48,   39,    6,    6, 0x0a,
-      66,    6,    6,    6, 0x0a,
+      91,   82,    6,    6, 0x0a,
+     109,    6,    6,    6, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_World[] = {
-    "World\0\0worldStepped(World*)\0testMark()\0"
-    "stepping\0setStepping(bool)\0stepWorld()\0"
+    "World\0\0preStepWorld(World*)\0"
+    "postStepWorld(World*)\0worldStepped(World*)\0"
+    "testMark()\0stepping\0setStepping(bool)\0"
+    "stepWorld()\0"
 };
 
 const QMetaObject World::staticMetaObject = {
@@ -75,27 +79,43 @@ int World::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: worldStepped((*reinterpret_cast< World*(*)>(_a[1]))); break;
-        case 1: testMark(); break;
-        case 2: setStepping((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 3: stepWorld(); break;
+        case 0: preStepWorld((*reinterpret_cast< World*(*)>(_a[1]))); break;
+        case 1: postStepWorld((*reinterpret_cast< World*(*)>(_a[1]))); break;
+        case 2: worldStepped((*reinterpret_cast< World*(*)>(_a[1]))); break;
+        case 3: testMark(); break;
+        case 4: setStepping((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 5: stepWorld(); break;
         default: ;
         }
-        _id -= 4;
+        _id -= 6;
     }
     return _id;
 }
 
 // SIGNAL 0
-void World::worldStepped(World * _t1)
+void World::preStepWorld(World * _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 
 // SIGNAL 1
+void World::postStepWorld(World * _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
+}
+
+// SIGNAL 2
+void World::worldStepped(World * _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
+}
+
+// SIGNAL 3
 void World::testMark()
 {
-    QMetaObject::activate(this, &staticMetaObject, 1, 0);
+    QMetaObject::activate(this, &staticMetaObject, 3, 0);
 }
 QT_END_MOC_NAMESPACE

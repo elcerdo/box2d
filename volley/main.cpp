@@ -17,10 +17,11 @@ int main(int argc, char *argv[]) {
     world.initialize(b2Vec2(0,-10));
 
     GameData data(world);
+    QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));
 
     Drawer drawer(data);
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
-    
+    QObject::connect(&world,SIGNAL(testMark()),&data,SLOT(pointMarked()));
     drawer.resize(800,600);
     drawer.show();
 

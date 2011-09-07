@@ -224,8 +224,10 @@ bool World::allBodiesAsleep() const
 void World::stepWorld()
 {
     time += dt;
+    emit preStepWorld(this);
     world->Step(dt,6,2);
     world->ClearForces();
     emit testMark();
+    emit postStepWorld(this);
     emit worldStepped(this);
 }

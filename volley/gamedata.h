@@ -1,18 +1,25 @@
 #ifndef __GAMEDATA_H__
 #define __GAMEDATA_H__
 
+#include <QObject>
 #include "world.h"
 
-class GameData {
+class GameData : public QObject {
+    Q_OBJECT
 public:
-    GameData(World& world);
+    GameData(World& world, QObject* parent=NULL);
 
     void leftPlayerGoLeft();
     void leftPlayerGoRight();
     void leftPlayerStopLeft();
     void leftPlayerStopRight();
+    void rightPlayerGoLeft();
+    void rightPlayerGoRight();
+    void rightPlayerStopLeft();
+    void rightPlayerStopRight();
 
-
+public slots:
+    void stabilizePlayers(World*);
     void pointMarked();
 
 protected:
@@ -26,7 +33,8 @@ protected:
     b2Body* ball;
     b2Body* left_player;
     b2Body* right_player;
-
+    int score_right_player;
+    int score_left_player;
 };
 
 #endif

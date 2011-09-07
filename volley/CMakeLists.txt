@@ -29,6 +29,7 @@ set(sources
     )
 set(headers
     world.h   drawer.h
+    gamedata.h
     )
 
 qt4_wrap_cpp(sources_moc ${headers})

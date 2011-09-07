@@ -40,6 +40,8 @@ public slots:
   void setStepping(bool stepping);
   void stepWorld();
 signals:
+  void preStepWorld(World*);
+  void postStepWorld(World*);
   void worldStepped(World*);
   void testMark();
 

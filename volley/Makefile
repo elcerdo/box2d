@@ -278,6 +278,30 @@ moc_drawer.cxx.s:
 	cd /home/fbaldacci/Programmation/coolstuff/box2d && $(MAKE) -f volley/CMakeFiles/volley.dir/build.make volley/CMakeFiles/volley.dir/moc_drawer.cxx.s
 .PHONY : moc_drawer.cxx.s
 
+moc_gamedata.o: moc_gamedata.cxx.o
+.PHONY : moc_gamedata.o
+
+# target to build an object file
+moc_gamedata.cxx.o:
+	cd /home/fbaldacci/Programmation/coolstuff/box2d && $(MAKE) -f volley/CMakeFiles/volley.dir/build.make volley/CMakeFiles/volley.dir/moc_gamedata.cxx.o
+.PHONY : moc_gamedata.cxx.o
+
+moc_gamedata.i: moc_gamedata.cxx.i
+.PHONY : moc_gamedata.i
+
+# target to preprocess a source file
+moc_gamedata.cxx.i:
+	cd /home/fbaldacci/Programmation/coolstuff/box2d && $(MAKE) -f volley/CMakeFiles/volley.dir/build.make volley/CMakeFiles/volley.dir/moc_gamedata.cxx.i
+.PHONY : moc_gamedata.cxx.i
+
+moc_gamedata.s: moc_gamedata.cxx.s
+.PHONY : moc_gamedata.s
+
+# target to generate assembly for a file
+moc_gamedata.cxx.s:
+	cd /home/fbaldacci/Programmation/coolstuff/box2d && $(MAKE) -f volley/CMakeFiles/volley.dir/build.make volley/CMakeFiles/volley.dir/moc_gamedata.cxx.s
+.PHONY : moc_gamedata.cxx.s
+
 moc_world.o: moc_world.cxx.o
 .PHONY : moc_world.o
 
@@ -354,6 +378,9 @@ help:
 	@echo "... moc_drawer.o"
 	@echo "... moc_drawer.i"
 	@echo "... moc_drawer.s"
+	@echo "... moc_gamedata.o"
+	@echo "... moc_gamedata.i"
+	@echo "... moc_gamedata.s"
 	@echo "... moc_world.o"
 	@echo "... moc_world.i"
 	@echo "... moc_world.s"
