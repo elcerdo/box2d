@@ -8,11 +8,13 @@ static const Qt::MouseButton panningButton = Qt::MidButton;
 
 // standard keys
 static const int leftPlayerStartKey = Qt::Key_Space;
-static const int leftPlayerLeftKey = Qt::Key_A;
-static const int leftPlayerRightKey = Qt::Key_Z;
+static const int leftPlayerLeftKey = Qt::Key_Q;
+static const int leftPlayerRightKey = Qt::Key_D;
+static const int leftPlayerUpKey = Qt::Key_Z;
 static const int rightPlayerStartKey = Qt::Key_M;
 static const int rightPlayerLeftKey = Qt::Key_Left;
 static const int rightPlayerRightKey = Qt::Key_Right;
+static const int rightPlayerUpKey = Qt::Key_Up;
 static const int fullscreenKey = Qt::Key_F;
 
 //// alternate keys
@@ -102,6 +104,12 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 	return;
     }
 
+    if (event->key()==leftPlayerUpKey) {
+      data.leftPlayerJump();
+      event->accept();
+      return;
+    }
+
     if (event->key()==rightPlayerLeftKey) {
 	data.rightPlayerGoLeft();
 	event->accept();
@@ -113,6 +121,13 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 	event->accept();
 	return;
     }
+
+    if (event->key()==rightPlayerUpKey) {
+      data.rightPlayerJump();
+      event->accept();
+      return;
+    }
+    
 
     event->ignore();
 }
@@ -138,6 +153,12 @@ void Drawer::keyReleaseEvent(QKeyEvent* event)
 	return;
     }
 
+    if (event->key()==leftPlayerUpKey) {
+	data.leftPlayerStopJump();
+	event->accept();
+	return;
+    }
+
     if (event->key()==rightPlayerLeftKey) {
 	data.rightPlayerStopLeft();
 	event->accept();
@@ -146,6 +167,12 @@ void Drawer::keyReleaseEvent(QKeyEvent* event)
 
     if (event->key()==rightPlayerRightKey) {
 	data.rightPlayerStopRight();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==rightPlayerUpKey) {
+	data.rightPlayerStopJump();
 	event->accept();
 	return;
     }

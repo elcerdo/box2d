@@ -205,7 +205,7 @@ b2Body* World::addBall(const b2Vec2 &pos, float radius)
     fixtureDef.shape = &shape;
     fixtureDef.density = 1;
     fixtureDef.friction = .3;
-    fixtureDef.restitution = .6;
+    fixtureDef.restitution = .8;
 
     b2Body* body = world->CreateBody(&bodyDef);
     body->CreateFixture(&fixtureDef);

@@ -16,10 +16,14 @@ public:
     void leftPlayerGoRight();
     void leftPlayerStopLeft();
     void leftPlayerStopRight();
+    void leftPlayerJump();
+    void leftPlayerStopJump();
     void rightPlayerGoLeft();
     void rightPlayerGoRight();
     void rightPlayerStopLeft();
     void rightPlayerStopRight();
+    void rightPlayerJump();
+    void rightPlayerStopJump();
 
     int leftPlayerScore() const;
     int rightPlayerScore() const;
@@ -46,6 +50,8 @@ protected:
     b2Body* right_player;
     int score_right_player;
     int score_left_player;
+    bool right_player_jumping;
+    bool left_player_jumping;
 };
 
 #endif
