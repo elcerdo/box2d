@@ -144,13 +144,14 @@ void GameData::pointMarked()
     const b2Body* body1 = contact->GetFixtureA()->GetBody();
     const b2Body* body2 = contact->GetFixtureB()->GetBody();
     if(body1 == right_ground){
-      qDebug() << "Point player 1";
-      score_right_player++;
-      
+      score_left_player++;
+      qDebug() << "Score : " << score_left_player << " a " << score_right_player;
+      leftPlayerStart();
     }
     if(body1 == left_ground){
-      qDebug() << "Point player 2";
-      score_left_player++;
+      score_right_player++;
+      qDebug() << "Score : " << score_left_player << " a " << score_right_player;
+      rightPlayerStart();
     }
   }
 }
