@@ -43,10 +43,30 @@ void GameData::leftPlayerGoRight()
 
 void GameData::leftPlayerStopLeft()
 {
-    left_player->SetLinearVelocity(b2Vec2(0,0));
+    if (left_player->GetLinearVelocity().x<0) left_player->SetLinearVelocity(b2Vec2(0,0));
 }
 
 void GameData::leftPlayerStopRight()
 {
-    left_player->SetLinearVelocity(b2Vec2(0,0));
+    if (left_player->GetLinearVelocity().x>0) left_player->SetLinearVelocity(b2Vec2(0,0));
+}
+
+void GameData::rightPlayerGoLeft()
+{
+    right_player->SetLinearVelocity(b2Vec2(-player_speed,0));
+}
+
+void GameData::rightPlayerGoRight()
+{
+    right_player->SetLinearVelocity(b2Vec2(player_speed,0));
+}
+
+void GameData::rightPlayerStopLeft()
+{
+    if (right_player->GetLinearVelocity().x<0) right_player->SetLinearVelocity(b2Vec2(0,0));
+}
+
+void GameData::rightPlayerStopRight()
+{
+    if (right_player->GetLinearVelocity().x>0) right_player->SetLinearVelocity(b2Vec2(0,0));
 }

@@ -6,6 +6,20 @@
 
 static const Qt::MouseButton panningButton = Qt::MidButton;
 
+// standard keys
+static const int leftPlayerLeftKey = Qt::Key_A;
+static const int leftPlayerRightKey = Qt::Key_Z;
+static const int rightPlayerLeftKey = Qt::Key_Left;
+static const int rightPlayerRightKey = Qt::Key_Right;
+static const int fullscreenKey = Qt::Key_F;
+
+//// alternate keys
+//static const int leftPlayerLeftKey = Qt::Key_D;
+//static const int leftPlayerRightKey = Qt::Key_F;
+//static const int rightPlayerLeftKey = Qt::Key_G;
+//static const int rightPlayerRightKey = Qt::Key_H;
+//static const int fullscreenKey = Qt::Key_Space;
+
 //scale is in pixel/m
 
 Drawer::Drawer(GameData& data,QWidget *parent)
@@ -36,22 +50,34 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 	return;
     }
 
-    qDebug() << "pressed" << event->key();
+    //qDebug() << "pressed" << event->key();
 
-    if (event->key()==Qt::Key_F) {
+    if (event->key()==fullscreenKey) {
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
 	event->accept();
 	return;
     }
 
-    if (event->key()==Qt::Key_A) {
+    if (event->key()==leftPlayerLeftKey) {
 	data.leftPlayerGoLeft();
 	event->accept();
 	return;
     }
 
-    if (event->key()==Qt::Key_Z) {
+    if (event->key()==leftPlayerRightKey) {
 	data.leftPlayerGoRight();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==rightPlayerLeftKey) {
+	data.rightPlayerGoLeft();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==rightPlayerRightKey) {
+	data.rightPlayerGoRight();
 	event->accept();
 	return;
     }
@@ -66,19 +92,32 @@ void Drawer::keyReleaseEvent(QKeyEvent* event)
 	return;
     }
 
-    qDebug() << "released" << event->key();
+    //qDebug() << "released" << event->key();
 
-    if (event->key()==Qt::Key_A) {
+    if (event->key()==leftPlayerLeftKey) {
 	data.leftPlayerStopLeft();
 	event->accept();
 	return;
     }
 
-    if (event->key()==Qt::Key_Z) {
+    if (event->key()==leftPlayerRightKey) {
 	data.leftPlayerStopRight();
 	event->accept();
 	return;
     }
+
+    if (event->key()==rightPlayerLeftKey) {
+	data.rightPlayerStopLeft();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==rightPlayerRightKey) {
+	data.rightPlayerStopRight();
+	event->accept();
+	return;
+    }
+
 
     event->ignore();
 }
