@@ -43,6 +43,7 @@ b2Body* World::addGround(const b2Vec2 &pos, float width, float height)
     Q_ASSERT(world);
 
     b2BodyDef bodyDef;
+    bodyDef.type = b2_staticBody;
     bodyDef.position = pos;
 
     b2PolygonShape shape;
