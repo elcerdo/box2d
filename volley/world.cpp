@@ -1,13 +1,12 @@
 #include "world.h"
 
-#include "common.h"
 #include <QDebug>
 
 World::World(float dt, QObject *parent)
-    : QObject(parent), world(NULL), timer(NULL), time(0)
+    : QObject(parent), world(NULL), timer(NULL), time(0), dt(dt)
 {
     timer = new QTimer(this);
-    timer->setInterval(dt);
+    timer->setInterval(1000.*dt);
     timer->setSingleShot(false);
 
     connect(timer,SIGNAL(timeout()),this,SLOT(stepWorld()));
@@ -172,158 +171,6 @@ b2Body* World::addBall(const b2Vec2 &pos, float radius)
     return body;
 }
 
-void World::buildLeg(const b2Vec2 &base, const RobotDef &robotDef, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category)
-{
-    Q_ASSERT(world);
-
-    b2Body* upperPart = NULL;
-    {
-        b2BodyDef bodyDef;
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.position = base;
-
-        b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,0),b2Vec2(0,0)};
-        if (ex.x>0) {
-            points[1] = robotDef.legWidth*ex;
-            points[2] = (robotDef.motorRadius+robotDef.upperExtension)*ey;
-        } else {
-            points[2] = robotDef.legWidth*ex;
-            points[1] = (robotDef.motorRadius+robotDef.upperExtension)*ey;
-        }
-        b2PolygonShape shape;
-        shape.Set(points,3);
-
-        b2FixtureDef fixtureDef;
-        fixtureDef.shape = &shape;
-        fixtureDef.density = .2;
-        fixtureDef.friction = 0;
-        fixtureDef.restitution = 0;
-        fixtureDef.filter.categoryBits = 1 << (category+1);
-        fixtureDef.filter.maskBits = 1;
-
-        b2Body* body = world->CreateBody(&bodyDef);
-        body->CreateFixture(&fixtureDef);
-
-        upperPart = body;
-    }
-    this->addHingeJoint(upperPart,main,base);
-    this->addDistanceJoint(motor,upperPart,motor->GetWorldCenter()-b2Vec2(0,robotDef.motorRadius),base+(robotDef.motorRadius+robotDef.upperExtension)*ey);
-
-    b2Body* lowerPart = NULL;
-    {
-        b2BodyDef bodyDef;
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.position = base-robotDef.legHeight*ey;
-
-        b2Vec2 points[] = {b2Vec2(0,0),b2Vec2(0,0),b2Vec2(0,0)};
-        if (ex.x>0) {
-            points[1] = -robotDef.footHeight*ey;
-            points[2] = robotDef.legWidth*ex;
-        } else {
-            points[2] = -robotDef.footHeight*ey;
-            points[1] = robotDef.legWidth*ex;
-        }
-        b2PolygonShape shape;
-        shape.Set(points,3);
-
-        b2FixtureDef fixtureDef;
-        fixtureDef.shape = &shape;
-        fixtureDef.density = .2;
-        fixtureDef.friction = 1;
-        fixtureDef.restitution = 0;
-        fixtureDef.filter.categoryBits = 1 << (category+1);
-        fixtureDef.filter.maskBits = 1;
-
-        b2Body* body = world->CreateBody(&bodyDef);
-        body->CreateFixture(&fixtureDef);
-
-        lowerPart = body;
-    }
-    this->addDistanceJoint(upperPart,lowerPart,base,base-robotDef.legHeight*ey);
-    this->addDistanceJoint(upperPart,lowerPart,base+robotDef.legWidth*ex,base+robotDef.legWidth*ex-robotDef.legHeight*ey);
-    this->addDistanceJoint(motor,lowerPart,motor->GetWorldCenter()-b2Vec2(0,robotDef.motorRadius),base-robotDef.legHeight*ey);
-}
-
-void World::buildLegPair(const b2Vec2 &center, const RobotDef &robotDef, b2Body* main, b2Body* motor,int category)
-{
-    Q_ASSERT(world);
-
-    {   // left leg
-        const b2Vec2 ex(-cos(robotDef.legAngle),sin(robotDef.legAngle));
-        const b2Vec2 ey(sin(robotDef.legAngle),cos(robotDef.legAngle));
-        buildLeg(center-b2Vec2(robotDef.mainLength/2.,0),robotDef,ex,ey,main,motor,category);
-    }
-
-    {   // right leg
-        const b2Vec2 ex(cos(robotDef.legAngle),sin(robotDef.legAngle));
-        const b2Vec2 ey(-sin(robotDef.legAngle),cos(robotDef.legAngle));
-        buildLeg(center+b2Vec2(robotDef.mainLength/2.,0),robotDef,ex,ey,main,motor,category);
-    }
-}
-
-Robot World::addRobot(const b2Vec2 &base, const RobotDef &robotDef, b2Body* ground)
-{
-    Q_ASSERT(world);
-
-    const b2Vec2 center = base+b2Vec2(0,(robotDef.legHeight+robotDef.footHeight)*1.1);
-
-    b2Body* main = NULL;
-    {
-        b2BodyDef bodyDef;
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.position = center;
-
-        b2Vec2 points[] = {b2Vec2(robotDef.mainLength/2.,0),b2Vec2(0,robotDef.mainHeight/2.),b2Vec2(-robotDef.mainLength/2.,0),b2Vec2(0,-robotDef.mainHeight/2.)};
-        b2PolygonShape shape;
-        shape.Set(points,4);
-
-        b2FixtureDef fixtureDef;
-        fixtureDef.shape = &shape;
-        fixtureDef.density = 1;
-        fixtureDef.friction = 0;
-        fixtureDef.restitution = 0;
-
-        b2Body* body = world->CreateBody(&bodyDef);
-        body->CreateFixture(&fixtureDef);
-
-        main = body;
-    }
-    b2Joint* fix0 = this->addHingeJoint(main,ground,center-b2Vec2(robotDef.mainLength/3.,0));
-    b2Joint* fix1 = this->addHingeJoint(main,ground,center+b2Vec2(robotDef.mainLength/3.,0));
-
-    b2Body* motor = this->addBall(center,robotDef.motorRadius);
-    b2RevoluteJoint* engine = static_cast<b2RevoluteJoint*>(this->addHingeJoint(motor,main,motor->GetWorldCenter(),false,10000,0));
-
-    Robot robot = Robot(robotDef,main,engine);
-    for (int kk=0; kk<robotDef.legNumber; kk++) {
-        rotateEngine(robot,kk*2*b2_pi/robotDef.legNumber);
-        buildLegPair(center,robotDef,main,motor,kk);
-    }
-
-    this->destroyJoint(fix0);
-    this->destroyJoint(fix1);
-
-    return robot;
-}
-
-void World::rotateEngine(Robot &robot, float angle, float tol)
-{
-    Q_ASSERT(world);
-
-    const float tau = 2;
-    const float startTime = this->getTime();
-    while (true) {
-        float error = robot.engine->GetJointAngle() - angle;
-        if (fabs(error)<tol) break;
-        robot.engine->SetMotorSpeed(-error/tau);
-        this->stepWorld();
-        if (this->getTime()-startTime>20*tau) throw BadRobot(robot.robotDef,BadRobot::BAD_ROTATION);
-    }
-    const float endTime = this->getTime();
-
-    //qDebug() << "angle" << engine->GetJointAngle()*180/b2_pi << "time" << (endTime-startTime);
-}
-
 bool World::allBodiesAsleep() const
 {
     bool allSleep = true;
@@ -335,7 +182,6 @@ bool World::allBodiesAsleep() const
 
 void World::stepWorld()
 {
-    static const float dt = 1./60.;
     time += dt;
     world->Step(dt,6,2);
     world->ClearForces();

@@ -23,6 +23,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 ## batch executable
 set(sources
     world.cpp drawer.cpp
+    common.cpp
     main.cpp
     )
 set(headers

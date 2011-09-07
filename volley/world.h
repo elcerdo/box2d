@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include <Box2d/Box2D.h>
+#include <Box2D/Box2D.h>
 
 class World : public QObject {
 Q_OBJECT
@@ -28,11 +28,8 @@ public:
   b2Joint *getFirstJoint();
 
   void resetTime();
-  void rotateEngine(Robot &robot, float angle, float tol=1e-2);
   float getTime() const;
 protected:
-  void buildLegPair(const b2Vec2 &center, const RobotDef &robotDef, b2Body* main, b2Body* motor, int category);
-  void buildLeg(const b2Vec2 &base, const RobotDef &robotDef, const b2Vec2 &ex, const b2Vec2 &ey, b2Body* main, b2Body* motor, int category);
 public slots:
   void setStepping(bool stepping);
   void stepWorld();
@@ -42,6 +39,7 @@ protected:
   b2World *world;
   QTimer *timer;
   float time;
+  float dt;
 };
 
 #endif
