@@ -41,7 +41,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
 {
     setFixedSize(800,600);
     QSettings settings;
-    scale = settings.value("drawer/scale",50.).toFloat();
+    scale = settings.value("drawer/scale",40.).toFloat();
     panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
 
     qDebug() << "******************";
@@ -91,7 +91,7 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
     if (event->key()==resetViewKey) {
 	panningPosition = QPointF(0,0);
-	scale = 50;
+	scale = 40;
 	update();
 	event->accept();
 	return;
@@ -248,7 +248,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 
   { // draw scene
       painter.save();
-      painter.translate(rect().width()/2.,rect().height()/2.);
+      painter.translate(rect().width()/2.,rect().height());
       painter.translate(panningPosition);
       if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
       painter.scale(scale,-scale);
@@ -301,50 +301,43 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.restore();
       }
 
-      painter.restore();
-  }
+      if (debug_draw) { // debug draw scene
+	  // draw bodies
+	  for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
+	      painter.save();
+	      painter.translate(toQPointF(body->GetPosition()));
+	      painter.rotate(body->GetAngle()*180/b2_pi);
 
-  if (debug_draw) { // debug draw scene
-      painter.save();
-      painter.translate(rect().width()/2.,rect().height()/2.);
-      painter.translate(panningPosition);
-      if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
-      painter.scale(scale,-scale);
+	      if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
+	      else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
 
-      // draw bodies
-      for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
-	painter.save();
-	painter.translate(toQPointF(body->GetPosition()));
-	painter.rotate(body->GetAngle()*180/b2_pi);
+	      for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
+		  if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {
+		      const b2PolygonShape* shape = static_cast<const b2PolygonShape*>(fixture->GetShape());
+		      int vertexCount = shape->GetVertexCount();
+		      QPolygonF polygon;
+		      for (int kk=0; kk<vertexCount; kk++) { polygon << toQPointF(shape->GetVertex(kk)); }
+		      painter.drawPolygon(polygon);
+		  } else if (fixture->GetShape()->GetType()==b2Shape::e_circle) {
+		      const b2CircleShape* shape = static_cast<const b2CircleShape*>(fixture->GetShape());
+		      painter.drawEllipse(QRectF(-shape->m_radius,-shape->m_radius,2.*shape->m_radius,2.*shape->m_radius));
+		      painter.drawLine(QPointF(0,0),QPointF(shape->m_radius,0));
+		  } else Q_ASSERT(false);
+	      }
 
-	if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
-	else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
-
-	for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
-	  if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {
-	    const b2PolygonShape* shape = static_cast<const b2PolygonShape*>(fixture->GetShape());
-	    int vertexCount = shape->GetVertexCount();
-	    QPolygonF polygon;
-	    for (int kk=0; kk<vertexCount; kk++) { polygon << toQPointF(shape->GetVertex(kk)); }
-	    painter.drawPolygon(polygon);
-	  } else if (fixture->GetShape()->GetType()==b2Shape::e_circle) {
-	    const b2CircleShape* shape = static_cast<const b2CircleShape*>(fixture->GetShape());
-	    painter.drawEllipse(QRectF(-shape->m_radius,-shape->m_radius,2.*shape->m_radius,2.*shape->m_radius));
-	    painter.drawLine(QPointF(0,0),QPointF(shape->m_radius,0));
-	  } else Q_ASSERT(false);
-	}
-
-	painter.restore();
-      }
-
-      { // draw joints
-	  painter.save();
-	  painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
-	  for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
-	    painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
+	      painter.restore();
 	  }
-	  painter.restore();
+
+	  { // draw joints
+	      painter.save();
+	      painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
+	      for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
+		  painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
+	      }
+	      painter.restore();
+	  }
       }
+
       painter.restore();
   }
 
