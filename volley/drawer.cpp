@@ -11,12 +11,15 @@ static const int leftPlayerStartKey = Qt::Key_Space;
 static const int leftPlayerLeftKey = Qt::Key_Q;
 static const int leftPlayerRightKey = Qt::Key_D;
 static const int leftPlayerUpKey = Qt::Key_Z;
+
 static const int rightPlayerStartKey = Qt::Key_M;
 static const int rightPlayerLeftKey = Qt::Key_Left;
 static const int rightPlayerRightKey = Qt::Key_Right;
 static const int rightPlayerUpKey = Qt::Key_Up;
+
 static const int fullscreenKey = Qt::Key_F;
 static const int resetViewKey = Qt::Key_R;
+static const int debugDrawKey = Qt::Key_T;
 
 //// alternate keys
 //static const int leftPlayerStartKey = Qt::Key_S;
@@ -30,7 +33,9 @@ static const int resetViewKey = Qt::Key_R;
 //scale is in pixel/m
 
 Drawer::Drawer(GameData& data,QWidget *parent)
-: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), data(data),
+: QWidget(parent), world(NULL),
+  panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debug_draw(false),
+  data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
   poleImage(":/images/pole.png")
 {
@@ -86,6 +91,13 @@ void Drawer::keyPressEvent(QKeyEvent* event)
     if (event->key()==resetViewKey) {
 	panningPosition = QPointF(0,0);
 	scale = 50;
+	update();
+	event->accept();
+	return;
+    }
+
+    if (event->key()==debugDrawKey) {
+	debug_draw = !debug_draw;
 	update();
 	event->accept();
 	return;
@@ -231,6 +243,8 @@ void Drawer::paintEvent(QPaintEvent* event)
   if (!world) return;
  
   QPainter painter(this);
+  painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
+
   { // draw scene
       painter.save();
       painter.translate(rect().width()/2.,rect().height()/2.);
@@ -281,7 +295,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
   }
 
-  { // debug draw scene
+  if (debug_draw) { // debug draw scene
       painter.save();
       painter.translate(rect().width()/2.,rect().height()/2.);
       painter.translate(panningPosition);

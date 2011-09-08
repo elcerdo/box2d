@@ -31,11 +31,14 @@ protected:
 
 protected:
   World* world;
+
   bool panning;
   QPointF panningPosition;
   QPointF panningPositionStart;
   QPointF panningPositionCurrent;
   float scale;
+  bool debug_draw;
+
   GameData &data;
 
   QImage ballImage;
