@@ -255,7 +255,7 @@ void GameData::stabilizePlayers(World* world)
 void GameData::checkPoints(World* world)
 {
     Q_UNUSED(world);
-    if(current_state == PLAYING){
+    //if(current_state == PLAYING){
       for(b2ContactEdge* ce = ball->GetContactList(); ce; ce = ce->next){
 	b2Contact* contact = ce->contact;
 	const b2Body* body1 = contact->GetFixtureA()->GetBody();
@@ -266,9 +266,9 @@ void GameData::checkPoints(World* world)
 	}
 	if(body1 == left_ground){
 	  score_right_player++;
-	    rightPlayerStart();
+	  rightPlayerStart();
 	}
       }
-    }
+      //}
     
 }
