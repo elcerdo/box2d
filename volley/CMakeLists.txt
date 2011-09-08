@@ -1,4 +1,5 @@
-find_package(Qt4 REQUIRED)
+find_package(Qt4)
+set(QT_USE_QTOPENGL TRUE)
 include(${QT_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR})
 

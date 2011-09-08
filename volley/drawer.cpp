@@ -33,7 +33,7 @@ static const int debugDrawKey = Qt::Key_T;
 //scale is in pixel/m
 
 Drawer::Drawer(GameData& data,QWidget *parent)
-: QWidget(parent), world(NULL),
+: QGLWidget(parent), world(NULL),
   panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debug_draw(false),
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
@@ -354,7 +354,6 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.drawText(score,Qt::AlignCenter,QString("%1 - %2").arg(data.leftPlayerScore()).arg(data.rightPlayerScore()));
       painter.restore();
   }
-
 
 }
 

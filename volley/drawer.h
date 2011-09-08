@@ -3,7 +3,7 @@
 
 #include <QPixmap>
 #include <QDebug>
-#include <QWidget>
+#include <QGLWidget>
 #include <QKeyEvent>
 #include <QPaintEvent>
 #include <QMouseEvent>
@@ -11,7 +11,7 @@
 #include "world.h"
 #include "gamedata.h"
 
-class Drawer : public QWidget {
+class Drawer : public QGLWidget {
 Q_OBJECT
 public:
   Drawer(GameData &data,QWidget *parent=NULL);
