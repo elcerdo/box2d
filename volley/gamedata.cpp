@@ -4,7 +4,7 @@
 
 static const float court_width = 20;
 static const float court_height = 30;
-static const float court_net_height = 1;
+static const float court_net_height = 3;
 static const float court_net_width = 0.2;
 static const float player_radius = 1.2;
 static const float player_speed = 8;
@@ -17,20 +17,16 @@ GameData::GameData(World& world, QObject* parent)
     buildCourt(world);
 }
 
-int GameData::courtWidth() const
-{
-    return court_width;
-}
+float GameData::courtWidth() const { return court_width; }
+float GameData::courtHeight() const { return court_height; }
+float GameData::netHeight() const { return court_net_height; }
+float GameData::netWidth() const { return court_net_width; }
+float GameData::ballRadius() const { return ball_radius; }
+float GameData::playerRadius() const { return player_radius; }
 
-int GameData::courtHeight() const
-{
-    return court_height;
-}
-
-const b2Body* GameData::getBall() const
-{
-    return ball;
-}
+const b2Body* GameData::getBall() const { return ball; }
+const b2Body* GameData::getLeftPlayer() const { return left_player; }
+const b2Body* GameData::getRightPlayer() const { return right_player; }
 
 void GameData::buildCourt(World &world)
 {

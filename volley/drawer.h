@@ -37,7 +37,11 @@ protected:
   QPointF panningPositionCurrent;
   float scale;
   GameData &data;
+
   QImage ballImage;
+  QImage leftPlayerImage;
+  QImage rightPlayerImage;
+  QImage poleImage;
 };
 
 #endif

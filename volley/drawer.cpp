@@ -16,6 +16,7 @@ static const int rightPlayerLeftKey = Qt::Key_Left;
 static const int rightPlayerRightKey = Qt::Key_Right;
 static const int rightPlayerUpKey = Qt::Key_Up;
 static const int fullscreenKey = Qt::Key_F;
+static const int resetViewKey = Qt::Key_R;
 
 //// alternate keys
 //static const int leftPlayerStartKey = Qt::Key_S;
@@ -29,7 +30,9 @@ static const int fullscreenKey = Qt::Key_F;
 //scale is in pixel/m
 
 Drawer::Drawer(GameData& data,QWidget *parent)
-: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), data(data), ballImage(":/images/ball.png")
+: QWidget(parent), world(NULL), panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), data(data),
+  ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
+  poleImage(":/images/pole.png")
 {
     QSettings settings;
     scale = settings.value("drawer/scale",50.).toFloat();
@@ -47,9 +50,9 @@ Drawer::Drawer(GameData& data,QWidget *parent)
     qDebug() << "right" << QKeySequence(rightPlayerRightKey).toString();
     qDebug() << "******************";
     qDebug() << "fullscreen" << QKeySequence(fullscreenKey).toString();
+    qDebug() << "resetview" << QKeySequence(resetViewKey).toString();
     qDebug() << "******************";
 
-    qDebug() << ballImage.width();
 }
 
 Drawer::~Drawer()
@@ -76,6 +79,14 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
     if (event->key()==fullscreenKey) {
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
+	event->accept();
+	return;
+    }
+
+    if (event->key()==resetViewKey) {
+	panningPosition = QPointF(0,0);
+	scale = 50;
+	update();
 	event->accept();
 	return;
     }
@@ -232,9 +243,41 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.save();
 	  painter.translate(toQPointF(ball->GetPosition()));
 	  painter.rotate(ball->GetAngle()*180/b2_pi);
-	  painter.drawImage(QRectF(-.5,-.5,1,1),ballImage);
+	  painter.drawImage(QRectF(-data.ballRadius(),-data.ballRadius(),2*data.ballRadius(),2*data.ballRadius()),ballImage);
 	  painter.restore();
       }
+
+      { // draw left player
+	  const b2Body *player = data.getLeftPlayer();
+	  painter.save();
+	  painter.translate(toQPointF(player->GetPosition()));
+	  painter.scale(1,-1);
+	  painter.drawImage(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),leftPlayerImage);
+	  painter.restore();
+      }
+
+      { // draw right player
+	  const b2Body *player = data.getRightPlayer();
+	  painter.save();
+	  painter.translate(toQPointF(player->GetPosition()));
+	  painter.scale(1,-1);
+	  painter.drawImage(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),rightPlayerImage);
+	  painter.restore();
+      }
+
+      { // draw pole
+	  painter.save();
+	  painter.scale(1,-1);
+	  QPen pen;
+	  pen.setColor(qRgb(100,102,105));
+	  pen.setWidthF(.05);
+	  painter.setPen(pen);
+	  painter.drawLine(QPointF(1,0),QPointF(0,-2.5));
+	  painter.drawLine(QPointF(-1,0),QPointF(0,-2.5));
+	  painter.drawImage(QRectF(-data.netWidth()/2.,-data.netHeight(),data.netWidth(),data.netHeight()),poleImage);
+	  painter.restore();
+      }
+
       painter.restore();
   }
 

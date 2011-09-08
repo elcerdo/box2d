@@ -28,10 +28,16 @@ public:
     int leftPlayerScore() const;
     int rightPlayerScore() const;
 
-    int courtWidth() const;
-    int courtHeight() const;
+    float courtWidth() const;
+    float courtHeight() const;
+    float netHeight() const;
+    float netWidth() const;
+    float ballRadius() const;
+    float playerRadius() const;
 
     const b2Body* getBall() const;
+    const b2Body* getLeftPlayer() const;
+    const b2Body* getRightPlayer() const;
 
 public slots:
     void stabilizePlayers(World*);
