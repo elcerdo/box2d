@@ -46,6 +46,7 @@ protected:
   QPixmap rightPlayerImage;
   QPixmap poleImage;
   QPixmap backgroundImage;
+  QPixmap arrowImage;
 };
 
 #endif

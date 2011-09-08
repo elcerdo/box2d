@@ -38,7 +38,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debug_draw(false),
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
-  poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg")
+  poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg"),
+  arrowImage(":/images/arrow.png")
 {
   resize(800,600);
   
@@ -247,118 +248,135 @@ void Drawer::wheelEvent(QWheelEvent* event)
 
 void Drawer::paintEvent(QPaintEvent* event)
 {
+  static const float scene_height = 15;
+
   if (!world) return;
  
   QPainter painter(this);
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
-  { // draw scene
+  painter.translate(rect().width()/2.,rect().height());
+  painter.translate(panningPosition);
+  if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
+  painter.scale(scale,-scale);
+
+  { // draw background
       painter.save();
-      painter.translate(rect().width()/2.,rect().height());
-      painter.translate(panningPosition);
-      if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
-      painter.scale(scale,-scale);
-
-      { // draw background
-          painter.save();
-          painter.scale(1,-1);
-          painter.drawPixmap(QRectF(-data.courtWidth()/2,-15,data.courtWidth(),15),backgroundImage,backgroundImage.rect());
-          painter.restore();
-      }
-
-      { // draw ball
-	  const b2Body *ball = data.getBall();
-	  painter.save();
-	  painter.translate(toQPointF(ball->GetPosition()));
-	  painter.rotate(ball->GetAngle()*180/b2_pi);
-	  painter.drawPixmap(QRectF(-data.ballRadius(),-data.ballRadius(),2*data.ballRadius(),2*data.ballRadius()),ballImage,ballImage.rect());
-	  painter.restore();
-      }
-
-      { // draw left player
-	  const b2Body *player = data.getLeftPlayer();
-	  painter.save();
-	  painter.translate(toQPointF(player->GetPosition()));
-	  painter.scale(1,-1);
-	  painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),leftPlayerImage,leftPlayerImage.rect());
-	  painter.restore();
-      }
-
-      { // draw right player
-	  const b2Body *player = data.getRightPlayer();
-	  painter.save();
-	  painter.translate(toQPointF(player->GetPosition()));
-	  painter.scale(1,-1);
-	  painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),rightPlayerImage,rightPlayerImage.rect());
-	  painter.restore();
-      }
-
-      { // draw pole
-	  painter.save();
-	  painter.scale(1,-1);
-	  QPen pen;
-	  pen.setColor(qRgb(100,102,105));
-	  pen.setWidthF(.05);
-	  painter.setPen(pen);
-	  painter.drawLine(QPointF(1,0),QPointF(0,-2.5));
-	  painter.drawLine(QPointF(-1,0),QPointF(0,-2.5));
-	  painter.drawPixmap(QRectF(-data.netWidth()/2.,-data.netHeight(),data.netWidth(),data.netHeight()),poleImage,poleImage.rect());
-	  painter.restore();
-      }
-
-      if (debug_draw) { // debug draw scene
-	  // draw bodies
-	  for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
-	      painter.save();
-	      painter.translate(toQPointF(body->GetPosition()));
-	      painter.rotate(body->GetAngle()*180/b2_pi);
-
-	      if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
-	      else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
-
-	      for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
-		  if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {
-		      const b2PolygonShape* shape = static_cast<const b2PolygonShape*>(fixture->GetShape());
-		      int vertexCount = shape->GetVertexCount();
-		      QPolygonF polygon;
-		      for (int kk=0; kk<vertexCount; kk++) { polygon << toQPointF(shape->GetVertex(kk)); }
-		      painter.drawPolygon(polygon);
-		  } else if (fixture->GetShape()->GetType()==b2Shape::e_circle) {
-		      const b2CircleShape* shape = static_cast<const b2CircleShape*>(fixture->GetShape());
-		      painter.drawEllipse(QRectF(-shape->m_radius,-shape->m_radius,2.*shape->m_radius,2.*shape->m_radius));
-		      painter.drawLine(QPointF(0,0),QPointF(shape->m_radius,0));
-		  } else Q_ASSERT(false);
-	      }
-
-	      painter.restore();
-	  }
-
-	  { // draw joints
-	      painter.save();
-	      painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
-	      for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
-		  painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
-	      }
-	      painter.restore();
-	  }
-      }
-
+      painter.scale(1,-1);
+      painter.drawPixmap(QRectF(-data.courtWidth()/2,-scene_height,data.courtWidth(),scene_height),backgroundImage,backgroundImage.rect());
       painter.restore();
   }
 
-  { // draw overlay
+  { // draw score overlay
       painter.save();
+      painter.resetTransform();
       QFont font;
       font.setBold(true);
       font.setPixelSize(100);
       painter.setFont(font);
-      QRectF score(width()/2.-150,10,300,100);
+      QRectF score(width()/2.-180,40,300,100);
       painter.setBrush(QColor("yellow"));
       painter.drawRect(score);
       painter.setBrush(QColor("black"));
       painter.drawText(score,Qt::AlignCenter,QString("%1 - %2").arg(data.leftPlayerScore()).arg(data.rightPlayerScore()));
       painter.restore();
   }
+
+
+  { // draw ball
+      const b2Body *ball = data.getBall();
+
+      painter.save();
+      painter.translate(toQPointF(ball->GetPosition()));
+      painter.scale(1,-1);
+      painter.rotate(ball->GetAngle()*180/b2_pi);
+      painter.drawPixmap(QRectF(-data.ballRadius(),-data.ballRadius(),2*data.ballRadius(),2*data.ballRadius()),ballImage,ballImage.rect());
+      painter.restore();
+
+
+      if (ball->GetPosition().y>scene_height+data.ballRadius()) {
+	  float mini_ball_size = 1.-(ball->GetPosition().y-scene_height-data.ballRadius())/15;
+	  if (mini_ball_size<.2) mini_ball_size = .2;
+
+	  painter.save();
+	  painter.translate(QPointF(ball->GetPosition().x,scene_height-.6));
+	  painter.scale(1,-1);
+	  painter.drawPixmap(QRectF(-.4,-.4,.8,.8),arrowImage,arrowImage.rect());
+	  painter.translate(0,1);
+	  painter.rotate(ball->GetAngle()*180/b2_pi);
+	  painter.drawPixmap(QRectF(-mini_ball_size/2.,-mini_ball_size/2.,mini_ball_size,mini_ball_size),ballImage,ballImage.rect());
+	  painter.restore();
+      }
+  }
+
+  { // draw left player
+      const b2Body *player = data.getLeftPlayer();
+      painter.save();
+      painter.translate(toQPointF(player->GetPosition()));
+      painter.scale(1,-1);
+      painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),leftPlayerImage,leftPlayerImage.rect());
+      painter.restore();
+  }
+
+  { // draw right player
+      const b2Body *player = data.getRightPlayer();
+      painter.save();
+      painter.translate(toQPointF(player->GetPosition()));
+      painter.scale(1,-1);
+      painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),rightPlayerImage,rightPlayerImage.rect());
+      painter.restore();
+  }
+
+  { // draw pole
+      painter.save();
+      painter.scale(1,-1);
+      QPen pen;
+      pen.setColor(qRgb(100,102,105));
+      pen.setWidthF(.05);
+      painter.setPen(pen);
+      painter.drawLine(QPointF(1,0),QPointF(0,-2.5));
+      painter.drawLine(QPointF(-1,0),QPointF(0,-2.5));
+      painter.drawPixmap(QRectF(-data.netWidth()/2.,-data.netHeight(),data.netWidth(),data.netHeight()),poleImage,poleImage.rect());
+      painter.restore();
+  }
+
+  if (debug_draw) { // debug draw scene
+      // draw bodies
+      for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
+	  painter.save();
+	  painter.translate(toQPointF(body->GetPosition()));
+	  painter.rotate(body->GetAngle()*180/b2_pi);
+
+	  if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
+	  else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
+
+	  for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
+	      if (fixture->GetShape()->GetType()==b2Shape::e_polygon) {
+		  const b2PolygonShape* shape = static_cast<const b2PolygonShape*>(fixture->GetShape());
+		  int vertexCount = shape->GetVertexCount();
+		  QPolygonF polygon;
+		  for (int kk=0; kk<vertexCount; kk++) { polygon << toQPointF(shape->GetVertex(kk)); }
+		  painter.drawPolygon(polygon);
+	      } else if (fixture->GetShape()->GetType()==b2Shape::e_circle) {
+		  const b2CircleShape* shape = static_cast<const b2CircleShape*>(fixture->GetShape());
+		  painter.drawEllipse(QRectF(-shape->m_radius,-shape->m_radius,2.*shape->m_radius,2.*shape->m_radius));
+		  painter.drawLine(QPointF(0,0),QPointF(shape->m_radius,0));
+	      } else Q_ASSERT(false);
+	  }
+
+	  painter.restore();
+      }
+
+      { // draw joints
+	  painter.save();
+	  painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
+	  for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
+	      painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
+	  }
+	  painter.restore();
+      }
+  }
+
 
 }
 
