@@ -7,8 +7,16 @@
 class GameData : public QObject {
     Q_OBJECT
 public:
+  enum state{
+    PLAYING,
+    STARTPOINT,
+    ENDPOINT
+  };
+ 
     GameData(World& world, QObject* parent=NULL);
 
+    void beginPoint();
+    
     void leftPlayerStart();
     void rightPlayerStart();
 
@@ -16,13 +24,13 @@ public:
     void leftPlayerGoRight();
     void leftPlayerStopLeft();
     void leftPlayerStopRight();
-    void leftPlayerJump();
+    void leftPlayerJump(float time);
     void leftPlayerStopJump();
     void rightPlayerGoLeft();
     void rightPlayerGoRight();
     void rightPlayerStopLeft();
     void rightPlayerStopRight();
-    void rightPlayerJump();
+    void rightPlayerJump(float time);
     void rightPlayerStopJump();
 
     int leftPlayerScore() const;
@@ -58,6 +66,11 @@ protected:
     int score_left_player;
     bool right_player_jumping;
     bool left_player_jumping;
+    float right_player_jump_speed;
+    float left_player_jump_speed;
+    float left_player_jump_time;
+    float right_player_jump_time;
+    state current_state;
 };
 
 #endif

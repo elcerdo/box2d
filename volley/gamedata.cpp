@@ -10,6 +10,9 @@ static const float player_radius = 1.2;
 static const float player_speed = 8;
 static const float ball_radius = .5;
 static const float max_jump_height = 2.;
+static const float G = 9.81;
+static const float jump_factor = 3.;
+
 
 GameData::GameData(World& world, QObject* parent) 
     : QObject(parent)
@@ -45,6 +48,17 @@ void GameData::buildCourt(World &world)
     score_right_player = 0;
     right_player_jumping = false;
     left_player_jumping = false;
+    right_player_jump_speed = 5.;
+    left_player_jump_speed = 5.;
+    current_state = STARTPOINT;
+}
+
+void GameData::beginPoint()
+{
+ 
+  //  if(current_state == STARTPOINT){
+    
+  //}
 }
 
 // left player stuff
@@ -83,14 +97,20 @@ void GameData::leftPlayerStopRight()
     if (left_player->GetLinearVelocity().x>0) left_player->SetLinearVelocity(b2Vec2(0,left_player->GetLinearVelocity().y));
 }
 
-void GameData::leftPlayerJump()
+void GameData::leftPlayerJump(float time)
 {
-  left_player_jumping = true;
+  if(!left_player_jumping){
+    left_player_jumping = true;
+    left_player_jump_time = time;
+    left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, jump_factor*left_player_jump_speed));
+  }
+  //left_player_jump_speed = 10.;
 }
 
 void GameData::leftPlayerStopJump()
 {
-  left_player_jumping = false;
+  //left_player_jumping = false;
+  // left_player_jump_speed = 0.;
 }
 
 
@@ -131,14 +151,19 @@ void GameData::rightPlayerStopRight()
     if (right_player->GetLinearVelocity().x>0) right_player->SetLinearVelocity(b2Vec2(0,right_player->GetLinearVelocity().y));
 }
 
-void GameData::rightPlayerJump()
+void GameData::rightPlayerJump(float time)
 {
-  right_player_jumping = true;
+  if(!right_player_jumping){
+    right_player_jumping = true;
+    right_player_jump_time = time;
+    right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, jump_factor*right_player_jump_speed));
+  }
+   
 }
 
 void GameData::rightPlayerStopJump()
 {
-  right_player_jumping = false;
+  //right_player_jumping = false;
 }
 
 int GameData::leftPlayerScore() const
@@ -156,32 +181,39 @@ void GameData::stabilizePlayers(World* world)
     Q_UNUSED(world);
 
     if(right_player_jumping){
-      if(right_player->GetPosition().y < max_jump_height)
-    	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, right_player->GetLinearVelocity().y+1.));
-      else
-    	right_player_jumping = false;
-    }
-    else{
-      if(right_player->GetPosition().y > 1)
-    	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, right_player->GetLinearVelocity().y-1.));
-      else {
-    	right_player->SetTransform(b2Vec2(right_player->GetPosition().x, 0),0);
-    	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, 0));
+    //   if(right_player->GetPosition().y < max_jump_height){
+    // 	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, right_player->GetLinearVelocity().y+1.));
+    //   }
+    //   else
+    // 	right_player_jumping = false;
+    // }
+    // else{
+      if(right_player->GetPosition().y < .05){
+	right_player->SetTransform(b2Vec2(right_player->GetPosition().x, 0),0);
+	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, 0));
+	right_player_jumping = false;
+      }
+      else{
+	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, jump_factor*(right_player_jump_speed - G*(world->getTime()-right_player_jump_time))));
       }
     }
     
     if(left_player_jumping){
-      if(left_player->GetPosition().y < max_jump_height)
-     	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, left_player->GetLinearVelocity().y+1.));
-      else
-     	left_player_jumping = false;
-    }
-    else{
-      if(left_player->GetPosition().y > 1)
-     	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, left_player->GetLinearVelocity().y-1.));
-      else {
-     	left_player->SetTransform(b2Vec2(left_player->GetPosition().x, 0),0);
-     	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, 0));
+    //   if(left_player->GetPosition().y < max_jump_height){
+    //  	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, left_player_jump_speed - 9.81*(world->getTime()-left_player_jump_time)));
+    // 	qDebug() << "time : " << world->getTime()-left_player_jump_time;
+    //   }
+    //   else
+    //  	leftPlayerStopJump();
+    // }
+    // else{
+      if(left_player->GetPosition().y < .05){
+	left_player->SetTransform(b2Vec2(left_player->GetPosition().x, 0),0);
+	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, 0));
+	left_player_jumping = false;
+      }
+      else{
+	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, jump_factor*(left_player_jump_speed - G*(world->getTime()-left_player_jump_time))));
       }
     }
     
@@ -223,17 +255,20 @@ void GameData::stabilizePlayers(World* world)
 void GameData::checkPoints(World* world)
 {
     Q_UNUSED(world);
-    for(b2ContactEdge* ce = ball->GetContactList(); ce; ce = ce->next){
+    if(current_state == PLAYING){
+      for(b2ContactEdge* ce = ball->GetContactList(); ce; ce = ce->next){
 	b2Contact* contact = ce->contact;
 	const b2Body* body1 = contact->GetFixtureA()->GetBody();
 	const b2Body* body2 = contact->GetFixtureB()->GetBody();
 	if(body1 == right_ground){
-	    score_left_player++;
-	    leftPlayerStart();
+	  score_left_player++;
+	  leftPlayerStart();
 	}
 	if(body1 == left_ground){
-	    score_right_player++;
+	  score_right_player++;
 	    rightPlayerStart();
 	}
+      }
     }
+    
 }

@@ -7,7 +7,7 @@
 static const Qt::MouseButton panningButton = Qt::MidButton;
 
 // standard keys
-static const int leftPlayerStartKey = Qt::Key_Space;
+static const int leftPlayerStartKey = Qt::Key_L;
 static const int leftPlayerLeftKey = Qt::Key_Q;
 static const int leftPlayerRightKey = Qt::Key_D;
 static const int leftPlayerUpKey = Qt::Key_Z;
@@ -21,6 +21,7 @@ static const int fullscreenKey = Qt::Key_F;
 static const int resetViewKey = Qt::Key_R;
 static const int debugDrawKey = Qt::Key_T;
 
+static const int beginPointKey = Qt::Key_Space;
 //// alternate keys
 //static const int leftPlayerStartKey = Qt::Key_S;
 //static const int leftPlayerLeftKey = Qt::Key_D;
@@ -39,7 +40,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
   poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg")
 {
-    setFixedSize(800,600);
+  resize(800,600);
+  
     QSettings settings;
     scale = settings.value("drawer/scale",40.).toFloat();
     panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
@@ -129,7 +131,7 @@ void Drawer::keyPressEvent(QKeyEvent* event)
     }
 
     if (event->key()==leftPlayerUpKey) {
-      data.leftPlayerJump();
+      data.leftPlayerJump(world->getTime());
       event->accept();
       return;
     }
@@ -147,12 +149,16 @@ void Drawer::keyPressEvent(QKeyEvent* event)
     }
 
     if (event->key()==rightPlayerUpKey) {
-      data.rightPlayerJump();
+      data.rightPlayerJump(world->getTime());
       event->accept();
       return;
     }
     
-
+    if(event->key() == beginPointKey){
+      data.beginPoint();
+      event->accept();
+      return;
+    }
     event->ignore();
 }
 
@@ -244,7 +250,7 @@ void Drawer::paintEvent(QPaintEvent* event)
   if (!world) return;
  
   QPainter painter(this);
-  //painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
+  painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
   { // draw scene
       painter.save();
@@ -256,7 +262,6 @@ void Drawer::paintEvent(QPaintEvent* event)
       { // draw background
           painter.save();
           painter.scale(1,-1);
-          painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,false);
           painter.drawPixmap(QRectF(-data.courtWidth()/2,-15,data.courtWidth(),15),backgroundImage,backgroundImage.rect());
           painter.restore();
       }
