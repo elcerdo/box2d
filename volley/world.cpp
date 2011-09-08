@@ -197,7 +197,7 @@ b2Body* World::addBall(const b2Vec2 &pos, float radius)
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = pos;
-
+    
     b2CircleShape shape;
     shape.m_radius = radius;
 

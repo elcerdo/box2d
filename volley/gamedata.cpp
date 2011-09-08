@@ -258,17 +258,19 @@ void GameData::checkPoints(World* world)
     //if(current_state == PLAYING){
       for(b2ContactEdge* ce = ball->GetContactList(); ce; ce = ce->next){
 	b2Contact* contact = ce->contact;
-	const b2Body* body1 = contact->GetFixtureA()->GetBody();
-	const b2Body* body2 = contact->GetFixtureB()->GetBody();
-	if(body1 == right_ground){
-	  score_left_player++;
-	  leftPlayerStart();
-	}
-	if(body1 == left_ground){
-	  score_right_player++;
-	  rightPlayerStart();
-	}
-      }
+	if(contact->IsTouching()){
+	    const b2Body* body1 = contact->GetFixtureA()->GetBody();
+	    const b2Body* body2 = contact->GetFixtureB()->GetBody();
+	    if(body1 == right_ground){
+	      score_left_player++;
+	      leftPlayerStart();
+	    }
+	    if(body1 == left_ground){
+	      score_right_player++;
+	      rightPlayerStart();
+	    }
+	  }
+	  }
       //}
     
 }
