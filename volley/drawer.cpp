@@ -37,8 +37,9 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debug_draw(false),
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
-  poleImage(":/images/pole.png")
+  poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg")
 {
+    setFixedSize(800,600);
     QSettings settings;
     scale = settings.value("drawer/scale",50.).toFloat();
     panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
@@ -251,6 +252,14 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.translate(panningPosition);
       if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
       painter.scale(scale,-scale);
+
+      { // draw background
+          painter.save();
+          painter.scale(1,-1);
+          painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,false);
+          painter.drawImage(QRectF(-data.courtWidth()/2,-15,data.courtWidth(),15),backgroundImage);
+          painter.restore();
+      }
 
       { // draw ball
 	  const b2Body *ball = data.getBall();

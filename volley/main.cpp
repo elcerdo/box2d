@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
 
     Drawer drawer(data);
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
-    drawer.resize(800,600);
     drawer.show();
 
     //world.stepWorld();

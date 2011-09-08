@@ -45,6 +45,7 @@ protected:
   QImage leftPlayerImage;
   QImage rightPlayerImage;
   QImage poleImage;
+  QImage backgroundImage;
 };
 
 #endif
