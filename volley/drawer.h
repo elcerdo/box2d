@@ -1,7 +1,7 @@
 #ifndef __DRAWER_H__
 #define __DRAWER_H__
 
-#include <QImage>
+#include <QPixmap>
 #include <QDebug>
 #include <QWidget>
 #include <QKeyEvent>
@@ -41,11 +41,11 @@ protected:
 
   GameData &data;
 
-  QImage ballImage;
-  QImage leftPlayerImage;
-  QImage rightPlayerImage;
-  QImage poleImage;
-  QImage backgroundImage;
+  QPixmap ballImage;
+  QPixmap leftPlayerImage;
+  QPixmap rightPlayerImage;
+  QPixmap poleImage;
+  QPixmap backgroundImage;
 };
 
 #endif

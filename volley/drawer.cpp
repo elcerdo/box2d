@@ -244,7 +244,7 @@ void Drawer::paintEvent(QPaintEvent* event)
   if (!world) return;
  
   QPainter painter(this);
-  painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
+  //painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
   { // draw scene
       painter.save();
@@ -257,7 +257,7 @@ void Drawer::paintEvent(QPaintEvent* event)
           painter.save();
           painter.scale(1,-1);
           painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,false);
-          painter.drawImage(QRectF(-data.courtWidth()/2,-15,data.courtWidth(),15),backgroundImage);
+          painter.drawPixmap(QRectF(-data.courtWidth()/2,-15,data.courtWidth(),15),backgroundImage,backgroundImage.rect());
           painter.restore();
       }
 
@@ -266,7 +266,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.save();
 	  painter.translate(toQPointF(ball->GetPosition()));
 	  painter.rotate(ball->GetAngle()*180/b2_pi);
-	  painter.drawImage(QRectF(-data.ballRadius(),-data.ballRadius(),2*data.ballRadius(),2*data.ballRadius()),ballImage);
+	  painter.drawPixmap(QRectF(-data.ballRadius(),-data.ballRadius(),2*data.ballRadius(),2*data.ballRadius()),ballImage,ballImage.rect());
 	  painter.restore();
       }
 
@@ -275,7 +275,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.save();
 	  painter.translate(toQPointF(player->GetPosition()));
 	  painter.scale(1,-1);
-	  painter.drawImage(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),leftPlayerImage);
+	  painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),leftPlayerImage,leftPlayerImage.rect());
 	  painter.restore();
       }
 
@@ -284,7 +284,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.save();
 	  painter.translate(toQPointF(player->GetPosition()));
 	  painter.scale(1,-1);
-	  painter.drawImage(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),rightPlayerImage);
+	  painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),rightPlayerImage,rightPlayerImage.rect());
 	  painter.restore();
       }
 
@@ -297,7 +297,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.setPen(pen);
 	  painter.drawLine(QPointF(1,0),QPointF(0,-2.5));
 	  painter.drawLine(QPointF(-1,0),QPointF(0,-2.5));
-	  painter.drawImage(QRectF(-data.netWidth()/2.,-data.netHeight(),data.netWidth(),data.netHeight()),poleImage);
+	  painter.drawPixmap(QRectF(-data.netWidth()/2.,-data.netHeight(),data.netWidth(),data.netHeight()),poleImage,poleImage.rect());
 	  painter.restore();
       }
 
