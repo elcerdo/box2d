@@ -20,10 +20,12 @@ protected:
 
 class Team {
 public:
-    Team();
+    enum Field {LEFT,RIGHT};
+    Team(const Field &field);
     int getScore() const;
     int teamScored();
 protected:
+    const Field field;
     int score;
 };
 
@@ -32,8 +34,10 @@ public:
     Player(b2Body* body, Team &team);
     void goLeft();
     void goRight();
+    void goJump();
     void stopLeft();
     void stopRight();
+    void stopJump();
 protected:
     Team &team;
     bool jumping;
