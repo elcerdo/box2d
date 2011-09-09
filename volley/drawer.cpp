@@ -96,7 +96,9 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
     if (event->key()==resetViewKey) {
 	panningPosition = QPointF(0,0);
-	scale = width()/data.courtWidth();
+	const float scaleWidth = width()/data.courtWidth();
+	const float scaleHeight = height()/data.sceneHeight();
+	scale = scaleWidth<scaleHeight ? scaleWidth : scaleHeight;
 	update();
 	event->accept();
 	return;
