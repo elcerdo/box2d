@@ -35,7 +35,7 @@ static const int beginPointKey = Qt::Key_Space;
 
 Drawer::Drawer(GameData& data,QWidget *parent)
 : QGLWidget(parent), world(NULL),
-  panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debug_draw(false),
+  panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debugdraw(false),
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
   poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg"),
@@ -46,6 +46,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
     QSettings settings;
     scale = settings.value("drawer/scale",40.).toFloat();
     panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
+    debugdraw = settings.value("drawer/debugdraw",false).toBool();
 
     qDebug() << "******************";
     qDebug() << "left player";
@@ -69,6 +70,7 @@ Drawer::~Drawer()
     QSettings settings;
     settings.setValue("drawer/scale",scale);
     settings.setValue("drawer/panningPosition",panningPosition);
+    settings.setValue("drawer/debugdraw",debugdraw);
 }
 
 void Drawer::displayWorld(World* world)
@@ -94,14 +96,14 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
     if (event->key()==resetViewKey) {
 	panningPosition = QPointF(0,0);
-	scale = 40;
+	scale = width()/data.courtWidth();
 	update();
 	event->accept();
 	return;
     }
 
     if (event->key()==debugDrawKey) {
-	debug_draw = !debug_draw;
+	debugdraw = !debugdraw;
 	update();
 	event->accept();
 	return;
@@ -339,7 +341,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
   }
 
-  if (debug_draw) { // debug draw scene
+  if (debugdraw) { // debug draw scene
       // draw bodies
       for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
 	  painter.save();

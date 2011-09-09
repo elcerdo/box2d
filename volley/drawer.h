@@ -37,7 +37,7 @@ protected:
   QPointF panningPositionStart;
   QPointF panningPositionCurrent;
   float scale;
-  bool debug_draw;
+  bool debugdraw;
 
   GameData &data;
 
