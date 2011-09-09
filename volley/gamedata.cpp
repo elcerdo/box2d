@@ -23,13 +23,13 @@ GameData::GameData(World& world, QObject* parent)
     buildCourt(world);
 }
 
-float GameData::courtWidth() const { return court_width; }
-float GameData::courtHeight() const { return court_height; }
-float GameData::netHeight() const { return court_net_height; }
-float GameData::netWidth() const { return court_net_width; }
-float GameData::ballRadius() const { return ball_radius; }
-float GameData::playerRadius() const { return player_radius; }
-float GameData::sceneHeight() const { return scene_height; }
+float GameData::courtWidth() { return court_width; }
+float GameData::courtHeight() { return court_height; }
+float GameData::netHeight() { return court_net_height; }
+float GameData::netWidth() { return court_net_width; }
+float GameData::ballRadius() { return ball_radius; }
+float GameData::playerRadius() { return player_radius; }
+float GameData::sceneHeight() { return scene_height; }
 
 const b2Body* GameData::getBall() const { return ball; }
 const b2Body* GameData::getLeftPlayer() const { return left_player; }

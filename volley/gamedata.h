@@ -73,13 +73,13 @@ public:
     int leftPlayerScore() const;
     int rightPlayerScore() const;
 
-    float sceneHeight() const;
-    float courtWidth() const;
-    float courtHeight() const;
-    float netHeight() const;
-    float netWidth() const;
-    float ballRadius() const;
-    float playerRadius() const;
+    static float sceneHeight();
+    static float courtWidth();
+    static float courtHeight();
+    static float netHeight();
+    static float netWidth();
+    static float ballRadius();
+    static float playerRadius();
 
     const b2Body* getBall() const;
     const b2Body* getLeftPlayer() const;
