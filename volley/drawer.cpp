@@ -289,7 +289,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.save();
       painter.translate(toQPointF(ball->GetPosition()));
       painter.scale(1,-1);
-      painter.rotate(ball->GetAngle()*180/b2_pi);
+      painter.rotate(-ball->GetAngle()*180/b2_pi);
       painter.drawPixmap(QRectF(-data.ballRadius(),-data.ballRadius(),2*data.ballRadius(),2*data.ballRadius()),ballImage,ballImage.rect());
       painter.restore();
 
@@ -303,7 +303,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.scale(1,-1);
 	  painter.drawPixmap(QRectF(-.4,-.4,.8,.8),arrowImage,arrowImage.rect());
 	  painter.translate(0,1);
-	  painter.rotate(ball->GetAngle()*180/b2_pi);
+	  painter.rotate(-ball->GetAngle()*180/b2_pi);
 	  painter.drawPixmap(QRectF(-mini_ball_size/2.,-mini_ball_size/2.,mini_ball_size,mini_ball_size),ballImage,ballImage.rect());
 	  painter.restore();
       }
