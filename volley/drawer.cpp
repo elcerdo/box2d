@@ -189,7 +189,7 @@ void Drawer::keyReleaseEvent(QKeyEvent* event)
     }
 
     if (event->key()==leftPlayerUpKey) {
-	data.leftPlayerStopJump();
+      data.leftPlayerStopJump(world->getTime());
 	event->accept();
 	return;
     }
@@ -207,7 +207,7 @@ void Drawer::keyReleaseEvent(QKeyEvent* event)
     }
 
     if (event->key()==rightPlayerUpKey) {
-	data.rightPlayerStopJump();
+	data.rightPlayerStopJump(world->getTime());
 	event->accept();
 	return;
     }

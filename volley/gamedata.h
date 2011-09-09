@@ -66,13 +66,13 @@ public:
     void leftPlayerStopLeft();
     void leftPlayerStopRight();
     void leftPlayerJump(float time);
-    void leftPlayerStopJump();
+    void leftPlayerStopJump(float time);
     void rightPlayerGoLeft();
     void rightPlayerGoRight();
     void rightPlayerStopLeft();
     void rightPlayerStopRight();
     void rightPlayerJump(float time);
-    void rightPlayerStopJump();
+    void rightPlayerStopJump(float time);
 
     int leftPlayerScore() const;
     int rightPlayerScore() const;

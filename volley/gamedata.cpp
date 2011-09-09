@@ -15,7 +15,7 @@ static const float tack_radius = .3;
 static const float max_jump_height = 2.;
 static const float gravity = 10;
 static const float jump_factor = 3.;
-
+static const float basic_jump_speed = 5.;
 
 GameData::GameData(World& world, QObject* parent) 
     : QObject(parent)
@@ -54,8 +54,8 @@ void GameData::buildCourt(World &world)
     score_right_player = 0;
     right_player_jumping = false;
     left_player_jumping = false;
-    right_player_jump_speed = 5.;
-    left_player_jump_speed = 5.;
+    // right_player_jump_speed = 5.;
+    // left_player_jump_speed = 5.;
     current_state = STARTPOINT;
 }
 
@@ -108,13 +108,16 @@ void GameData::leftPlayerJump(float time)
   if(!left_player_jumping){
     left_player_jumping = true;
     left_player_jump_time = time;
+    left_player_jump_speed = basic_jump_speed;
     left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, jump_factor*left_player_jump_speed));
   }
   //left_player_jump_speed = 10.;
 }
 
-void GameData::leftPlayerStopJump()
+void GameData::leftPlayerStopJump(float time)
 {
+  if(left_player_jump_speed - gravity*(time-left_player_jump_time) > 0)
+    left_player_jump_speed = gravity*(time-left_player_jump_time);
   //left_player_jumping = false;
   // left_player_jump_speed = 0.;
 }
@@ -160,6 +163,7 @@ void GameData::rightPlayerStopRight()
 void GameData::rightPlayerJump(float time)
 {
   if(!right_player_jumping){
+    right_player_jump_speed = basic_jump_speed;
     right_player_jumping = true;
     right_player_jump_time = time;
     right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, jump_factor*right_player_jump_speed));
@@ -167,8 +171,10 @@ void GameData::rightPlayerJump(float time)
    
 }
 
-void GameData::rightPlayerStopJump()
+void GameData::rightPlayerStopJump(float time)
 {
+  if(right_player_jump_speed - gravity*(time-right_player_jump_time) > 0)
+    right_player_jump_speed = gravity*(time-right_player_jump_time);
   //right_player_jumping = false;
 }
 
