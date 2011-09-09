@@ -33,27 +33,6 @@ void World::initialize(const b2Vec2 &gravity)
     world = new b2World(gravity,true);
 }
 
-b2Body* World::addGround(float x, float y, float width, float height)
-{
-    return addGround(b2Vec2(x,y),width,height);
-}
-
-b2Body* World::addGround(const b2Vec2 &pos, float width, float height)
-{
-    Q_ASSERT(world);
-
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_staticBody;
-    bodyDef.position = pos;
-
-    b2PolygonShape shape;
-    shape.SetAsBox(width/2.,height/2.);
-
-    b2Body* body = world->CreateBody(&bodyDef);
-    body->CreateFixture(&shape,0);
-    return body;
-}
-
 b2Joint* World::addDistanceJoint(b2Body* a, b2Body* b, const b2Vec2 &ca, const b2Vec2 &cb, bool collide)
 {
     Q_ASSERT(world);
@@ -123,6 +102,27 @@ b2Joint* World::getFirstJoint()
     return world->GetJointList();
 }
 
+b2Body* World::addStaticBox(float x, float y, float width, float height)
+{
+    return addStaticBox(b2Vec2(x,y),width,height);
+}
+
+b2Body* World::addStaticBox(const b2Vec2 &pos, float width, float height)
+{
+    Q_ASSERT(world);
+
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_staticBody;
+    bodyDef.position = pos;
+
+    b2PolygonShape shape;
+    shape.SetAsBox(width/2.,height/2.);
+
+    b2Body* body = world->CreateBody(&bodyDef);
+    body->CreateFixture(&shape,0);
+    return body;
+}
+
 b2Body* World::addBox(float x, float y, float width, float height)
 {
     return addBox(b2Vec2(x,y),width,height);
@@ -184,6 +184,28 @@ b2Body* World::addPlayer(const b2Vec2 &pos, float radius)
     body->CreateFixture(&fixtureDef);
     return body;
 }
+
+b2Body* World::addStaticBall(float x, float y, float radius)
+{
+    return addStaticBall(b2Vec2(x,y),radius);
+}
+
+b2Body* World::addStaticBall(const b2Vec2 &pos, float radius)
+{
+    Q_ASSERT(world);
+
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_staticBody;
+    bodyDef.position = pos;
+    
+    b2CircleShape shape;
+    shape.m_radius = radius;
+
+    b2Body* body = world->CreateBody(&bodyDef);
+    body->CreateFixture(&shape,0);
+    return body;
+}
+
 
 b2Body* World::addBall(float x, float y, float radius)
 {

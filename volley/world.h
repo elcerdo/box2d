@@ -15,10 +15,12 @@ public:
   ~World();
 
   void initialize(const b2Vec2 &gravity);
-  b2Body* addGround(const b2Vec2 &pos, float width, float height);
-  b2Body* addGround(float x, float y, float width, float height);
+  b2Body* addStaticBox(const b2Vec2 &pos, float width, float height);
+  b2Body* addStaticBox(float x, float y, float width, float height);
   b2Body* addBox(const b2Vec2 &pos, float width, float height);
   b2Body* addBox(float x, float y, float width, float height);
+  b2Body* addStaticBall(const b2Vec2 &pos, float radius);
+  b2Body* addStaticBall(float x, float y, float radius);
   b2Body* addBall(const b2Vec2 &pos, float radius);
   b2Body* addBall(float x, float y, float radius);
   b2Body* addPlayer(const b2Vec2 &pos, float radius);

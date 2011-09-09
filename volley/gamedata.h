@@ -36,6 +36,7 @@ public:
     int leftPlayerScore() const;
     int rightPlayerScore() const;
 
+    float sceneHeight() const;
     float courtWidth() const;
     float courtHeight() const;
     float netHeight() const;
@@ -58,6 +59,8 @@ protected:
     b2Body* ceiling;
     b2Body* left_wall;
     b2Body* right_wall;
+    b2Body* left_tack;
+    b2Body* right_tack;
     b2Body* net;
     b2Body* ball;
     b2Body* left_player;

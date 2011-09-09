@@ -248,7 +248,6 @@ void Drawer::wheelEvent(QWheelEvent* event)
 
 void Drawer::paintEvent(QPaintEvent* event)
 {
-  static const float scene_height = 15;
 
   if (!world) return;
  
@@ -263,7 +262,7 @@ void Drawer::paintEvent(QPaintEvent* event)
   { // draw background
       painter.save();
       painter.scale(1,-1);
-      painter.drawPixmap(QRectF(-data.courtWidth()/2,-scene_height,data.courtWidth(),scene_height),backgroundImage,backgroundImage.rect());
+      painter.drawPixmap(QRectF(-data.courtWidth()/2,-data.sceneHeight(),data.courtWidth(),data.sceneHeight()),backgroundImage,backgroundImage.rect());
       painter.restore();
   }
 
@@ -294,12 +293,12 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
 
 
-      if (ball->GetPosition().y>scene_height+data.ballRadius()) {
-	  float mini_ball_size = 1.-(ball->GetPosition().y-scene_height-data.ballRadius())/15;
+      if (ball->GetPosition().y>data.sceneHeight()+data.ballRadius()) {
+	  float mini_ball_size = 1.-(ball->GetPosition().y-data.sceneHeight()-data.ballRadius())/15;
 	  if (mini_ball_size<.2) mini_ball_size = .2;
 
 	  painter.save();
-	  painter.translate(QPointF(ball->GetPosition().x,scene_height-.6));
+	  painter.translate(QPointF(ball->GetPosition().x,data.sceneHeight()-.6));
 	  painter.scale(1,-1);
 	  painter.drawPixmap(QRectF(-.4,-.4,.8,.8),arrowImage,arrowImage.rect());
 	  painter.translate(0,1);

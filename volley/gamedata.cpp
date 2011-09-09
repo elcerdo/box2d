@@ -2,6 +2,7 @@
 
 #include <QDebug>
 
+static const float scene_height = 15;
 static const float court_width = 20;
 static const float court_height = 30;
 static const float court_net_height = 3;
@@ -9,8 +10,10 @@ static const float court_net_width = 0.2;
 static const float player_radius = 1.2;
 static const float player_speed = 8;
 static const float ball_radius = .5;
+static const float tack_radius = .3;
+
 static const float max_jump_height = 2.;
-static const float G = 9.81;
+static const float gravity = 10;
 static const float jump_factor = 3.;
 
 
@@ -26,6 +29,7 @@ float GameData::netHeight() const { return court_net_height; }
 float GameData::netWidth() const { return court_net_width; }
 float GameData::ballRadius() const { return ball_radius; }
 float GameData::playerRadius() const { return player_radius; }
+float GameData::sceneHeight() const { return scene_height; }
 
 const b2Body* GameData::getBall() const { return ball; }
 const b2Body* GameData::getLeftPlayer() const { return left_player; }
@@ -33,12 +37,14 @@ const b2Body* GameData::getRightPlayer() const { return right_player; }
 
 void GameData::buildCourt(World &world)
 {
-    left_ground = world.addGround(-court_width/4.-.5,-.5,court_width/2.+1,1);
-    right_ground = world.addGround(court_width/4.+.5,-.5,court_width/2.+1,1);
-    ceiling = world.addGround(0,court_height+.5,court_width+2,1);
-    left_wall = world.addGround(court_width/2.+.5,court_height/2.,1,court_height+2.);
-    right_wall = world.addGround(-court_width/2.-.5,court_height/2.,1,court_height+2.);
-    net = world.addGround(0,court_net_height/2.,court_net_width,court_net_height);
+    left_ground = world.addStaticBox(-court_width/4.-.5,-.5,court_width/2.+1,1);
+    right_ground = world.addStaticBox(court_width/4.+.5,-.5,court_width/2.+1,1);
+    ceiling = world.addStaticBox(0,court_height+.5,court_width+2,1);
+    left_wall = world.addStaticBox(court_width/2.+.5,court_height/2.,1,court_height+2.);
+    right_wall = world.addStaticBox(-court_width/2.-.5,court_height/2.,1,court_height+2.);
+    left_tack = world.addStaticBall(-court_width/2.-tack_radius/2.,scene_height+2,tack_radius);
+    right_tack = world.addStaticBall(court_width/2.+tack_radius/2.,scene_height+2,tack_radius);
+    net = world.addStaticBox(0,court_net_height/2.,court_net_width,court_net_height);
 
     ball = world.addBall(0,4,ball_radius);
 
@@ -194,7 +200,7 @@ void GameData::stabilizePlayers(World* world)
 	right_player_jumping = false;
       }
       else{
-	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, jump_factor*(right_player_jump_speed - G*(world->getTime()-right_player_jump_time))));
+	right_player->SetLinearVelocity(b2Vec2(right_player->GetLinearVelocity().x, jump_factor*(right_player_jump_speed - gravity*(world->getTime()-right_player_jump_time))));
       }
     }
     
@@ -213,7 +219,7 @@ void GameData::stabilizePlayers(World* world)
 	left_player_jumping = false;
       }
       else{
-	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, jump_factor*(left_player_jump_speed - G*(world->getTime()-left_player_jump_time))));
+	left_player->SetLinearVelocity(b2Vec2(left_player->GetLinearVelocity().x, jump_factor*(left_player_jump_speed - gravity*(world->getTime()-left_player_jump_time))));
       }
     }
     
