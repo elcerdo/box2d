@@ -6,31 +6,6 @@
 
 static const Qt::MouseButton panningButton = Qt::MidButton;
 
-// standard keys
-static const int leftPlayerStartKey = Qt::Key_L;
-static const int leftPlayerLeftKey = Qt::Key_Q;
-static const int leftPlayerRightKey = Qt::Key_D;
-static const int leftPlayerUpKey = Qt::Key_Z;
-
-static const int rightPlayerStartKey = Qt::Key_M;
-static const int rightPlayerLeftKey = Qt::Key_Left;
-static const int rightPlayerRightKey = Qt::Key_Right;
-static const int rightPlayerUpKey = Qt::Key_Up;
-
-static const int fullscreenKey = Qt::Key_F;
-static const int resetViewKey = Qt::Key_R;
-static const int debugDrawKey = Qt::Key_T;
-
-static const int beginPointKey = Qt::Key_Space;
-//// alternate keys
-//static const int leftPlayerStartKey = Qt::Key_S;
-//static const int leftPlayerLeftKey = Qt::Key_D;
-//static const int leftPlayerRightKey = Qt::Key_F;
-//static const int rightPlayerStartKey = Qt::Key_J;
-//static const int rightPlayerLeftKey = Qt::Key_G;
-//static const int rightPlayerRightKey = Qt::Key_H;
-//static const int fullscreenKey = Qt::Key_Space;
-
 //scale is in pixel/m
 
 Drawer::Drawer(GameData& data,QWidget *parent)
@@ -41,28 +16,12 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg"),
   arrowImage(":/images/arrow.png")
 {
-  resize(800,600);
+    resize(800,600);
   
     QSettings settings;
     scale = settings.value("drawer/scale",40.).toFloat();
     panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
     debugdraw = settings.value("drawer/debugdraw",false).toBool();
-
-    qDebug() << "******************";
-    qDebug() << "left player";
-    qDebug() << "start" << QKeySequence(leftPlayerStartKey).toString();
-    qDebug() << "left" << QKeySequence(leftPlayerLeftKey).toString();
-    qDebug() << "right" << QKeySequence(leftPlayerRightKey).toString();
-    qDebug() << "******************";
-    qDebug() << "right player";
-    qDebug() << "start" << QKeySequence(rightPlayerStartKey).toString();
-    qDebug() << "right" << QKeySequence(rightPlayerLeftKey).toString();
-    qDebug() << "right" << QKeySequence(rightPlayerRightKey).toString();
-    qDebug() << "******************";
-    qDebug() << "fullscreen" << QKeySequence(fullscreenKey).toString();
-    qDebug() << "resetview" << QKeySequence(resetViewKey).toString();
-    qDebug() << "******************";
-
 }
 
 Drawer::~Drawer()
@@ -88,13 +47,13 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
     //qDebug() << "pressed" << event->key();
 
-    if (event->key()==fullscreenKey) {
+    if (event->key()==keyManager.fullscreenKey()) {
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
 	event->accept();
 	return;
     }
 
-    if (event->key()==resetViewKey) {
+    if (event->key()==keyManager.resetViewKey()) {
 	panningPosition = QPointF(0,0);
 	const float scaleWidth = width()/data.courtWidth();
 	const float scaleHeight = height()/data.sceneHeight();
@@ -104,7 +63,7 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 	return;
     }
 
-    if (event->key()==debugDrawKey) {
+    if (event->key()==keyManager.debugDrawKey()) {
 	debugdraw = !debugdraw;
 	update();
 	event->accept();

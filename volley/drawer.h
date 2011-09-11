@@ -10,6 +10,7 @@
 #include <QWheelEvent>
 #include "world.h"
 #include "gamedata.h"
+#include "keymanager.h"
 
 class Drawer : public QGLWidget {
 Q_OBJECT
@@ -40,6 +41,7 @@ protected:
   bool debugdraw;
 
   GameData &data;
+  KeyManager keyManager;
 
   QPixmap ballImage;
   QPixmap leftPlayerImage;

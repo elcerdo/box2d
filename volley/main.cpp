@@ -13,6 +13,11 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setApplicationName("volley");
     }
 
+    { // dump key settings
+	KeyManager keyManager;
+	keyManager.dumpKeys(qDebug());
+    }
+
     World world(1./50.);
     world.initialize(b2Vec2(0,-10));
 
