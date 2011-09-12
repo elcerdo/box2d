@@ -179,8 +179,35 @@ void Drawer::paintEvent(QPaintEvent* event)
       QRectF score(width()/2.-150,40,300,100);
       painter.setBrush(QColor("yellow"));
       painter.drawRect(score);
-      painter.setBrush(QColor("black"));
       painter.drawText(score,Qt::AlignCenter,QString("%1 - %2").arg(data.getTeam(Team::LEFT).getScore()).arg(data.getTeam(Team::RIGHT).getScore()));
+      painter.restore();
+  }
+
+  { // draw state overlay
+      QString state_string;
+      switch (data.getState()) {
+	  case GameData::INIT:
+	      state_string = "init";
+	      break;
+	  case GameData::STARTING:
+	      state_string = "starting";
+	      break;
+	  case GameData::PLAYING:
+	      state_string = "playing";
+	      break;
+	  case GameData::FINISHED:
+	      state_string = "finished";
+	      break;
+      };
+
+      painter.save();
+      painter.resetTransform();
+      QFont font;
+      font.setBold(true);
+      font.setPixelSize(20);
+      painter.setFont(font);
+      painter.setPen(QColor("red"));
+      painter.drawText(5,20,state_string);
       painter.restore();
   }
 

@@ -9,12 +9,14 @@ class GameData : public QObject {
     Q_OBJECT
 public:
     enum State {
+	INIT,
+	STARTING,
 	PLAYING,
-	STARTPOINT,
-	ENDPOINT
+	FINISHED
     };
  
     GameData(World& world, QObject* parent=NULL);
+    State getState() const;
 
     void beginPoint();
     void leftPlayerStart();
@@ -51,7 +53,7 @@ protected:
     Player* left_player;
     Player* right_player;
 
-    State current_state;
+    State state;
 };
 
 #endif

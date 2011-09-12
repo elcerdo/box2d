@@ -4,11 +4,13 @@
 #include <QDebug>
 
 GameData::GameData(World& world, QObject* parent) 
-    : QObject(parent)
+    : QObject(parent), state(INIT)
 {
     buildCourt(world);
+    beginPoint();
 }
 
+GameData::State GameData::getState() const { return state; }
 Ball& GameData::getBall() { return *ball; }
 Team& GameData::getTeam(Team::Field field) { return field==Team::RIGHT ? *right_team : *left_team; }
 Player& GameData::getPlayer(int number) { return number ? *right_player : *left_player; }
@@ -44,8 +46,6 @@ void GameData::buildCourt(World &world)
     left_player = new Player(body_left_player,*left_team);
     body_right_player = world.addPlayer(GameManager::courtWidth()/4.,0,GameManager::playerRadius());
     right_player = new Player(body_right_player,*right_team);
-
-    current_state = STARTPOINT;
 }
 
 void GameData::beginPoint()
