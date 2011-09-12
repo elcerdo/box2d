@@ -31,7 +31,9 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
   poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg"),
-  arrowImage(":/images/arrow.png")
+  arrowImage(":/images/arrow.png"),
+  win00(":/images/win00.png"),win01(":/images/win01.png"),
+  lose00(":/images/lose00.png"),lose01(":/images/lose01.png")
 {
     resize(800,600);
   
@@ -207,6 +209,49 @@ void Drawer::paintEvent(QPaintEvent* event)
       QRectF rectangle(width()/2.-300,150,600,100);
       painter.setPen(QColor("red"));
       painter.drawText(rectangle,Qt::AlignCenter,"GO");
+      painter.restore();
+  }
+
+  if (data.getState()==GameData::FINISHED) { // draw ready overlay
+      bool aa = (dt-static_cast<int>(dt/.5)*.5<.5/2.);
+      painter.save();
+      painter.resetTransform();
+      { // finished
+	  QFont font;
+	  font.setBold(true);
+	  font.setPixelSize(100);
+	  painter.setFont(font);
+	  QRectF rectangle(width()/2.-300,150,600,100);
+	  painter.setPen(QColor("red"));
+	  painter.drawText(rectangle,Qt::AlignCenter,"FINISHED");
+      }
+      if (aa) { // press space
+	  QFont font;
+	  font.setBold(true);
+	  font.setPixelSize(30);
+	  painter.setFont(font);
+	  QRectF rectangle(width()/2.-300,250,600,30);
+	  painter.setPen(QColor("red"));
+	  painter.drawText(rectangle,Qt::AlignCenter,"press space");
+      }
+      { // win animation
+	  painter.save();
+	  if (data.getLastScoringTeam().getField()==Team::LEFT) painter.translate(width()/4.,300);
+	  else painter.translate(3.*width()/4.,300);
+	  QRect rectangle(-50,-50,100,100);
+	  if (aa) painter.drawPixmap(rectangle,win00,win00.rect());
+	  else painter.drawPixmap(rectangle,win01,win01.rect());
+	  painter.restore();
+      }
+      { // lose animation
+	  painter.save();
+	  if (data.getLastScoringTeam().getField()==Team::RIGHT) painter.translate(width()/4.,300);
+	  else painter.translate(3.*width()/4.,300);
+	  QRect rectangle(-50,-50,100,100);
+	  if (aa) painter.drawPixmap(rectangle,lose00,lose00.rect());
+	  else painter.drawPixmap(rectangle,lose01,lose01.rect());
+	  painter.restore();
+      }
       painter.restore();
   }
 

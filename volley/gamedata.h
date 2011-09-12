@@ -18,6 +18,7 @@ public:
     GameData(World& world, QObject* parent=NULL);
     State getState() const;
     float getLastTransitionTime() const;
+    const Team& getLastScoringTeam() const;
 
     void beginPoint(World& world);
 

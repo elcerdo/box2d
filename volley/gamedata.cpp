@@ -12,6 +12,7 @@ GameData::GameData(World& world, QObject* parent)
 
 GameData::State GameData::getState() const { return state; }
 float GameData::getLastTransitionTime() const { return last_transition_time; }
+const Team& GameData::getLastScoringTeam() const { Q_ASSERT(last_scoring_team); return *last_scoring_team; }
 Ball& GameData::getBall() { return *ball; }
 Team& GameData::getTeam(Team::Field field) { return field==Team::RIGHT ? *right_team : *left_team; }
 Player& GameData::getPlayer(int number) { return number ? *right_player : *left_player; }
@@ -114,15 +115,19 @@ void GameData::checkState(World* world)
 	    const b2Body* body2 = contact->GetFixtureB()->GetBody();
 
 	    if(body1 == body_right_ground){
+		qDebug() << "left";
+		last_scoring_team = left_team;
+		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();
 		state = FINISHED;
-		left_player->getTeam().teamScored();
 	    }
 
 	    if(body1 == body_left_ground){
+		qDebug() << "right";
+		last_scoring_team = right_team;
+		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();
 		state = FINISHED;
-		right_player->getTeam().teamScored();
 	    }
 	}
 	return;
