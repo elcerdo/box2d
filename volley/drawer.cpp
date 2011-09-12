@@ -151,9 +151,10 @@ void Drawer::wheelEvent(QWheelEvent* event)
 
 void Drawer::paintEvent(QPaintEvent* event)
 {
-
   if (!world) return;
  
+  const float dt = world->getTime()-data.getLastTransitionTime();
+
   QPainter painter(this);
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
@@ -183,6 +184,32 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
   }
 
+  if (data.getState()==GameData::STARTING) { // draw ready overlay
+      painter.save();
+      painter.resetTransform();
+      QFont font;
+      font.setBold(true);
+      font.setPixelSize(100);
+      painter.setFont(font);
+      QRectF rectangle(width()/2.-300,150,600,100);
+      painter.setPen(QColor("red"));
+      painter.drawText(rectangle,Qt::AlignCenter,"READY");
+      painter.restore();
+  }
+
+  if (data.getState()==GameData::PLAYING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.)) { // draw ready overlay
+      painter.save();
+      painter.resetTransform();
+      QFont font;
+      font.setBold(true);
+      font.setPixelSize(100);
+      painter.setFont(font);
+      QRectF rectangle(width()/2.-300,150,600,100);
+      painter.setPen(QColor("red"));
+      painter.drawText(rectangle,Qt::AlignCenter,"GO");
+      painter.restore();
+  }
+
   { // draw state overlay
       QString state_string;
       switch (data.getState()) {
@@ -190,7 +217,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 	      state_string = "init";
 	      break;
 	  case GameData::STARTING:
-	      state_string = "starting";
+	      state_string = QString("starting");
 	      break;
 	  case GameData::PLAYING:
 	      state_string = "playing";
@@ -208,9 +235,9 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.setFont(font);
       painter.setPen(QColor("red"));
       painter.drawText(5,20,state_string);
+      painter.drawText(5,40,QString("%1s").arg(dt,0,'f',2));
       painter.restore();
   }
-
 
   { // draw ball
       const Ball& ball = data.getBall();

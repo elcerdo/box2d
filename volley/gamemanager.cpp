@@ -28,3 +28,7 @@ float GameManager::playerJumpSpeed() { return player_jump_speed; }
 float GameManager::gravity() { return g; }
 float GameManager::jumpFactor() { return jump_factor; }
 
+static const float ball_release_height = 6;
+
+float GameManager::ballReleaseHeight() { return ball_release_height; }
+float GameManager::startingTime() { return 1.5; }

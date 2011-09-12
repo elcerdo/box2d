@@ -4,13 +4,14 @@
 #include <QDebug>
 
 GameData::GameData(World& world, QObject* parent) 
-    : QObject(parent), state(INIT)
+    : QObject(parent), last_transition_time(world.getTime()), last_scoring_team(NULL), state(INIT)
 {
     buildCourt(world);
-    beginPoint();
+    beginPoint(world);
 }
 
 GameData::State GameData::getState() const { return state; }
+float GameData::getLastTransitionTime() const { return last_transition_time; }
 Ball& GameData::getBall() { return *ball; }
 Team& GameData::getTeam(Team::Field field) { return field==Team::RIGHT ? *right_team : *left_team; }
 Player& GameData::getPlayer(int number) { return number ? *right_player : *left_player; }
@@ -36,7 +37,7 @@ void GameData::buildCourt(World &world)
     body_net = world.addStaticBox(0,GameManager::netHeight()/2.,GameManager::netWidth(),GameManager::netHeight());
     body_net->SetUserData(NULL);
 
-    body_ball = world.addBall(0,4,GameManager::ballRadius());
+    body_ball = world.addBall(0,GameManager::ballReleaseHeight(),GameManager::ballRadius());
     ball = new Ball(body_ball);
 
     left_team = new Team(Team::LEFT);
@@ -48,42 +49,39 @@ void GameData::buildCourt(World &world)
     right_player = new Player(body_right_player,*right_team);
 }
 
-void GameData::beginPoint()
+void GameData::beginPoint(World& world) 
 {
-  //  if(current_state == STARTPOINT){
-  //}
-}
+    Q_ASSERT_X(state==INIT || state==FINISHED,"game state","invalid state transition");
 
-// left player stuff
-void GameData::leftPlayerStart()
-{
-    qDebug() << "left player start";
-
+    // reset player position
     body_left_player->SetTransform(b2Vec2(-GameManager::courtWidth()/4.,0),0);
     body_right_player->SetTransform(b2Vec2(GameManager::courtWidth()/4.,0),0);
     body_left_player->SetLinearVelocity(b2Vec2(0,0));
     body_right_player->SetLinearVelocity(b2Vec2(0,0));
 
-    body_ball->SetTransform(b2Vec2(-GameManager::courtWidth()/4.,5),0);
+    // reset ball position
     body_ball->SetLinearVelocity(b2Vec2(0,0));
     body_ball->SetAngularVelocity(0);
-    body_ball->SetAwake(true);
-}
+    body_ball->SetAwake(false);
 
-// right player stuff
-void GameData::rightPlayerStart()
-{
-    qDebug() << "right player start";
+    // place ball in the good spot
+    if (state==INIT) {
+	Q_ASSERT(last_scoring_team==NULL);
+	body_ball->SetTransform(b2Vec2(0,GameManager::ballReleaseHeight()),0); // place ball on net for first point
+    } else {
+	Q_ASSERT(last_scoring_team);
+	switch (last_scoring_team->getField()) {
+	    case Team::LEFT:
+		body_ball->SetTransform(b2Vec2(-GameManager::courtWidth()/4.,GameManager::ballReleaseHeight()),0);
+		break;
+	    case Team::RIGHT:
+		body_ball->SetTransform(b2Vec2(GameManager::courtWidth()/4.,GameManager::ballReleaseHeight()),0);
+		break;
+	};
+    }
 
-    body_left_player->SetTransform(b2Vec2(-GameManager::courtWidth()/4.,0),0);
-    body_right_player->SetTransform(b2Vec2(GameManager::courtWidth()/4.,0),0);
-    body_left_player->SetLinearVelocity(b2Vec2(0,0));
-    body_right_player->SetLinearVelocity(b2Vec2(0,0));
-
-    body_ball->SetTransform(b2Vec2(GameManager::courtWidth()/4.,5),0);
-    body_ball->SetLinearVelocity(b2Vec2(0,0));
-    body_ball->SetAngularVelocity(0);
-    body_ball->SetAwake(true);
+    last_transition_time = world.getTime();
+    state = STARTING;
 }
 
 void GameData::stabilizePlayers(World* world)
@@ -96,24 +94,37 @@ void GameData::stabilizePlayers(World* world)
     right_player->checkPosition(world->getTime());
 }
 
-void GameData::checkPoints(World* world)
+void GameData::checkState(World* world)
 {
-    Q_UNUSED(world);
-    for (const b2ContactEdge* ce = ball->getBody()->GetContactList(); ce; ce = ce->next) {
-	const b2Contact* contact = ce->contact;
-	if (!contact->IsTouching()) continue;
-
-	const b2Body* body1 = contact->GetFixtureA()->GetBody();
-	const b2Body* body2 = contact->GetFixtureB()->GetBody();
-
-	if(body1 == body_right_ground){
-	    left_player->getTeam().teamScored();
-	    leftPlayerStart();
+    if (state==STARTING) {
+	if (world->getTime()-last_transition_time>GameManager::startingTime()) {
+	    body_ball->SetAwake(true);
+	    last_transition_time = world->getTime();
+	    state = PLAYING;
 	}
+	return;
+    }
 
-	if(body1 == body_left_ground){
-	    right_player->getTeam().teamScored();
-	    rightPlayerStart();
+    if (state==PLAYING) {
+	for (const b2ContactEdge* ce = ball->getBody()->GetContactList(); ce; ce = ce->next) {
+	    const b2Contact* contact = ce->contact;
+	    if (!contact->IsTouching()) continue;
+
+	    const b2Body* body1 = contact->GetFixtureA()->GetBody();
+	    const b2Body* body2 = contact->GetFixtureB()->GetBody();
+
+	    if(body1 == body_right_ground){
+		last_transition_time = world->getTime();
+		state = FINISHED;
+		left_player->getTeam().teamScored();
+	    }
+
+	    if(body1 == body_left_ground){
+		last_transition_time = world->getTime();
+		state = FINISHED;
+		right_player->getTeam().teamScored();
+	    }
 	}
+	return;
     }
 }

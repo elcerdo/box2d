@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
     GameData data(world);
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));
-    QObject::connect(&world,SIGNAL(preStepWorld(World*)),&data,SLOT(checkPoints(World*)));
+    QObject::connect(&world,SIGNAL(preStepWorld(World*)),&data,SLOT(checkState(World*)));
 
     Drawer drawer(data);
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));

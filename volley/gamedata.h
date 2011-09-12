@@ -17,10 +17,9 @@ public:
  
     GameData(World& world, QObject* parent=NULL);
     State getState() const;
+    float getLastTransitionTime() const;
 
-    void beginPoint();
-    void leftPlayerStart();
-    void rightPlayerStart();
+    void beginPoint(World& world);
 
     Ball& getBall();
     Team& getTeam(Team::Field field);
@@ -30,7 +29,7 @@ public:
 
 public slots:
     void stabilizePlayers(World*);
-    void checkPoints(World*);
+    void checkState(World*);
 
 protected:
     void buildCourt(World& world);
@@ -52,6 +51,9 @@ protected:
     Team* right_team;
     Player* left_player;
     Player* right_player;
+
+    float last_transition_time;
+    Team* last_scoring_team;
 
     State state;
 };

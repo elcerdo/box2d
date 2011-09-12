@@ -16,6 +16,9 @@ public:
     static float playerJumpSpeed();
     static float gravity();
     static float jumpFactor();
+
+    static float ballReleaseHeight();
+    static float startingTime();
 private:
     GameManager(); // not implemented
 };
