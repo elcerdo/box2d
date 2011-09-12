@@ -6,6 +6,7 @@
 class UserData {
 public:
     UserData(b2Body* body);
+    const b2Body* getBody() const;
 protected:
     b2Body* body;
 };
@@ -21,6 +22,7 @@ class Team {
 public:
     enum Field {LEFT,RIGHT};
     Team(const Field &field);
+    Field getField() const;
     int getScore() const;
     int teamScored();
 protected:
@@ -31,12 +33,15 @@ protected:
 class Player : public UserData {
 public:
     Player(b2Body* body, Team &team);
-    void goLeft();
-    void goRight();
-    void goJump();
-    void stopLeft();
-    void stopRight();
-    void stopJump();
+    void goLeft(float time);
+    void goRight(float time);
+    void goJump(float time);
+    void stopLeft(float time);
+    void stopRight(float time);
+    void stopJump(float time);
+    void checkPosition(float time);
+    void checkJump(float time);
+    Team &getTeam();
 protected:
     Team &team;
     bool jumping;

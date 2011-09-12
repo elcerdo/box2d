@@ -23,7 +23,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 ## batch executable
 set(sources
-    keymanager.cpp
+    keymanager.cpp gamemanager.cpp
     world.cpp drawer.cpp
     gamehelper.cpp gamedata.cpp
     common.cpp

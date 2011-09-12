@@ -3,50 +3,28 @@
 
 #include <QObject>
 #include "world.h"
+#include "gamehelper.h"
 
 class GameData : public QObject {
     Q_OBJECT
 public:
-  enum state{
-    PLAYING,
-    STARTPOINT,
-    ENDPOINT
-  };
+    enum State {
+	PLAYING,
+	STARTPOINT,
+	ENDPOINT
+    };
  
     GameData(World& world, QObject* parent=NULL);
 
     void beginPoint();
-    
     void leftPlayerStart();
     void rightPlayerStart();
 
-    void leftPlayerGoLeft();
-    void leftPlayerGoRight();
-    void leftPlayerStopLeft();
-    void leftPlayerStopRight();
-    void leftPlayerJump(float time);
-    void leftPlayerStopJump(float time);
-    void rightPlayerGoLeft();
-    void rightPlayerGoRight();
-    void rightPlayerStopLeft();
-    void rightPlayerStopRight();
-    void rightPlayerJump(float time);
-    void rightPlayerStopJump(float time);
-
-    int leftPlayerScore() const;
-    int rightPlayerScore() const;
-
-    static float sceneHeight();
-    static float courtWidth();
-    static float courtHeight();
-    static float netHeight();
-    static float netWidth();
-    static float ballRadius();
-    static float playerRadius();
-
-    const b2Body* getBall() const;
-    const b2Body* getLeftPlayer() const;
-    const b2Body* getRightPlayer() const;
+    Ball& getBall();
+    Team& getTeam(Team::Field field);
+    Player& getPlayer(int number);
+    Player& getLeftPlayer();
+    Player& getRightPlayer();
 
 public slots:
     void stabilizePlayers(World*);
@@ -54,26 +32,26 @@ public slots:
 
 protected:
     void buildCourt(World& world);
-    b2Body* left_ground;
-    b2Body* right_ground;
-    b2Body* ceiling;
-    b2Body* left_wall;
-    b2Body* right_wall;
-    b2Body* left_tack;
-    b2Body* right_tack;
-    b2Body* net;
-    b2Body* ball;
-    b2Body* left_player;
-    b2Body* right_player;
-    int score_right_player;
-    int score_left_player;
-    bool right_player_jumping;
-    bool left_player_jumping;
-    float right_player_jump_speed;
-    float left_player_jump_speed;
-    float left_player_jump_time;
-    float right_player_jump_time;
-    state current_state;
+
+    b2Body* body_left_ground;
+    b2Body* body_right_ground;
+    b2Body* body_left_wall;
+    b2Body* body_right_wall;
+    b2Body* body_ceiling;
+    b2Body* body_left_tack;
+    b2Body* body_right_tack;
+    b2Body* body_net;
+    b2Body* body_ball;
+    b2Body* body_left_player;
+    b2Body* body_right_player;
+
+    Ball* ball;
+    Team* left_team;
+    Team* right_team;
+    Player* left_player;
+    Player* right_player;
+
+    State current_state;
 };
 
 #endif

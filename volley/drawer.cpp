@@ -1,8 +1,25 @@
+#include "gamemanager.h"
 #include "drawer.h"
 #include "common.h"
 #include <QPainter>
 #include <QColor>
 #include <QSettings>
+
+bool Drawer::handlePlayerKeyPress(int key, const PlayerKeys& keys, Player& player, float time)
+{
+    if (key==keys.left) { player.goLeft(time); return true; }
+    if (key==keys.right) { player.goRight(time); return true; }
+    if (key==keys.jump) { player.goJump(time); return true; }
+    return false;
+}
+
+bool Drawer::handlePlayerKeyRelease(int key, const PlayerKeys& keys, Player& player, float time)
+{
+    if (key==keys.left) { player.stopLeft(time); return true; }
+    if (key==keys.right) { player.stopRight(time); return true; }
+    if (key==keys.jump) { player.stopJump(time); return true; }
+    return false;
+}
 
 static const Qt::MouseButton panningButton = Qt::MidButton;
 
@@ -37,7 +54,6 @@ void Drawer::displayWorld(World* world)
   this->world = world;
   update();
 }
-
 void Drawer::keyPressEvent(QKeyEvent* event)
 {
     if (event->isAutoRepeat()) {
@@ -47,82 +63,36 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 
     //qDebug() << "pressed" << event->key();
 
-    if (event->key()==keyManager.fullscreenKey()) {
+    if (event->key()==KeyManager::fullscreenKey()) {
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
 	event->accept();
 	return;
     }
 
-    if (event->key()==keyManager.resetViewKey()) {
+    if (event->key()==KeyManager::resetViewKey()) {
 	panningPosition = QPointF(0,0);
-	const float scaleWidth = width()/data.courtWidth();
-	const float scaleHeight = height()/data.sceneHeight();
+	const float scaleWidth = width()/GameManager::courtWidth();
+	const float scaleHeight = height()/GameManager::sceneHeight();
 	scale = scaleWidth<scaleHeight ? scaleWidth : scaleHeight;
 	update();
 	event->accept();
 	return;
     }
 
-    if (event->key()==keyManager.debugDrawKey()) {
+    if (event->key()==KeyManager::debugDrawKey()) {
 	debugdraw = !debugdraw;
 	update();
 	event->accept();
 	return;
     }
 
-    if (event->key()==leftPlayerStartKey) {
-	data.leftPlayerStart();
-	event->accept();
-	return;
+    for (int kk=0; kk<nplayers; kk++) {
+	if (handlePlayerKeyPress(event->key(),KeyManager::playerKeys(kk),data.getPlayer(kk),world->getTime())) {
+	    event->accept();
+	    return;
+	}
     }
 
-    if (event->key()==rightPlayerStartKey) {
-	data.rightPlayerStart();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==leftPlayerLeftKey) {
-	data.leftPlayerGoLeft();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==leftPlayerRightKey) {
-	data.leftPlayerGoRight();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==leftPlayerUpKey) {
-      data.leftPlayerJump(world->getTime());
-      event->accept();
-      return;
-    }
-
-    if (event->key()==rightPlayerLeftKey) {
-	data.rightPlayerGoLeft();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==rightPlayerRightKey) {
-	data.rightPlayerGoRight();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==rightPlayerUpKey) {
-      data.rightPlayerJump(world->getTime());
-      event->accept();
-      return;
-    }
-    
-    if(event->key() == beginPointKey){
-      data.beginPoint();
-      event->accept();
-      return;
-    }
     event->ignore();
 }
 
@@ -135,42 +105,12 @@ void Drawer::keyReleaseEvent(QKeyEvent* event)
 
     //qDebug() << "released" << event->key();
 
-    if (event->key()==leftPlayerLeftKey) {
-	data.leftPlayerStopLeft();
-	event->accept();
-	return;
+    for (int kk=0; kk<nplayers; kk++) {
+	if (handlePlayerKeyRelease(event->key(),KeyManager::playerKeys(kk),data.getPlayer(kk),world->getTime())) {
+	    event->accept();
+	    return;
+	}
     }
-
-    if (event->key()==leftPlayerRightKey) {
-	data.leftPlayerStopRight();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==leftPlayerUpKey) {
-      data.leftPlayerStopJump(world->getTime());
-	event->accept();
-	return;
-    }
-
-    if (event->key()==rightPlayerLeftKey) {
-	data.rightPlayerStopLeft();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==rightPlayerRightKey) {
-	data.rightPlayerStopRight();
-	event->accept();
-	return;
-    }
-
-    if (event->key()==rightPlayerUpKey) {
-	data.rightPlayerStopJump(world->getTime());
-	event->accept();
-	return;
-    }
-
 
     event->ignore();
 }
@@ -225,7 +165,7 @@ void Drawer::paintEvent(QPaintEvent* event)
   { // draw background
       painter.save();
       painter.scale(1,-1);
-      painter.drawPixmap(QRectF(-data.courtWidth()/2,-data.sceneHeight(),data.courtWidth(),data.sceneHeight()),backgroundImage,backgroundImage.rect());
+      painter.drawPixmap(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight(),GameManager::courtWidth(),GameManager::sceneHeight()),backgroundImage,backgroundImage.rect());
       painter.restore();
   }
 
@@ -240,52 +180,57 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.setBrush(QColor("yellow"));
       painter.drawRect(score);
       painter.setBrush(QColor("black"));
-      painter.drawText(score,Qt::AlignCenter,QString("%1 - %2").arg(data.leftPlayerScore()).arg(data.rightPlayerScore()));
+      painter.drawText(score,Qt::AlignCenter,QString("%1 - %2").arg(data.getTeam(Team::LEFT).getScore()).arg(data.getTeam(Team::RIGHT).getScore()));
       painter.restore();
   }
 
 
   { // draw ball
-      const b2Body *ball = data.getBall();
+      const Ball& ball = data.getBall();
+      const b2Body* body = ball.getBody();
 
       painter.save();
-      painter.translate(toQPointF(ball->GetPosition()));
+      painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
-      painter.rotate(-ball->GetAngle()*180/b2_pi);
-      painter.drawPixmap(QRectF(-data.ballRadius(),-data.ballRadius(),2*data.ballRadius(),2*data.ballRadius()),ballImage,ballImage.rect());
+      painter.rotate(-body->GetAngle()*180/b2_pi);
+      painter.drawPixmap(QRectF(-GameManager::ballRadius(),-GameManager::ballRadius(),2*GameManager::ballRadius(),2*GameManager::ballRadius()),ballImage,ballImage.rect());
       painter.restore();
 
 
-      if (ball->GetPosition().y>data.sceneHeight()+data.ballRadius()) {
-	  float mini_ball_size = 1.-(ball->GetPosition().y-data.sceneHeight()-data.ballRadius())/15;
+      if (body->GetPosition().y>GameManager::sceneHeight()+GameManager::ballRadius()) {
+	  float mini_ball_size = 1.-(body->GetPosition().y-GameManager::sceneHeight()-GameManager::ballRadius())/15;
 	  if (mini_ball_size<.2) mini_ball_size = .2;
 
 	  painter.save();
-	  painter.translate(QPointF(ball->GetPosition().x,data.sceneHeight()-.6));
+	  painter.translate(QPointF(body->GetPosition().x,GameManager::sceneHeight()-.6));
 	  painter.scale(1,-1);
 	  painter.drawPixmap(QRectF(-.4,-.4,.8,.8),arrowImage,arrowImage.rect());
 	  painter.translate(0,1);
-	  painter.rotate(-ball->GetAngle()*180/b2_pi);
+	  painter.rotate(-body->GetAngle()*180/b2_pi);
 	  painter.drawPixmap(QRectF(-mini_ball_size/2.,-mini_ball_size/2.,mini_ball_size,mini_ball_size),ballImage,ballImage.rect());
 	  painter.restore();
       }
   }
 
   { // draw left player
-      const b2Body *player = data.getLeftPlayer();
+      const Player& player = data.getLeftPlayer();
+      const b2Body* body = player.getBody();
+
       painter.save();
-      painter.translate(toQPointF(player->GetPosition()));
+      painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
-      painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),leftPlayerImage,leftPlayerImage.rect());
+      painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),leftPlayerImage,leftPlayerImage.rect());
       painter.restore();
   }
 
   { // draw right player
-      const b2Body *player = data.getRightPlayer();
+      const Player& player = data.getRightPlayer();
+      const b2Body* body = player.getBody();
+
       painter.save();
-      painter.translate(toQPointF(player->GetPosition()));
+      painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
-      painter.drawPixmap(QRectF(-data.playerRadius(),-data.playerRadius(),2*data.playerRadius(),data.playerRadius()),rightPlayerImage,rightPlayerImage.rect());
+      painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),rightPlayerImage,rightPlayerImage.rect());
       painter.restore();
   }
 
@@ -298,7 +243,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.setPen(pen);
       painter.drawLine(QPointF(1,0),QPointF(0,-2.5));
       painter.drawLine(QPointF(-1,0),QPointF(0,-2.5));
-      painter.drawPixmap(QRectF(-data.netWidth()/2.,-data.netHeight(),data.netWidth(),data.netHeight()),poleImage,poleImage.rect());
+      painter.drawPixmap(QRectF(-GameManager::netWidth()/2.,-GameManager::netHeight(),GameManager::netWidth(),GameManager::netHeight()),poleImage,poleImage.rect());
       painter.restore();
   }
 

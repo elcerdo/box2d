@@ -1,5 +1,6 @@
 #include "keymanager.h"
 
+#include <QDebug>
 #include <Qt>
 
 // default keys
@@ -15,13 +16,27 @@ static const PlayerKeys defaultPlayerKeys[nplayers] = {
 
 PlayerKeys::PlayerKeys(int left,int right,int jump) : left(left), right(right), jump(jump) {}
 
-int KeyManager::fullscreenKey() const { return defaultFullscreenKey; }
-int KeyManager::debugDrawKey() const { return defaultDebugDrawKey; }
-int KeyManager::resetViewKey() const { return defaultResetViewKey; }
-int KeyManager::beginPointKey() const { return defaultBeginPointKey; }
+int KeyManager::fullscreenKey() { return defaultFullscreenKey; }
+int KeyManager::debugDrawKey() { return defaultDebugDrawKey; }
+int KeyManager::resetViewKey() { return defaultResetViewKey; }
+int KeyManager::beginPointKey() { return defaultBeginPointKey; }
 
-PlayerKeys KeyManager::playerKeys(int number) const {
+PlayerKeys KeyManager::playerKeys(int number) {
     Q_ASSERT(number>=0 && number<nplayers);
     return defaultPlayerKeys[number];
 }
 
+void KeyManager::dumpKeys() {
+    qDebug() << "[GENERAL]";
+    qDebug() << "fullscreen" << keyToString(fullscreenKey());
+    qDebug() << "debugdraw" << keyToString(debugDrawKey());
+    qDebug() << "resetview" << keyToString(resetViewKey());
+    qDebug() << "beginpoint" << keyToString(beginPointKey());
+    for (int kk=0; kk<2; kk++) {
+	PlayerKeys keys = playerKeys(kk);
+	qDebug() << qPrintable(QString("[PLAYER%1]").arg(kk));
+	qDebug() << "left" << keyToString(keys.left);
+	qDebug() << "right" << keyToString(keys.right);
+	qDebug() << "jump" << keyToString(keys.jump);
+    }
+}

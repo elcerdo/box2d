@@ -1,6 +1,7 @@
 
 #include <QApplication>
 #include "world.h"
+#include "gamemanager.h"
 #include "gamedata.h"
 #include "drawer.h"
 
@@ -13,13 +14,11 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setApplicationName("volley");
     }
 
-    { // dump key settings
-	KeyManager keyManager;
-	keyManager.dumpKeys(qDebug());
-    }
+    // dump key settings
+    KeyManager::dumpKeys();
 
     World world(1./50.);
-    world.initialize(b2Vec2(0,-10));
+    world.initialize(b2Vec2(0,-GameManager::gravity()));
 
     GameData data(world);
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));

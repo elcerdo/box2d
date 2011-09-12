@@ -12,29 +12,16 @@ struct PlayerKeys {
 
 class KeyManager {
 public:
+    static int fullscreenKey();
+    static int debugDrawKey();
+    static int resetViewKey();
+    static int beginPointKey();
 
-    int fullscreenKey() const;
-    int debugDrawKey() const;
-    int resetViewKey() const;
-    int beginPointKey() const;
+    static PlayerKeys playerKeys(int number);
 
-    PlayerKeys playerKeys(int number) const;
-
-    template <class Stream> 
-    void dumpKeys(Stream &stream) const {
-	stream << "[GENERAL]";
-	stream << "fullscreen" << keyToString(fullscreenKey());
-	stream << "debugdraw" << keyToString(debugDrawKey());
-	stream << "resetview" << keyToString(resetViewKey());
-	stream << "beginpoint" << keyToString(beginPointKey());
-	for (int kk=0; kk<2; kk++) {
-	    PlayerKeys keys = playerKeys(kk);
-	    stream << qPrintable(QString("[PLAYER%1]").arg(kk));
-	    stream << "left" << keyToString(keys.left);
-	    stream << "right" << keyToString(keys.right);
-	    stream << "jump" << keyToString(keys.jump);
-	}
-    }
+    static void dumpKeys();
+private:
+    KeyManager(); // not implemented
 };
 
 #endif

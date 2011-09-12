@@ -30,6 +30,9 @@ protected:
   void mouseReleaseEvent(QMouseEvent* event);
   void wheelEvent(QWheelEvent* event);
 
+  static bool handlePlayerKeyPress(int key, const PlayerKeys& keys, Player& player, float time);
+  static bool handlePlayerKeyRelease(int key, const PlayerKeys& keys, Player& player, float time);
+
 protected:
   World* world;
 
@@ -41,7 +44,6 @@ protected:
   bool debugdraw;
 
   GameData &data;
-  KeyManager keyManager;
 
   QPixmap ballImage;
   QPixmap leftPlayerImage;

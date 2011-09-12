@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include <QKeySequence>
+
 QPointF toQPointF(const b2Vec2 &vect)
 {
   return QPointF(vect.x,vect.y);
@@ -7,5 +9,5 @@ QPointF toQPointF(const b2Vec2 &vect)
 
 QString keyToString(int key)
 {
-    return QKeySequence(int).getString();
+    return QKeySequence(key).toString();
 }
