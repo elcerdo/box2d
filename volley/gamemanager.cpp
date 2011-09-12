@@ -21,7 +21,7 @@ float GameManager::tackRadius() { return tack_radius; }
 static const float player_move_speed = 8;
 static const float player_jump_speed = 5.;
 static const float g = 10;
-static const float jump_factor = 3.;
+static const float jump_factor = 3.5;
 
 float GameManager::playerMoveSpeed() { return player_move_speed; }
 float GameManager::playerJumpSpeed() { return player_jump_speed; }
