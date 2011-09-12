@@ -142,8 +142,8 @@ b2Body* World::addBox(const b2Vec2 &pos, float width, float height)
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
     fixtureDef.density = 1;
-    fixtureDef.friction = .3;
-    fixtureDef.restitution = .6;
+    //fixtureDef.friction = 0;
+    //fixtureDef.restitution = 0;
 
     b2Body* body = world->CreateBody(&bodyDef);
     body->CreateFixture(&fixtureDef);
@@ -177,8 +177,8 @@ b2Body* World::addPlayer(const b2Vec2 &pos, float radius)
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
     fixtureDef.density = 1;
-    fixtureDef.friction = .3;
-    fixtureDef.restitution = .6;
+    //fixtureDef.friction = 1;
+    //fixtureDef.restitution = 0;
 
     b2Body* body = world->CreateBody(&bodyDef);
     body->CreateFixture(&fixtureDef);
@@ -226,10 +226,11 @@ b2Body* World::addBall(const b2Vec2 &pos, float radius)
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
     fixtureDef.density = 1;
-    fixtureDef.friction = .3;
+    fixtureDef.friction = .6;
     fixtureDef.restitution = .8;
 
     b2Body* body = world->CreateBody(&bodyDef);
+    body->SetLinearDamping(.2);
     body->CreateFixture(&fixtureDef);
     return body;
 }
