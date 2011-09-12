@@ -176,7 +176,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       font.setBold(true);
       font.setPixelSize(100);
       painter.setFont(font);
-      QRectF score(width()/2.-180,40,300,100);
+      QRectF score(width()/2.-150,40,300,100);
       painter.setBrush(QColor("yellow"));
       painter.drawRect(score);
       painter.setBrush(QColor("black"));
