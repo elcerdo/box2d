@@ -88,6 +88,12 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 	return;
     }
 
+    if (data.getState()==GameData::FINISHED && event->key()==KeyManager::beginPointKey()) {
+	data.beginPoint(*world);
+	event->accept();
+	return;
+    }
+
     for (int kk=0; kk<nplayers; kk++) {
 	if (handlePlayerKeyPress(event->key(),KeyManager::playerKeys(kk),data.getPlayer(kk),world->getTime())) {
 	    event->accept();

@@ -115,7 +115,6 @@ void GameData::checkState(World* world)
 	    const b2Body* body2 = contact->GetFixtureB()->GetBody();
 
 	    if(body1 == body_right_ground){
-		qDebug() << "left";
 		last_scoring_team = left_team;
 		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();
@@ -123,7 +122,6 @@ void GameData::checkState(World* world)
 	    }
 
 	    if(body1 == body_left_ground){
-		qDebug() << "right";
 		last_scoring_team = right_team;
 		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();
