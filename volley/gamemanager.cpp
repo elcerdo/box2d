@@ -4,7 +4,6 @@ static const float scene_height = 15;
 static const float court_width = 20;
 static const float court_height = 30;
 static const float court_net_height = 3;
-static const float court_net_width = 0.2;
 static const float player_radius = 1.2;
 static const float ball_radius = .5;
 static const float tack_radius = .3;
@@ -12,7 +11,7 @@ static const float tack_radius = .3;
 float GameManager::courtWidth() { return court_width; }
 float GameManager::courtHeight() { return court_height; }
 float GameManager::netHeight() { return court_net_height; }
-float GameManager::netWidth() { return court_net_width; }
+float GameManager::netWidth() { return 0.25; }
 float GameManager::ballRadius() { return ball_radius; }
 float GameManager::playerRadius() { return player_radius; }
 float GameManager::sceneHeight() { return scene_height; }
@@ -32,3 +31,4 @@ static const float ball_release_height = 6;
 
 float GameManager::ballReleaseHeight() { return ball_release_height; }
 float GameManager::startingTime() { return 1.5; }
+float GameManager::groundLevel() { return 3; }

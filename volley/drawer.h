@@ -48,8 +48,6 @@ protected:
   QPixmap ballImage;
   QPixmap leftPlayerImage;
   QPixmap rightPlayerImage;
-  QPixmap poleImage;
-  QPixmap backgroundImage;
   QPixmap arrowImage;
   QPixmap win00,win01;
   QPixmap lose00,lose01;

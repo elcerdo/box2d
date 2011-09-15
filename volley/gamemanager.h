@@ -19,6 +19,8 @@ public:
 
     static float ballReleaseHeight();
     static float startingTime();
+
+    static float groundLevel();
 private:
     GameManager(); // not implemented
 };

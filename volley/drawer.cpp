@@ -31,7 +31,6 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debugdraw(false),
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
-  poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg"),
   arrowImage(":/images/arrow.png"),
   win00(":/images/win00.png"),win01(":/images/win01.png"),
   lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
@@ -175,6 +174,11 @@ void Drawer::paintEvent(QPaintEvent* event)
  
   const float dt = world->getTime()-data.getLastTransitionTime();
 
+  QPen drawing_pen;
+  drawing_pen.setColor("white");
+  drawing_pen.setWidthF(.25);
+  drawing_pen.setCapStyle(Qt::RoundCap);
+
   QPainter painter(this);
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
@@ -280,6 +284,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       const b2Body* body = ball.getBody();
 
       painter.save();
+      painter.translate(0,GameManager::groundLevel());
       painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
       painter.rotate(-body->GetAngle()*180/b2_pi);
@@ -307,6 +312,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       const b2Body* body = player.getBody();
 
       painter.save();
+      painter.translate(0,GameManager::groundLevel());
       painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),leftPlayerImage,leftPlayerImage.rect());
@@ -318,22 +324,19 @@ void Drawer::paintEvent(QPaintEvent* event)
       const b2Body* body = player.getBody();
 
       painter.save();
+      painter.translate(0,GameManager::groundLevel());
       painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),rightPlayerImage,rightPlayerImage.rect());
       painter.restore();
   }
 
-  { // draw pole
+  { // draw ground and net
       painter.save();
-      painter.scale(1,-1);
-      QPen pen;
-      pen.setColor(qRgb(100,102,105));
-      pen.setWidthF(.05);
-      painter.setPen(pen);
-      painter.drawLine(QPointF(1,0),QPointF(0,-2.5));
-      painter.drawLine(QPointF(-1,0),QPointF(0,-2.5));
-      painter.drawPixmap(QRectF(-GameManager::netWidth()/2.,-GameManager::netHeight(),GameManager::netWidth(),GameManager::netHeight()),poleImage,poleImage.rect());
+      painter.translate(0,GameManager::groundLevel());
+      painter.setPen(drawing_pen);
+      painter.drawLine(QPointF(-GameManager::courtWidth()/2,-drawing_pen.widthF()/2),QPointF(GameManager::courtWidth()/2,-drawing_pen.widthF()/2));
+      painter.drawLine(QPointF(0,0),QPointF(0,GameManager::netHeight()-0.125));
       painter.restore();
   }
 
@@ -379,6 +382,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       // draw bodies
       for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
 	  painter.save();
+	  painter.translate(0,GameManager::groundLevel());
 	  painter.translate(toQPointF(body->GetPosition()));
 	  painter.rotate(body->GetAngle()*180/b2_pi);
 
