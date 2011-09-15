@@ -13,9 +13,10 @@ void generateBackgroundNoise()
 
     for (int kk=0; kk<10; kk++) {
 	QImage image(400,300,QImage::Format_RGB32);
-	//image.fill(qRgb(0,255,255));
+	image.fill(qRgb(0,0,0));
 	for (int x=0; x<image.width(); x++) {
 	    for (int y=0; y<image.height(); y++) {
+		if (qrand()%100>40) continue;
 		int value = qrand() % 45;
 		if (value>32) value = 32 + (value-32)*2;
 		image.setPixel(x,y,qRgb(value,value,value));
