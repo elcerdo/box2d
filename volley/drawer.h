@@ -43,6 +43,7 @@ protected:
   QPointF panningPositionCurrent;
   float scale;
   bool debugdraw;
+  float cursorMovedTime;
 
   GameData &data;
 

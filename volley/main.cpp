@@ -13,7 +13,7 @@ void generateBackgroundNoise()
 
     for (int kk=0; kk<10; kk++) {
 	QImage image(400,300,QImage::Format_RGB32);
-	image.fill(qRgb(0,0,0));
+	//image.fill(qRgb(0,255,255));
 	for (int x=0; x<image.width(); x++) {
 	    for (int y=0; y<image.height(); y++) {
 		int value = qrand() % 45;
@@ -23,8 +23,7 @@ void generateBackgroundNoise()
 	}
 
 	QString name = QString("noise%1").arg(kk);
-	QPixmap pixmap;
-	pixmap.fromImage(image);
+	QPixmap pixmap = QPixmap::fromImage(image);
 	cache.insert(name,pixmap);
     }
 }

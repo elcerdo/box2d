@@ -29,3 +29,4 @@ static const float ball_release_height = 6;
 float GameManager::ballReleaseHeight() { return ball_release_height; }
 float GameManager::startingTime() { return 1.5; }
 float GameManager::groundLevel() { return 3; }
+float GameManager::cursorHideTime() { return .5; }

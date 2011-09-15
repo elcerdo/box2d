@@ -29,6 +29,7 @@ static const Qt::MouseButton panningButton = Qt::MidButton;
 Drawer::Drawer(GameData& data,QWidget *parent)
 : QGLWidget(parent), world(NULL),
   panning(false), fullscreen(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debugdraw(false),
+  cursorMovedTime(0),
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob.png"), rightPlayerImage(":/images/right_blob.png"),
   arrowImage(":/images/arrow.png"),
@@ -37,6 +38,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   frame(":/images/tv_frame.png")
 {
     resize(800,600);
+    setCursor(QCursor(Qt::BlankCursor));
+    setMouseTracking(true);
   
     { // load settings
 	QSettings settings;
@@ -165,10 +168,12 @@ void Drawer::mousePressEvent(QMouseEvent* event)
 
 void Drawer::mouseMoveEvent(QMouseEvent* event)
 {
-  if (event->buttons().testFlag(panningButton) && panning) {
-    panningPositionCurrent = event->posF();
-    event->accept();
-  }
+    unsetCursor();
+    if (world) cursorMovedTime = world->getTime();
+    if (event->buttons().testFlag(panningButton) && panning) {
+	panningPositionCurrent = event->posF();
+	event->accept();
+    }
 }
 
 void Drawer::mouseReleaseEvent(QMouseEvent* event)
@@ -190,9 +195,10 @@ void Drawer::wheelEvent(QWheelEvent* event)
 void Drawer::paintEvent(QPaintEvent* event)
 {
   if (!world) return;
+
+  if (world->getTime()>cursorMovedTime+GameManager::cursorHideTime()) setCursor(QCursor(Qt::BlankCursor));
  
   const float dt = world->getTime()-data.getLastTransitionTime();
-
 
   QRectF message_position(width()/2.-300,120,600,100);
 

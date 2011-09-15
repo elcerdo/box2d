@@ -21,6 +21,7 @@ public:
     static float startingTime();
 
     static float groundLevel();
+    static float cursorHideTime();
 private:
     GameManager(); // not implemented
 };
