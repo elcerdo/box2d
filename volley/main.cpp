@@ -24,7 +24,7 @@ void generateBackgroundNoise()
 
 	QString name = QString("noise%1").arg(kk);
 	QPixmap pixmap;
-	pixmap.convertFromImage(image);
+	pixmap.fromImage(image);
 	cache.insert(name,pixmap);
     }
 }

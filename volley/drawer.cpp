@@ -28,7 +28,7 @@ static const Qt::MouseButton panningButton = Qt::MidButton;
 
 Drawer::Drawer(GameData& data,QWidget *parent)
 : QGLWidget(parent), world(NULL),
-  panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debugdraw(false),
+  panning(false), fullscreen(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debugdraw(false),
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob.png"), rightPlayerImage(":/images/right_blob.png"),
   arrowImage(":/images/arrow.png"),
@@ -38,10 +38,14 @@ Drawer::Drawer(GameData& data,QWidget *parent)
 {
     resize(800,600);
   
-    QSettings settings;
-    scale = settings.value("drawer/scale",40.).toFloat();
-    panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
-    debugdraw = settings.value("drawer/debugdraw",false).toBool();
+    { // load settings
+	QSettings settings;
+	scale = settings.value("drawer/scale",40.).toFloat();
+	panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
+	debugdraw = settings.value("drawer/debugdraw",false).toBool();
+	fullscreen = settings.value("drawer/fullscreen",false).toBool();
+	if (fullscreen) setWindowState(windowState()|Qt::WindowFullScreen);
+    }
 
     { // background noise
 	noise_current = 0;
@@ -52,6 +56,18 @@ Drawer::Drawer(GameData& data,QWidget *parent)
 	    Q_ASSERT(ok);
 	}
     }
+
+    { // setup graphic stuff
+	drawingPen.setColor("white");
+	drawingPen.setWidthF(.25);
+	drawingPen.setCapStyle(Qt::RoundCap);
+	drawingFont.setFamily("04b03");
+	drawingFont.setPixelSize(100);
+
+	debugPen.setColor("red");
+	debugFont.setBold(true);
+	debugFont.setPixelSize(20);
+    }
 }
 
 Drawer::~Drawer()
@@ -60,6 +76,7 @@ Drawer::~Drawer()
     settings.setValue("drawer/scale",scale);
     settings.setValue("drawer/panningPosition",panningPosition);
     settings.setValue("drawer/debugdraw",debugdraw);
+    settings.setValue("drawer/fullscreen",fullscreen);
 }
 
 void Drawer::displayWorld(World* world)
@@ -67,6 +84,7 @@ void Drawer::displayWorld(World* world)
   this->world = world;
   update();
 }
+
 void Drawer::keyPressEvent(QKeyEvent* event)
 {
     if (event->isAutoRepeat()) {
@@ -77,6 +95,7 @@ void Drawer::keyPressEvent(QKeyEvent* event)
     //qDebug() << "pressed" << event->key();
 
     if (event->key()==KeyManager::fullscreenKey()) {
+	fullscreen = !fullscreen;
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
 	event->accept();
 	return;
@@ -174,19 +193,21 @@ void Drawer::paintEvent(QPaintEvent* event)
  
   const float dt = world->getTime()-data.getLastTransitionTime();
 
-  static QPen drawing_pen;
-  drawing_pen.setColor("white");
-  drawing_pen.setWidthF(.25);
-  drawing_pen.setCapStyle(Qt::FlatCap);
-  static QFont drawing_font("04b03");
-  drawing_font.setPixelSize(100);
 
   QRectF message_position(width()/2.-300,120,600,100);
 
   QPainter painter(this);
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
-  painter.setFont(drawing_font);
-  painter.setPen(drawing_pen);
+
+  { // clear background
+      painter.beginNativePainting();
+      glClearColor(0, 0, 0, 1);
+      glClear(GL_COLOR_BUFFER_BIT);
+      painter.endNativePainting();
+  }
+
+  painter.setFont(drawingFont);
+  painter.setPen(drawingPen);
 
   painter.translate(width()/2.,height());
   painter.translate(panningPosition);
@@ -231,8 +252,8 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.resetTransform();
       painter.drawText(message_position,Qt::AlignCenter,"FINISHED"); // finished
       if (aa) { // press space
-	  QFont font(drawing_font);
-	  font.setPixelSize(30);
+	  QFont font(drawingFont);
+	  font.setPixelSize(drawingFont.pixelSize()/3);
 	  painter.setFont(font);
 	  QRectF rectangle(message_position);
 	  rectangle.setTop(rectangle.top()+80);
@@ -315,9 +336,8 @@ void Drawer::paintEvent(QPaintEvent* event)
   { // draw ground and net
       painter.save();
       painter.translate(0,GameManager::groundLevel());
-      painter.setPen(drawing_pen);
-      painter.drawLine(QPointF(-GameManager::courtWidth()/2,-drawing_pen.widthF()/2),QPointF(GameManager::courtWidth()/2,-drawing_pen.widthF()/2));
-      painter.drawLine(QPointF(0,0),QPointF(0,GameManager::netHeight()));
+      painter.drawLine(QPointF(-GameManager::courtWidth()/2,-drawingPen.widthF()/2),QPointF(GameManager::courtWidth()/2,-drawingPen.widthF()/2));
+      painter.drawLine(QPointF(0,0),QPointF(0,GameManager::netHeight()-GameManager::netWidth()/3));
       painter.restore();
   }
 
@@ -348,11 +368,8 @@ void Drawer::paintEvent(QPaintEvent* event)
 
       painter.save();
       painter.resetTransform();
-      QFont font;
-      font.setBold(true);
-      font.setPixelSize(20);
-      painter.setFont(font);
-      painter.setPen(QColor("red"));
+      painter.setFont(debugFont);
+      painter.setPen(debugPen);
       painter.drawText(5,20,state_string);
       painter.drawText(5,40,QString("%1s").arg(dt,0,'f',2));
       painter.restore();
@@ -360,14 +377,18 @@ void Drawer::paintEvent(QPaintEvent* event)
 
 
   if (debugdraw) { // debug draw scene
+      painter.save();
+      painter.setFont(debugFont);
+      painter.setPen(debugPen);
+      painter.translate(0,GameManager::groundLevel());
+
       // draw bodies
       for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {
 	  painter.save();
-	  painter.translate(0,GameManager::groundLevel());
 	  painter.translate(toQPointF(body->GetPosition()));
 	  painter.rotate(body->GetAngle()*180/b2_pi);
 
-	  if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
+	  if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,1,0,.3)));
 	  else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
 
 	  for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
@@ -387,14 +408,16 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  painter.restore();
       }
 
-      { // draw joints
-	  painter.save();
-	  painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
-	  for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
-	      painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
-	  }
-	  painter.restore();
-      }
+      //{ // draw joints
+      //    painter.save();
+      //    painter.setPen(QPen(QColor::fromRgbF(0,1,0)));
+      //    for (const b2Joint* joint=world->getFirstJoint(); joint!=NULL; joint=joint->GetNext()) {
+      //        painter.drawLine(toQPointF(joint->GetAnchorA()),toQPointF(joint->GetAnchorB()));
+      //    }
+      //    painter.restore();
+      //}
+
+      painter.restore();
   }
 
 

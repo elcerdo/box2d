@@ -37,6 +37,7 @@ protected:
   World* world;
 
   bool panning;
+  bool fullscreen;
   QPointF panningPosition;
   QPointF panningPositionStart;
   QPointF panningPositionCurrent;
@@ -55,6 +56,11 @@ protected:
   QPixmap frame;
   QPixmap noises[10];
   int noise_current;
+
+  QPen drawingPen;
+  QFont drawingFont;
+  QPen debugPen;
+  QFont debugFont;
 };
 
 #endif
