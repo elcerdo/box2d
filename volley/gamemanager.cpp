@@ -5,7 +5,7 @@ static const float court_width = 20;
 static const float court_height = 30;
 static const float court_net_height = 3;
 static const float player_radius = 1.2;
-static const float ball_radius = .5;
+static const float ball_radius = .75;
 static const float tack_radius = .3;
 
 float GameManager::courtWidth() { return court_width; }

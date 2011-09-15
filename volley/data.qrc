@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-<file>images/ball.png</file>
+<file>images/ballbw.png</file>
 <file>images/left_blob_00.png</file>
 <file>images/right_blob_00.png</file>
 <file>images/arrow.png</file>
