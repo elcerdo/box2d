@@ -4,10 +4,6 @@
 <file alias="images/left_blob.png">images/left_blob_bw.png</file>
 <file alias="images/right_blob.png">images/right_blob_bw.png</file>
 <file>images/arrow.png</file>
-<file>images/win00.png</file>
-<file>images/win01.png</file>
-<file>images/lose00.png</file>
-<file>images/lose01.png</file>
 <file>images/tv_frame.png</file>
 <file>fonts/04b03.ttf</file>
 </qresource>

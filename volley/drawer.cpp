@@ -32,8 +32,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob.png"), rightPlayerImage(":/images/right_blob.png"),
   arrowImage(":/images/arrow.png"),
-  win00(":/images/win00.png"),win01(":/images/win01.png"),
-  lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
+  //win00(":/images/win00.png"),win01(":/images/win01.png"),
+  //lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
   frame(":/images/tv_frame.png")
 {
     resize(800,600);
@@ -239,24 +239,24 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  rectangle.setBottom(rectangle.bottom()+80);
 	  painter.drawText(rectangle,Qt::AlignCenter,"press space");
       }
-      { // win animation
-	  painter.save();
-	  if (data.getLastScoringTeam().getField()==Team::LEFT) painter.translate(width()/4.,300);
-	  else painter.translate(3.*width()/4.,300);
-	  QRect rectangle(-50,-50,100,100);
-	  if (aa) painter.drawPixmap(rectangle,win00,win00.rect());
-	  else painter.drawPixmap(rectangle,win01,win01.rect());
-	  painter.restore();
-      }
-      { // lose animation
-	  painter.save();
-	  if (data.getLastScoringTeam().getField()==Team::RIGHT) painter.translate(width()/4.,300);
-	  else painter.translate(3.*width()/4.,300);
-	  QRect rectangle(-50,-50,100,100);
-	  if (aa) painter.drawPixmap(rectangle,lose00,lose00.rect());
-	  else painter.drawPixmap(rectangle,lose01,lose01.rect());
-	  painter.restore();
-      }
+      //{ // win animation
+      //    painter.save();
+      //    if (data.getLastScoringTeam().getField()==Team::LEFT) painter.translate(width()/4.,300);
+      //    else painter.translate(3.*width()/4.,300);
+      //    QRect rectangle(-50,-50,100,100);
+      //    if (aa) painter.drawPixmap(rectangle,win00,win00.rect());
+      //    else painter.drawPixmap(rectangle,win01,win01.rect());
+      //    painter.restore();
+      //}
+      //{ // lose animation
+      //    painter.save();
+      //    if (data.getLastScoringTeam().getField()==Team::RIGHT) painter.translate(width()/4.,300);
+      //    else painter.translate(3.*width()/4.,300);
+      //    QRect rectangle(-50,-50,100,100);
+      //    if (aa) painter.drawPixmap(rectangle,lose00,lose00.rect());
+      //    else painter.drawPixmap(rectangle,lose01,lose01.rect());
+      //    painter.restore();
+      //}
       painter.restore();
   }
 
