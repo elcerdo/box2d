@@ -65,7 +65,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
 	drawingPen.setWidthF(.25);
 	drawingPen.setCapStyle(Qt::RoundCap);
 	drawingFont.setFamily("04b03");
-	drawingFont.setPixelSize(100);
+	drawingFont.setPixelSize(22);
 
 	debugPen.setColor("red");
 	debugFont.setBold(true);
@@ -200,7 +200,7 @@ void Drawer::paintEvent(QPaintEvent* event)
  
   const float dt = world->getTime()-data.getLastTransitionTime();
 
-  QRectF message_position(width()/2.-300,120,600,100);
+  static QRectF message_position(-50,-130,100,20);
 
   QPainter painter(this);
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
@@ -231,23 +231,24 @@ void Drawer::paintEvent(QPaintEvent* event)
 
   { // draw score
       painter.save();
-      painter.resetTransform();
-      painter.translate(width()/2,height());
-      painter.drawText(QRect(-160,-115,150,100),Qt::AlignRight,QString("%1").arg(data.getTeam(Team::LEFT).getScore()));
-      painter.drawText(QRect(20,-115,150,100),Qt::AlignLeft,QString("%1").arg(data.getTeam(Team::RIGHT).getScore()));
+      painter.scale(.1,-.1);
+      //painter.drawRect(QRectF(-32,-25,30,20));
+      painter.drawText(QRectF(-34.5,-25,30,20),Qt::AlignRight|Qt::AlignTop,QString("%1").arg(data.getTeam(Team::LEFT).getScore()));
+      //painter.drawRect(QRectF(2,-25,30,20));
+      painter.drawText(QRectF(7,-25,30,20),Qt::AlignLeft|Qt::AlignTop,QString("%1").arg(data.getTeam(Team::RIGHT).getScore()));
       painter.restore();
   }
 
   if (data.getState()==GameData::STARTING) { // draw ready overlay
       painter.save();
-      painter.resetTransform();
+      painter.scale(.1,-.1);
       painter.drawText(message_position,Qt::AlignCenter,"READY");
       painter.restore();
   }
 
   if (data.getState()==GameData::PLAYING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.)) { // draw ready overlay
       painter.save();
-      painter.resetTransform();
+      painter.scale(.1,-.1);
       painter.drawText(message_position,Qt::AlignCenter,"GO");
       painter.restore();
   }
@@ -255,15 +256,15 @@ void Drawer::paintEvent(QPaintEvent* event)
   if (data.getState()==GameData::FINISHED) { // draw ready overlay
       bool aa = (dt-static_cast<int>(dt/.5)*.5<.5/2.);
       painter.save();
-      painter.resetTransform();
+      painter.scale(.1,-.1);
       painter.drawText(message_position,Qt::AlignCenter,"FINISHED"); // finished
       if (aa) { // press space
 	  QFont font(drawingFont);
-	  font.setPixelSize(drawingFont.pixelSize()/3);
+	  font.setPixelSize(drawingFont.pixelSize()/2);
 	  painter.setFont(font);
 	  QRectF rectangle(message_position);
-	  rectangle.setTop(rectangle.top()+80);
-	  rectangle.setBottom(rectangle.bottom()+80);
+	  rectangle.setTop(rectangle.top()+25);
+	  rectangle.setBottom(rectangle.bottom()+25);
 	  painter.drawText(rectangle,Qt::AlignCenter,"press space");
       }
       //{ // win animation
