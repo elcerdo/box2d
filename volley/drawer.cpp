@@ -34,7 +34,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   arrowImage(":/images/arrow.png"),
   win00(":/images/win00.png"),win01(":/images/win01.png"),
   lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
-  frame(":/images/tv_frame.png")
+  frame(":/images/tv_frame2.png")
 {
     resize(800,600);
   
