@@ -1,4 +1,4 @@
-
+#include <QFontDatabase>
 #include <QPixmapCache>
 #include <QApplication>
 #include "world.h"
@@ -29,6 +29,13 @@ void generateBackgroundNoise()
     }
 }
 
+void loadFont()
+{
+    qDebug() << "loading font";
+    QFontDatabase fontDB;
+    fontDB.addApplicationFont(":/fonts/04b03.ttf");
+}
+
 int main(int argc, char *argv[]) {
     srand(time(NULL));
     QApplication app(argc,argv);
@@ -41,6 +48,7 @@ int main(int argc, char *argv[]) {
 
     // generate graphics
     generateBackgroundNoise();
+    loadFont();
 
     // dump key settings
     KeyManager::dumpKeys();

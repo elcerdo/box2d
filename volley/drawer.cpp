@@ -174,15 +174,17 @@ void Drawer::paintEvent(QPaintEvent* event)
  
   const float dt = world->getTime()-data.getLastTransitionTime();
 
-  QPen drawing_pen;
+  static QPen drawing_pen;
   drawing_pen.setColor("white");
   drawing_pen.setWidthF(.25);
-  drawing_pen.setCapStyle(Qt::RoundCap);
+  drawing_pen.setCapStyle(Qt::FlatCap);
+  static QFont drawing_font("04b03");
+  drawing_font.setPixelSize(100);
 
   QPainter painter(this);
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
-  painter.translate(rect().width()/2.,rect().height());
+  painter.translate(width()/2.,height());
   painter.translate(panningPosition);
   if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
   painter.scale(scale,-scale);
@@ -196,17 +198,14 @@ void Drawer::paintEvent(QPaintEvent* event)
       noise_current%=10;
   }
 
-  { // draw score overlay
+  { // draw score
       painter.save();
       painter.resetTransform();
-      QFont font;
-      font.setBold(true);
-      font.setPixelSize(100);
-      painter.setFont(font);
-      QRectF score(width()/2.-150,40,300,100);
-      painter.setBrush(QColor("yellow"));
-      painter.drawRect(score);
-      painter.drawText(score,Qt::AlignCenter,QString("%1 - %2").arg(data.getTeam(Team::LEFT).getScore()).arg(data.getTeam(Team::RIGHT).getScore()));
+      painter.setFont(drawing_font);
+      painter.setPen(drawing_pen);
+      painter.translate(width()/2,height());
+      painter.drawText(QRect(-160,-115,150,100),Qt::AlignRight,QString("%1").arg(data.getTeam(Team::LEFT).getScore()));
+      painter.drawText(QRect(20,-115,150,100),Qt::AlignLeft,QString("%1").arg(data.getTeam(Team::RIGHT).getScore()));
       painter.restore();
   }
 
@@ -215,7 +214,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.resetTransform();
       QFont font;
       font.setBold(true);
-      font.setPixelSize(100);
+      font.setPixelSize(20);
       painter.setFont(font);
       QRectF rectangle(width()/2.-300,150,600,100);
       painter.setPen(QColor("red"));
@@ -240,11 +239,11 @@ void Drawer::paintEvent(QPaintEvent* event)
       bool aa = (dt-static_cast<int>(dt/.5)*.5<.5/2.);
       painter.save();
       painter.resetTransform();
+      QFont font;
+      font.setBold(true);
+      font.setPixelSize(100);
+      painter.setFont(font);
       { // finished
-	  QFont font;
-	  font.setBold(true);
-	  font.setPixelSize(100);
-	  painter.setFont(font);
 	  QRectF rectangle(width()/2.-300,150,600,100);
 	  painter.setPen(QColor("red"));
 	  painter.drawText(rectangle,Qt::AlignCenter,"FINISHED");
@@ -252,8 +251,11 @@ void Drawer::paintEvent(QPaintEvent* event)
       if (aa) { // press space
 	  QFont font;
 	  font.setBold(true);
-	  font.setPixelSize(30);
+	  font.setPixelSize(20);
 	  painter.setFont(font);
+	  //QFont font(drawing_font);
+	  //font.setPixelSize(30);
+	  //painter.setFont(font);
 	  QRectF rectangle(width()/2.-300,250,600,30);
 	  painter.setPen(QColor("red"));
 	  painter.drawText(rectangle,Qt::AlignCenter,"press space");
@@ -336,7 +338,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.translate(0,GameManager::groundLevel());
       painter.setPen(drawing_pen);
       painter.drawLine(QPointF(-GameManager::courtWidth()/2,-drawing_pen.widthF()/2),QPointF(GameManager::courtWidth()/2,-drawing_pen.widthF()/2));
-      painter.drawLine(QPointF(0,0),QPointF(0,GameManager::netHeight()-0.125));
+      painter.drawLine(QPointF(0,0),QPointF(0,GameManager::netHeight()));
       painter.restore();
   }
 
