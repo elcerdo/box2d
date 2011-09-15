@@ -1,8 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-<file>images/ballbw.png</file>
-<file>images/left_blob_00.png</file>
-<file>images/right_blob_00.png</file>
+<file alias="images/ball.png">images/ballbw.png</file>
+<file alias="images/left_blob.png">images/left_blob_bw.png</file>
+<file alias="images/right_blob.png">images/right_blob_bw.png</file>
 <file>images/arrow.png</file>
 <file>images/win00.png</file>
 <file>images/win01.png</file>

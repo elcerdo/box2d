@@ -30,7 +30,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
 : QGLWidget(parent), world(NULL),
   panning(false), panningPosition(0,0), panningPositionStart(0,0), panningPositionCurrent(0,0), scale(0.), debugdraw(false),
   data(data),
-  ballImage(":/images/ballbw.png"), leftPlayerImage(":/images/left_blob_00.png"), rightPlayerImage(":/images/right_blob_00.png"),
+  ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob.png"), rightPlayerImage(":/images/right_blob.png"),
   arrowImage(":/images/arrow.png"),
   win00(":/images/win00.png"),win01(":/images/win01.png"),
   lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
