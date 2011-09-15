@@ -31,9 +31,9 @@ void GameData::buildCourt(World &world)
     body_left_wall->SetUserData(NULL);
     body_right_wall = world.addStaticBox(-GameManager::courtWidth()/2.-.5,GameManager::courtHeight()/2.,1,GameManager::courtHeight()+2.);
     body_right_wall->SetUserData(NULL);
-    body_left_tack = world.addStaticBall(-GameManager::courtWidth()/2.-GameManager::tackRadius()/2.,GameManager::sceneHeight()+2,GameManager::tackRadius());
+    body_left_tack = world.addStaticBall(-GameManager::courtWidth()/2.,GameManager::courtHeight(),GameManager::tackRadius());
     body_left_tack->SetUserData(NULL);
-    body_right_tack = world.addStaticBall(GameManager::courtWidth()/2.+GameManager::tackRadius()/2.,GameManager::sceneHeight()+2,GameManager::tackRadius());
+    body_right_tack = world.addStaticBall(GameManager::courtWidth()/2.,GameManager::courtHeight(),GameManager::tackRadius());
     body_right_tack->SetUserData(NULL);
     body_net = world.addStaticBox(0,GameManager::netHeight()/2.,GameManager::netWidth(),GameManager::netHeight());
     body_net->SetUserData(NULL);
