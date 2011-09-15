@@ -53,6 +53,10 @@ protected:
   QPixmap arrowImage;
   QPixmap win00,win01;
   QPixmap lose00,lose01;
+
+  QPixmap frame;
+  QPixmap noises[10];
+  int noise_current;
 };
 
 #endif

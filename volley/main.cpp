@@ -1,11 +1,36 @@
 
+#include <QPixmapCache>
 #include <QApplication>
 #include "world.h"
 #include "gamemanager.h"
 #include "gamedata.h"
 #include "drawer.h"
 
+void generateBackgroundNoise()
+{
+    qDebug() << "generating background noise";
+    QPixmapCache cache;
+
+    for (int kk=0; kk<10; kk++) {
+	QImage image(400,300,QImage::Format_RGB32);
+	image.fill(qRgb(0,0,0));
+	for (int x=0; x<image.width(); x++) {
+	    for (int y=0; y<image.height(); y++) {
+		int value = qrand() % 45;
+		if (value>32) value = 32 + (value-32)*2;
+		image.setPixel(x,y,qRgb(value,value,value));
+	    }
+	}
+
+	QString name = QString("noise%1").arg(kk);
+	QPixmap pixmap;
+	pixmap.convertFromImage(image);
+	cache.insert(name,pixmap);
+    }
+}
+
 int main(int argc, char *argv[]) {
+    srand(time(NULL));
     QApplication app(argc,argv);
 
     { // set details for QSettings
@@ -13,6 +38,9 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setOrganizationDomain("softpower.ord");
 	QCoreApplication::setApplicationName("volley");
     }
+
+    // generate graphics
+    generateBackgroundNoise();
 
     // dump key settings
     KeyManager::dumpKeys();

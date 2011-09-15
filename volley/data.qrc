@@ -10,5 +10,6 @@
 <file>images/win01.png</file>
 <file>images/lose00.png</file>
 <file>images/lose01.png</file>
+<file>images/tv_frame.png</file>
 </qresource>
 </RCC>

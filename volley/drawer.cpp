@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QColor>
 #include <QSettings>
+#include <QPixmapCache>
 
 bool Drawer::handlePlayerKeyPress(int key, const PlayerKeys& keys, Player& player, float time)
 {
@@ -33,7 +34,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   poleImage(":/images/pole.png"), backgroundImage(":/images/beach.jpg"),
   arrowImage(":/images/arrow.png"),
   win00(":/images/win00.png"),win01(":/images/win01.png"),
-  lose00(":/images/lose00.png"),lose01(":/images/lose01.png")
+  lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
+  frame(":/images/tv_frame.png")
 {
     resize(800,600);
   
@@ -41,6 +43,16 @@ Drawer::Drawer(GameData& data,QWidget *parent)
     scale = settings.value("drawer/scale",40.).toFloat();
     panningPosition = settings.value("drawer/panningPosition",0.).toPointF();
     debugdraw = settings.value("drawer/debugdraw",false).toBool();
+
+    { // background noise
+	noise_current = 0;
+	QPixmapCache cache;
+	for (int kk=0; kk<10; kk++) {
+	    QString name = QString("noise%1").arg(kk);
+	    bool ok = cache.find(name,&noises[kk]);
+	    Q_ASSERT(ok);
+	}
+    }
 }
 
 Drawer::~Drawer()
@@ -174,8 +186,10 @@ void Drawer::paintEvent(QPaintEvent* event)
   { // draw background
       painter.save();
       painter.scale(1,-1);
-      painter.drawPixmap(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight(),GameManager::courtWidth(),GameManager::sceneHeight()),backgroundImage,backgroundImage.rect());
+      painter.drawPixmap(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight(),GameManager::courtWidth(),GameManager::sceneHeight()),noises[noise_current],noises[noise_current].rect());
       painter.restore();
+      noise_current++;
+      noise_current%=10;
   }
 
   { // draw score overlay
@@ -261,35 +275,6 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
   }
 
-  { // draw state overlay
-      QString state_string;
-      switch (data.getState()) {
-	  case GameData::INIT:
-	      state_string = "init";
-	      break;
-	  case GameData::STARTING:
-	      state_string = QString("starting");
-	      break;
-	  case GameData::PLAYING:
-	      state_string = "playing";
-	      break;
-	  case GameData::FINISHED:
-	      state_string = "finished";
-	      break;
-      };
-
-      painter.save();
-      painter.resetTransform();
-      QFont font;
-      font.setBold(true);
-      font.setPixelSize(20);
-      painter.setFont(font);
-      painter.setPen(QColor("red"));
-      painter.drawText(5,20,state_string);
-      painter.drawText(5,40,QString("%1s").arg(dt,0,'f',2));
-      painter.restore();
-  }
-
   { // draw ball
       const Ball& ball = data.getBall();
       const b2Body* body = ball.getBody();
@@ -351,6 +336,44 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.drawPixmap(QRectF(-GameManager::netWidth()/2.,-GameManager::netHeight(),GameManager::netWidth(),GameManager::netHeight()),poleImage,poleImage.rect());
       painter.restore();
   }
+
+  { // draw tv frame
+      painter.save();
+      painter.translate(0,GameManager::sceneHeight()/2);
+      painter.scale(1.04,-1.04);
+      painter.drawPixmap(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight()/2,GameManager::courtWidth(),GameManager::sceneHeight()),frame,frame.rect());
+      painter.restore();
+  }
+
+  { // draw state overlay
+      QString state_string;
+      switch (data.getState()) {
+	  case GameData::INIT:
+	      state_string = "init";
+	      break;
+	  case GameData::STARTING:
+	      state_string = QString("starting");
+	      break;
+	  case GameData::PLAYING:
+	      state_string = "playing";
+	      break;
+	  case GameData::FINISHED:
+	      state_string = "finished";
+	      break;
+      };
+
+      painter.save();
+      painter.resetTransform();
+      QFont font;
+      font.setBold(true);
+      font.setPixelSize(20);
+      painter.setFont(font);
+      painter.setPen(QColor("red"));
+      painter.drawText(5,20,state_string);
+      painter.drawText(5,40,QString("%1s").arg(dt,0,'f',2));
+      painter.restore();
+  }
+
 
   if (debugdraw) { // debug draw scene
       // draw bodies
