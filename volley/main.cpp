@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
     drawer.show();
 
+    QObject::connect(&drawer,SIGNAL(exitButtonPressed()), &app, SLOT(quit()));
     //world.stepWorld();
     world.setStepping(true);
 

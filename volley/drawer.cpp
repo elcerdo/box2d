@@ -96,7 +96,9 @@ void Drawer::keyPressEvent(QKeyEvent* event)
     }
 
     //qDebug() << "pressed" << event->key();
-
+    if (event->key()==KeyManager::exitKey()) {
+      emit exitButtonPressed();
+    }
     if (event->key()==KeyManager::fullscreenKey()) {
 	fullscreen = !fullscreen;
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
