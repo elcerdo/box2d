@@ -65,7 +65,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
 	drawingPen.setColor("white");
 	drawingPen.setWidthF(.25);
 	drawingPen.setCapStyle(Qt::RoundCap);
-	drawingFont.setFamily("04b03");
+	//drawingFont.setFamily("04b03");
+	drawingFont.setFamily("PixelSplitter");
 	drawingFont.setPixelSize(22);
 
 	debugPen.setColor("red");
@@ -203,7 +204,7 @@ void Drawer::paintEvent(QPaintEvent* event)
  
   const float dt = world->getTime()-data.getLastTransitionTime();
 
-  static QRectF message_position(-50,-130,100,20);
+  static QRectF message_position(-75,-130,150,20);
 
   QPainter painter(this);
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
@@ -249,10 +250,10 @@ void Drawer::paintEvent(QPaintEvent* event)
   { // draw score
       painter.save();
       painter.scale(.1,-.1);
-      //painter.drawRect(QRectF(-32,-25,30,20));
-      painter.drawText(QRectF(-34.5,-25,30,20),Qt::AlignRight|Qt::AlignTop,QString("%1").arg(data.getTeam(Team::LEFT).getScore()));
-      //painter.drawRect(QRectF(2,-25,30,20));
-      painter.drawText(QRectF(7,-25,30,20),Qt::AlignLeft|Qt::AlignTop,QString("%1").arg(data.getTeam(Team::RIGHT).getScore()));
+      //painter.drawRect(QRectF(-32,-30,30,25));
+      painter.drawText(QRectF(-34.5,-30,30,25),Qt::AlignRight|Qt::AlignTop,QString("%1").arg(data.getTeam(Team::LEFT).getScore()));
+      //painter.drawRect(QRectF(2,-30,30,25));
+      painter.drawText(QRectF(4,-30,30,25),Qt::AlignLeft|Qt::AlignTop,QString("%1").arg(data.getTeam(Team::RIGHT).getScore()));
       painter.restore();
   }
 

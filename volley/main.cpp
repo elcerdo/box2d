@@ -52,6 +52,7 @@ void loadFont()
     qDebug() << "loading font";
     QFontDatabase fontDB;
     fontDB.addApplicationFont(":/fonts/04b03.ttf");
+    fontDB.addApplicationFont(":/fonts/PixelSplitter-Bold.ttf");
 }
 
 int main(int argc, char *argv[]) {
