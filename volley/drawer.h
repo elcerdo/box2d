@@ -63,6 +63,9 @@ protected:
   QFont drawingFont;
   QPen debugPen;
   QFont debugFont;
+
+ signals:
+  void exitButtonPressed();
 };
 
 #endif

@@ -6,6 +6,24 @@
 #include "gamedata.h"
 #include "drawer.h"
 
+/*
+ Calcul de
+ 
+      sigma*\sqrt{12/n}(\sigma_{i=1}^{12} rand()/RAND_MAX - n/2) + mu
+
+ pour n = 12
+*/
+double L_gauss(float mu, float sigma)
+{
+  double sum = 0.0;
+
+  for (int i = 0; i < 12; i++)
+    sum += (double)qrand();
+  sum = sum/RAND_MAX - 6;
+
+  return sigma*sum + mu;;
+}
+
 void generateBackgroundNoise()
 {
     qDebug() << "generating background noise";
@@ -17,12 +35,12 @@ void generateBackgroundNoise()
 	for (int x=0; x<image.width(); x++) {
 	    for (int y=0; y<image.height(); y++) {
 		if (qrand()%100>40) continue;
-		int value = qrand() % 45;
-		if (value>32) value = 32 + (value-32)*2;
+		// int value = qrand() % 45;
+		// if (value>32) value = 32 + (value-32)*2;
+		int value = (int) fabs(L_gauss(0., 30.));
 		image.setPixel(x,y,qRgb(value,value,value));
 	    }
 	}
-
 	QString name = QString("noise%1").arg(kk);
 	QPixmap pixmap = QPixmap::fromImage(image);
 	cache.insert(name,pixmap);
@@ -65,6 +83,7 @@ int main(int argc, char *argv[]) {
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
     drawer.show();
 
+    QObject::connect(&drawer,SIGNAL(exitButtonPressed()), &app, SLOT(quit()));
     //world.stepWorld();
     world.setStepping(true);
 

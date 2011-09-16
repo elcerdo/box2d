@@ -16,7 +16,7 @@ public:
     static int debugDrawKey();
     static int resetViewKey();
     static int beginPointKey();
-
+    static int exitKey();
     static PlayerKeys playerKeys(int number);
 
     static void dumpKeys();
