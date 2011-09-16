@@ -34,7 +34,7 @@ public:
     Team(const Field &field);
     Field getField() const;
     int getScore() const;
-    int teamScored();
+    void teamScored();
 protected:
     const Field field;
     int score;

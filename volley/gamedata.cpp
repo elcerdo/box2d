@@ -122,14 +122,14 @@ void GameData::checkState(World* world)
 	    const b2Body* body1 = contact->GetFixtureA()->GetBody();
 	    const b2Body* body2 = contact->GetFixtureB()->GetBody();
 
-	    if(body1 == body_right_ground){
+	    if(body1 == body_right_ground || body2 == body_right_ground){
 		last_scoring_team = left_team;
 		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();
 		state = FINISHED;
 	    }
 
-	    if(body1 == body_left_ground){
+	    if(body1 == body_left_ground || body2 == body_left_ground){
 		last_scoring_team = right_team;
 		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();

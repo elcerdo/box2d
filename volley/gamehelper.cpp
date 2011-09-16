@@ -43,7 +43,7 @@ void Ball::drawPositions(QPixmap& pixmap) const
 Team::Team(const Team::Field &field) : field(field), score(0) {}
 Team::Field Team::getField() const { return field; }
 int Team::getScore() const { return score; }
-int Team::teamScored() { score++; }
+void Team::teamScored() { score++; }
 
 Player::Player(b2Body* body, Team &team) : UserData(body), team(team), jumping(false), jump_speed(0), jump_time(-1) {}
 

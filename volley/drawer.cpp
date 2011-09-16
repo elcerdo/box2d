@@ -209,10 +209,16 @@ void Drawer::paintEvent(QPaintEvent* event)
   painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
   { // clear background
-      painter.beginNativePainting();
-      glClearColor(0, 0, 0, 1);
-      glClear(GL_COLOR_BUFFER_BIT);
-      painter.endNativePainting();
+      //painter.beginNativePainting();
+      //qglClearColor(Qt::black);
+      //glClear(GL_COLOR_BUFFER_BIT);
+      //painter.endNativePainting();
+	  painter.save();
+	  qglColor(Qt::yellow);
+	  painter.setPen(Qt::NoPen);
+	  painter.setBrush(Qt::black);
+	  painter.drawRect(rect());
+	  painter.restore();
   }
 
   painter.setFont(drawingFont);

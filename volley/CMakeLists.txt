@@ -45,7 +45,7 @@ add_executable(volley
     ${sources_moc}
     ${sources_rcc}
     )
-target_link_libraries(volley ${QT_LIBRARIES} Box2D GL)
+target_link_libraries(volley ${QT_LIBRARIES} Box2D)
 
 install(TARGETS volley
     RUNTIME DESTINATION bin
