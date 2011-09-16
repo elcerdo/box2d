@@ -22,6 +22,7 @@ public:
 
     static float groundLevel();
     static float cursorHideTime();
+    static int numberOfPositions();
 private:
     GameManager(); // not implemented
 };

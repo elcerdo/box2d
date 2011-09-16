@@ -2,6 +2,8 @@
 #define __GAMEHELPER_H__
 
 #include "common.h"
+#include <QList>
+#include <QPixmap>
 
 class UserData {
 public:
@@ -14,7 +16,15 @@ protected:
 class Ball : public UserData {
 public:
     Ball(b2Body* body);
+    void clearPositions();
+    void recordPosition();
+    void drawPositions(QPixmap& pixmap) const;
 protected:
+    struct Position {
+	float x,y;
+    };
+    typedef QList<Position> Positions;
+    Positions positions;
     int nhit;
 };
 

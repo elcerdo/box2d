@@ -1,12 +1,44 @@
 #include "gamehelper.h"
 #include "gamemanager.h"
 
-UserData::UserData(b2Body* body) : body(body) {}
+#include <QPainter>
+#include <QDebug>
+
+UserData::UserData(b2Body* body) : body(body) { Q_ASSERT(body); body->SetUserData(static_cast<void*>(this)); }
 const b2Body* UserData::getBody() const { return body; }
 
-Ball::Ball(b2Body* body) : UserData(body), nhit(0) {
-    body->SetUserData(static_cast<void*>(this));
+Ball::Ball(b2Body* body) : UserData(body), nhit(0) {}
+
+void Ball::recordPosition()
+{
+    //qDebug() << "record" << positions.size();
+    Position position = {body->GetPosition().x,body->GetPosition().y};
+    positions.push_back(position);
+    while (positions.size()>GameManager::numberOfPositions()) { positions.pop_front(); }
 }
+
+void Ball::clearPositions()
+{
+    positions.clear();
+}
+
+void Ball::drawPositions(QPixmap& pixmap) const
+{
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    painter.setPen(Qt::NoPen);
+    painter.translate(pixmap.width()/2.,pixmap.height());
+    painter.scale(pixmap.width()/GameManager::courtWidth(),-pixmap.width()/GameManager::courtWidth());
+    painter.translate(-GameManager::ballRadius(),GameManager::groundLevel()-GameManager::ballRadius());
+    int kk=0;
+    for (Positions::const_iterator iter=positions.begin(); iter!=positions.end(); iter++) {
+	painter.setBrush(QColor::fromHsv(kk,255,255-kk));
+	painter.drawEllipse(QRectF(iter->x,iter->y,2*GameManager::ballRadius(),2*GameManager::ballRadius()));
+	kk+=17;
+	kk%=360;
+    }
+}
+
 
 Team::Team(const Team::Field &field) : field(field), score(0) {}
 Team::Field Team::getField() const { return field; }

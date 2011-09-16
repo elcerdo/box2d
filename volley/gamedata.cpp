@@ -80,9 +80,17 @@ void GameData::beginPoint(World& world)
 		break;
 	};
     }
+    
+    ball->clearPositions();
 
     last_transition_time = world.getTime();
     state = STARTING;
+}
+
+void GameData::recordBallPosition(World* world)
+{
+    Q_UNUSED(world);
+    ball->recordPosition();
 }
 
 void GameData::stabilizePlayers(World* world)

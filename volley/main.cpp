@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
 
     GameData data(world);
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));
+    QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(recordBallPosition(World*)));
     QObject::connect(&world,SIGNAL(preStepWorld(World*)),&data,SLOT(checkState(World*)));
 
     Drawer drawer(data);

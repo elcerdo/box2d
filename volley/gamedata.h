@@ -29,6 +29,7 @@ public:
     Player& getRightPlayer();
 
 public slots:
+    void recordBallPosition(World*);
     void stabilizePlayers(World*);
     void checkState(World*);
 

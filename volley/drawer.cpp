@@ -33,6 +33,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob.png"), rightPlayerImage(":/images/right_blob.png"),
   arrowImage(":/images/arrow.png"),
+  trajectoryImage(400,300),
   //win00(":/images/win00.png"),win01(":/images/win01.png"),
   //lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
   frame(":/images/tv_frame.png")
@@ -221,9 +222,17 @@ void Drawer::paintEvent(QPaintEvent* event)
   painter.scale(scale,-scale);
 
   { // draw background
+      data.getBall().drawPositions(trajectoryImage);
+
       painter.save();
       painter.scale(1,-1);
-      painter.drawPixmap(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight(),GameManager::courtWidth(),GameManager::sceneHeight()),noises[noise_current],noises[noise_current].rect());
+      QImage current = noises[noise_current].toImage();
+      QPainter composition(&current);
+      composition.setCompositionMode(QPainter::CompositionMode_Overlay);
+      composition.drawPixmap(0,0,trajectoryImage);
+      composition.end();
+      painter.drawImage(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight(),GameManager::courtWidth(),GameManager::sceneHeight()),current,current.rect());
+      //painter.drawPixmap(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight(),GameManager::courtWidth(),GameManager::sceneHeight()),trajectoryImage,trajectoryImage.rect());
       painter.restore();
       noise_current++;
       noise_current%=10;
