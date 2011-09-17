@@ -353,6 +353,14 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),leftPlayerImage,leftPlayerImage.rect());
+      if (data.getState()==GameData::STARTING) {
+	  painter.scale(1,-1);
+	  painter.translate(0,1);
+	  painter.drawPixmap(QRectF(-.5,.5,1,1),arrowImage,arrowImage.rect());
+	  painter.translate(0,2);
+	  painter.scale(.05,-.05);
+	  painter.drawText(QRectF(-20,-15,40,30),Qt::AlignCenter,player.getName());
+      }
       //if (data.isLastTouchingPlayer(player)) painter.drawRect(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()));
       painter.restore();
   }
@@ -367,6 +375,14 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),rightPlayerImage,rightPlayerImage.rect());
       //if (data.isLastTouchingPlayer(player)) painter.drawRect(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()));
+      if (data.getState()==GameData::STARTING) {
+	  painter.scale(1,-1);
+	  painter.translate(0,1);
+	  painter.drawPixmap(QRectF(-.5,.5,1,1),arrowImage,arrowImage.rect());
+	  painter.translate(0,2);
+	  painter.scale(.05,-.05);
+	  painter.drawText(QRectF(-20,-15,40,30),Qt::AlignCenter,player.getName());
+      }
       painter.restore();
   }
 
