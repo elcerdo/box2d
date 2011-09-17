@@ -23,6 +23,7 @@ public:
     static float groundLevel();
     static float cursorHideTime();
     static int numberOfPositions();
+    static int winningScore();
 private:
     GameManager(); // not implemented
 };

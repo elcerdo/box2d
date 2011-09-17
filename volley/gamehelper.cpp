@@ -40,10 +40,22 @@ void Ball::drawPositions(QPixmap& pixmap) const
 }
 
 
-Team::Team(const Team::Field &field) : field(field), score(0) {}
+Team::Team(const Team::Field &field) : field(field), score(0), set(0) {}
 Team::Field Team::getField() const { return field; }
+void Team::resetScore() { score = 0; }
 int Team::getScore() const { return score; }
 void Team::teamScored() { score++; }
+int Team::getSet() const { return set; }
+void Team::teamWonSet() { set++; }
+QString Team::getName() const
+{
+    switch (field) {
+	case Team::LEFT:
+	    return "T1";
+	case Team::RIGHT:
+	    return "T2";
+    }
+}
 
 Player::Player(b2Body* body, Team &team) : UserData(body), team(team), jumping(false), jump_speed(0), jump_time(-1) {}
 
@@ -128,3 +140,12 @@ void Player::checkPosition(float time)
 }
 
 Team &Player::getTeam() { return team; }
+const Team &Player::getTeam() const { return team; }
+QString Player::getName() const {
+    switch (team.getField()) {
+	case Team::LEFT:
+	    return "P1";
+	case Team::RIGHT:
+	    return "P2";
+    }
+}

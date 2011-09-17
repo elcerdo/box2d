@@ -273,9 +273,19 @@ void Drawer::paintEvent(QPaintEvent* event)
 
   if (data.getState()==GameData::FINISHED) { // draw ready overlay
       bool aa = (dt-static_cast<int>(dt/.5)*.5<.5/2.);
+
+      const Team& team = data.getLastScoringTeam();
+      const Player* player = data.getLastScoringPlayer();
+
+      QString message = QString("%1 SCORED").arg(team.getName());
+      if (player) {
+	  if (player->getTeam().getField()==team.getField()) message = QString("%1 SCORED").arg(player->getName());
+	  else message = QString("%1 FAILED").arg(player->getName());
+      }
+
       painter.save();
       painter.scale(.1,-.1);
-      painter.drawText(message_position,Qt::AlignCenter,"FINISHED"); // finished
+      painter.drawText(message_position,Qt::AlignCenter,message); // finished
       if (aa) { // press space
 	  QFont font(drawingFont);
 	  font.setPixelSize(drawingFont.pixelSize()/2);
@@ -343,6 +353,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),leftPlayerImage,leftPlayerImage.rect());
+      //if (data.isLastTouchingPlayer(player)) painter.drawRect(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()));
       painter.restore();
   }
 
@@ -355,6 +366,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),rightPlayerImage,rightPlayerImage.rect());
+      //if (data.isLastTouchingPlayer(player)) painter.drawRect(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()));
       painter.restore();
   }
 

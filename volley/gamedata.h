@@ -19,6 +19,9 @@ public:
     State getState() const;
     float getLastTransitionTime() const;
     const Team& getLastScoringTeam() const;
+    const Player* getLastScoringPlayer() const;
+    const Player* getLastTouchingPlayer() const;
+    bool isLastTouchingPlayer(const Player& player) const;
 
     void beginPoint(World& world);
 
@@ -56,6 +59,8 @@ protected:
 
     float last_transition_time;
     Team* last_scoring_team;
+    Player* last_scoring_player;
+    Player* last_touching_player;
 
     State state;
 };

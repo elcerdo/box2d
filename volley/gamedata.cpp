@@ -4,7 +4,7 @@
 #include <QDebug>
 
 GameData::GameData(World& world, QObject* parent) 
-    : QObject(parent), last_transition_time(world.getTime()), last_scoring_team(NULL), state(INIT)
+    : QObject(parent), last_transition_time(world.getTime()), last_scoring_team(NULL), last_scoring_player(NULL), last_touching_player(NULL), state(INIT)
 {
     buildCourt(world);
     beginPoint(world);
@@ -13,11 +13,20 @@ GameData::GameData(World& world, QObject* parent)
 GameData::State GameData::getState() const { return state; }
 float GameData::getLastTransitionTime() const { return last_transition_time; }
 const Team& GameData::getLastScoringTeam() const { Q_ASSERT(last_scoring_team); return *last_scoring_team; }
+const Player* GameData::getLastScoringPlayer() const { return last_scoring_player; }
+const Player* GameData::getLastTouchingPlayer() const { return last_touching_player; }
 Ball& GameData::getBall() { return *ball; }
 Team& GameData::getTeam(Team::Field field) { return field==Team::RIGHT ? *right_team : *left_team; }
 Player& GameData::getPlayer(int number) { return number ? *right_player : *left_player; }
 Player& GameData::getLeftPlayer() { return *left_player; }
 Player& GameData::getRightPlayer() { return *right_player; }
+
+bool GameData::isLastTouchingPlayer(const Player& player) const
+{
+    if (!last_touching_player) return false;
+    if (last_touching_player==&player) return true;
+    return false;
+}
 
 void GameData::buildCourt(World &world)
 {
@@ -81,7 +90,9 @@ void GameData::beginPoint(World& world)
 	};
     }
     
+    // reset touching player and ball tail
     ball->clearPositions();
+    last_touching_player = NULL;
 
     last_transition_time = world.getTime();
     state = STARTING;
@@ -111,7 +122,6 @@ void GameData::checkState(World* world)
 	    last_transition_time = world->getTime();
 	    state = PLAYING;
 	}
-	return;
     }
 
     if (state==PLAYING) {
@@ -124,6 +134,7 @@ void GameData::checkState(World* world)
 
 	    if(body1 == body_right_ground || body2 == body_right_ground){
 		last_scoring_team = left_team;
+		last_scoring_player = last_touching_player;
 		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();
 		state = FINISHED;
@@ -131,11 +142,28 @@ void GameData::checkState(World* world)
 
 	    if(body1 == body_left_ground || body2 == body_left_ground){
 		last_scoring_team = right_team;
+		last_scoring_player = last_touching_player;
 		last_scoring_team->teamScored();
 		last_transition_time = world->getTime();
 		state = FINISHED;
 	    }
 	}
-	return;
+    }
+
+    // update last touching player
+    for (const b2ContactEdge* ce = body_ball->GetContactList(); ce; ce = ce->next) {
+	const b2Contact* contact = ce->contact;
+	if (!contact->IsTouching()) continue;
+
+	const b2Body* body1 = contact->GetFixtureA()->GetBody();
+	const b2Body* body2 = contact->GetFixtureB()->GetBody();
+
+	if (body1==body_left_player || body2==body_left_player) {
+	    last_touching_player = left_player;
+	}
+
+	if (body1==body_right_player || body2==body_right_player) {
+	    last_touching_player = right_player;
+	}
     }
 }

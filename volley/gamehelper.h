@@ -35,9 +35,14 @@ public:
     Field getField() const;
     int getScore() const;
     void teamScored();
+    void resetScore();
+    int getSet() const;
+    void teamWonSet();
+    QString getName() const;
 protected:
     const Field field;
     int score;
+    int set;
 };
 
 class Player : public UserData {
@@ -52,6 +57,8 @@ public:
     void checkPosition(float time);
     void checkJump(float time);
     Team &getTeam();
+    const Team &getTeam() const;
+    QString getName() const;
 protected:
     Team &team;
     bool jumping;
