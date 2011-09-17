@@ -30,12 +30,12 @@ void Ball::drawPositions(QPixmap& pixmap) const
     painter.translate(pixmap.width()/2.,pixmap.height());
     painter.scale(pixmap.width()/GameManager::courtWidth(),-pixmap.width()/GameManager::courtWidth());
     painter.translate(-GameManager::ballRadius(),GameManager::groundLevel()-GameManager::ballRadius());
-    int kk=0;
+    float alpha = 1.;
     for (Positions::const_iterator iter=positions.begin(); iter!=positions.end(); iter++) {
-	painter.setBrush(QColor::fromHsv(kk,255,255-kk));
-	painter.drawEllipse(QRectF(iter->x,iter->y,2*GameManager::ballRadius(),2*GameManager::ballRadius()));
-	kk+=17;
-	kk%=360;
+	painter.setBrush(QColor::fromHsvF(alpha*2/3,1,1));
+	float beta = alpha * alpha;
+	painter.drawEllipse(QRectF(iter->x+beta*GameManager::ballRadius(),iter->y+beta*GameManager::ballRadius(),(1-beta)*2*GameManager::ballRadius(),(1-beta)*2*GameManager::ballRadius()));
+	alpha -= 1./GameManager::numberOfPositions();
     }
 }
 
