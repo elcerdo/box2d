@@ -5,6 +5,7 @@
 #include "gamemanager.h"
 #include "gamedata.h"
 #include "drawer.h"
+#include "sound.h"
 
 /*
  Calcul de
@@ -74,6 +75,9 @@ int main(int argc, char *argv[]) {
 
     World world(1./50.);
     world.initialize(b2Vec2(0,-GameManager::gravity()));
+
+    Sound sound;
+    sound.playBeep();
 
     GameData data(world);
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));

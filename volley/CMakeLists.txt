@@ -1,5 +1,6 @@
 find_package(Qt4)
 set(QT_USE_QTOPENGL TRUE)
+set(QT_USE_QTMULTIMEDIA TRUE)
 include(${QT_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR})
 
@@ -27,10 +28,12 @@ set(sources
     world.cpp drawer.cpp
     gamehelper.cpp gamedata.cpp
     common.cpp
+    sound.cpp
     main.cpp
     )
 set(headers
     world.h   drawer.h
+    sound.h
     gamedata.h
     )
 set(ressources
