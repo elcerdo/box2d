@@ -135,17 +135,13 @@ void GameData::checkState(World* world)
 	    if(body1 == body_right_ground || body2 == body_right_ground){
 		last_scoring_team = left_team;
 		last_scoring_player = last_touching_player;
-		last_scoring_team->teamScored();
-		last_transition_time = world->getTime();
-		state = FINISHED;
+		updateScoreAndSet(*world);
 	    }
 
 	    if(body1 == body_left_ground || body2 == body_left_ground){
 		last_scoring_team = right_team;
 		last_scoring_player = last_touching_player;
-		last_scoring_team->teamScored();
-		last_transition_time = world->getTime();
-		state = FINISHED;
+		updateScoreAndSet(*world);
 	    }
 	}
     }
@@ -166,4 +162,17 @@ void GameData::checkState(World* world)
 	    last_touching_player = right_player;
 	}
     }
+}
+
+void GameData::updateScoreAndSet(World& world)
+{
+    last_scoring_team->teamScored();
+    if (last_scoring_team->getScore()>=GameManager::winningScore())
+    {
+	last_scoring_team->teamWonSet();
+	left_team->resetScore();
+	right_team->resetScore();
+    }
+    last_transition_time = world.getTime();
+    state = FINISHED;
 }

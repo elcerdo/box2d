@@ -34,6 +34,8 @@ protected:
   static bool handlePlayerKeyRelease(int key, const PlayerKeys& keys, Player& player, float time);
 
 protected:
+  void drawPlayerName(const Player& player, QPainter &painter) const;
+
   World* world;
 
   bool panning;

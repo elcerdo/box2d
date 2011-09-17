@@ -31,4 +31,4 @@ float GameManager::startingTime() { return 1.5; }
 float GameManager::groundLevel() { return 3; }
 float GameManager::cursorHideTime() { return .5; }
 int GameManager::numberOfPositions() { return 15; }
-int GameManager::winningScore() { return 10; }
+int GameManager::winningScore() { return 15; }

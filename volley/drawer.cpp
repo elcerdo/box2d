@@ -196,6 +196,16 @@ void Drawer::wheelEvent(QWheelEvent* event)
   scale *= pow(2,degree/180);
 }
 
+void Drawer::drawPlayerName(const Player& player, QPainter &painter) const
+{
+    painter.scale(1,-1);
+    painter.translate(0,1);
+    painter.drawPixmap(QRectF(-.5,.5,1,1),arrowImage,arrowImage.rect());
+    painter.translate(0,2);
+    painter.scale(.05,-.05);
+    painter.drawText(QRectF(-20,-15,40,30),Qt::AlignCenter,player.getName());
+}
+
 void Drawer::paintEvent(QPaintEvent* event)
 {
   if (!world) return;
@@ -257,6 +267,30 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
   }
 
+  { // draw sets
+      painter.save();
+      painter.setPen(Qt::NoPen);
+      painter.setBrush(drawingPen.color());
+
+      painter.save();
+      painter.translate(-GameManager::courtWidth()/2,2);
+      for (int kk=0; kk<data.getTeam(Team::LEFT).getSet() && kk<4; kk++) {
+	  painter.translate(1.2,0);
+	  painter.drawEllipse(QRectF(-.5,-.5,1,1));
+      }
+      painter.restore();
+
+      painter.save();
+      painter.translate(GameManager::courtWidth()/2,2);
+      for (int kk=0; kk<data.getTeam(Team::RIGHT).getSet() && kk<4; kk++) {
+	  painter.translate(-1.2,0);
+	  painter.drawEllipse(QRectF(-.5,-.5,1,1));
+      }
+      painter.restore();
+
+      painter.restore();
+  }
+
   if (data.getState()==GameData::STARTING) { // draw ready overlay
       painter.save();
       painter.scale(.1,-.1);
@@ -264,7 +298,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
   }
 
-  if (data.getState()==GameData::PLAYING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.)) { // draw ready overlay
+  if (data.getState()==GameData::PLAYING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.)) { // draw go overlay
       painter.save();
       painter.scale(.1,-.1);
       painter.drawText(message_position,Qt::AlignCenter,"GO");
@@ -353,15 +387,10 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.translate(toQPointF(body->GetPosition()));
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),leftPlayerImage,leftPlayerImage.rect());
-      if (data.getState()==GameData::STARTING) {
-	  painter.scale(1,-1);
-	  painter.translate(0,1);
-	  painter.drawPixmap(QRectF(-.5,.5,1,1),arrowImage,arrowImage.rect());
-	  painter.translate(0,2);
-	  painter.scale(.05,-.05);
-	  painter.drawText(QRectF(-20,-15,40,30),Qt::AlignCenter,player.getName());
-      }
       //if (data.isLastTouchingPlayer(player)) painter.drawRect(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()));
+      //if (data.getState()==GameData::STARTING || (data.getState()==GameData::PLAYING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.))) drawPlayerName(player,painter);
+      if (data.getState()==GameData::STARTING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.)) drawPlayerName(player,painter);
+      //if (data.getState()==GameData::STARTING) drawPlayerName(player,painter);
       painter.restore();
   }
 
@@ -375,14 +404,9 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.scale(1,-1);
       painter.drawPixmap(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()),rightPlayerImage,rightPlayerImage.rect());
       //if (data.isLastTouchingPlayer(player)) painter.drawRect(QRectF(-GameManager::playerRadius(),-GameManager::playerRadius(),2*GameManager::playerRadius(),GameManager::playerRadius()));
-      if (data.getState()==GameData::STARTING) {
-	  painter.scale(1,-1);
-	  painter.translate(0,1);
-	  painter.drawPixmap(QRectF(-.5,.5,1,1),arrowImage,arrowImage.rect());
-	  painter.translate(0,2);
-	  painter.scale(.05,-.05);
-	  painter.drawText(QRectF(-20,-15,40,30),Qt::AlignCenter,player.getName());
-      }
+      //if (data.getState()==GameData::STARTING || (data.getState()==GameData::PLAYING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.))) drawPlayerName(player,painter);
+      if (data.getState()==GameData::STARTING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.)) drawPlayerName(player,painter);
+      //if (data.getState()==GameData::STARTING) drawPlayerName(player,painter);
       painter.restore();
   }
 

@@ -38,6 +38,7 @@ public slots:
 
 protected:
     void buildCourt(World& world);
+    void updateScoreAndSet(World &world);
 
     b2Body* body_left_ground;
     b2Body* body_right_ground;
