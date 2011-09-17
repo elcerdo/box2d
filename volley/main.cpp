@@ -77,9 +77,8 @@ int main(int argc, char *argv[]) {
     world.initialize(b2Vec2(0,-GameManager::gravity()));
 
     Sound sound;
-    sound.playBeep();
 
-    GameData data(world);
+    GameData data(sound,world);
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(recordBallPosition(World*)));
     QObject::connect(&world,SIGNAL(preStepWorld(World*)),&data,SLOT(checkState(World*)));

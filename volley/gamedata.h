@@ -2,6 +2,7 @@
 #define __GAMEDATA_H__
 
 #include <QObject>
+#include "sound.h"
 #include "world.h"
 #include "gamehelper.h"
 
@@ -15,7 +16,7 @@ public:
 	FINISHED
     };
  
-    GameData(World& world, QObject* parent=NULL);
+    GameData(Sound &sound,World& world, QObject* parent=NULL);
     State getState() const;
     float getLastTransitionTime() const;
     const Team& getLastScoringTeam() const;
@@ -39,6 +40,8 @@ public slots:
 protected:
     void buildCourt(World& world);
     void updateScoreAndSet(World &world);
+
+    Sound &sound;
 
     b2Body* body_left_ground;
     b2Body* body_right_ground;

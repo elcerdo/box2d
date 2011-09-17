@@ -95,12 +95,14 @@ Sound::Sound(QObject* parent)
     generator = new Generator(this);
 
     generator->open(QIODevice::ReadOnly);
+    qDebug() << "buffersize" << device->bufferSize();
+    device->setBufferSize(100);
     device->start(generator);
+    qDebug() << "buffersize" << device->bufferSize();
 }
 
 void Sound::playBeep()
 {
-    qDebug() << "beep";
     if (generator) generator->beepOn();
 }
 

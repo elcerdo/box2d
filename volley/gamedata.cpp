@@ -3,8 +3,8 @@
 #include "gamemanager.h"
 #include <QDebug>
 
-GameData::GameData(World& world, QObject* parent) 
-    : QObject(parent), last_transition_time(world.getTime()), last_scoring_team(NULL), last_scoring_player(NULL), last_touching_player(NULL), state(INIT)
+GameData::GameData(Sound &sound, World& world, QObject* parent) 
+    : QObject(parent), sound(sound), last_transition_time(world.getTime()), last_scoring_team(NULL), last_scoring_player(NULL), last_touching_player(NULL), state(INIT)
 {
     buildCourt(world);
     beginPoint(world);
@@ -96,6 +96,8 @@ void GameData::beginPoint(World& world)
 
     last_transition_time = world.getTime();
     state = STARTING;
+
+    sound.playBeep();
 }
 
 void GameData::recordBallPosition(World* world)
@@ -166,6 +168,7 @@ void GameData::checkState(World* world)
 
 void GameData::updateScoreAndSet(World& world)
 {
+    sound.playBeep();
     last_scoring_team->teamScored();
     if (last_scoring_team->getScore()>=GameManager::winningScore())
     {
