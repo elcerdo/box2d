@@ -15,7 +15,7 @@ class Generator : public QIODevice
 	void beepOn();
 	qint64 readData(char* buffer, qint64 size);
 	qint64 writeData(const char* buffer, qint64 size);
-	//qint64 bytesAvailable() const;
+	qint64 bytesAvailable() const;
     protected:
 	qint64 beepcount;
 	qint64 nperiod;

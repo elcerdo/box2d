@@ -41,6 +41,7 @@ Generator::~Generator()
 
 qint64 Generator::readData(char* buffer, qint64 size)
 {
+    //qDebug() << "size" << size;
     qint64 total = 0;
     while (total<size)
     {
@@ -54,6 +55,7 @@ qint64 Generator::readData(char* buffer, qint64 size)
 	position += length;
 	position %= nperiod;
 	total += length;
+	//if (total>=300) break;
     }
     Q_ASSERT(total==size);
     return total;
@@ -64,18 +66,18 @@ qint64 Generator::writeData(const char* buffer, qint64 size)
     return 0;
 }
 
-//qint64 Generator::bytesAvailable() const
-//{
-//    //return QIODevice::bytesAvailable();
-//    return 128;
-//}
+qint64 Generator::bytesAvailable() const
+{
+    //return QIODevice::bytesAvailable();
+    return 200;
+}
 
 Sound::Sound(QObject* parent)
     : QObject(parent), device(NULL)
 {
     QAudioFormat format;
     format.setFrequency(44100);
-    format.setChannels(1);
+    format.setChannels(2);
     format.setSampleSize(sizeof(Sample)*8);
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleType(QAudioFormat::UnSignedInt);
@@ -95,7 +97,7 @@ Sound::Sound(QObject* parent)
     generator = new Generator(this);
 
     generator->open(QIODevice::ReadOnly);
-    qDebug() << "buffersize" << device->bufferSize();
+    qDebug() << "buffersize" << device->bufferSize() << "available" << generator->bytesAvailable();
     device->setBufferSize(100);
     device->start(generator);
     qDebug() << "buffersize" << device->bufferSize();
