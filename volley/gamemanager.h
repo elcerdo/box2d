@@ -24,6 +24,8 @@ public:
     static float cursorHideTime();
     static int numberOfPositions();
     static int winningScore();
+
+    static int numberOfNoiseBackground();
 private:
     GameManager(); // not implemented
 };

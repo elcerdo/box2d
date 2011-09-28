@@ -21,6 +21,7 @@ public:
 
 public slots:
   void displayWorld(World* world);
+  void recordPhysicsStamp(World* world);
 
 protected:
   void keyPressEvent(QKeyEvent* event);
@@ -50,8 +51,8 @@ protected:
 
   typedef QList<int> TimeStamps;
   QTime time;
-  TimeStamps stamps;
-
+  TimeStamps frame_stamps;
+  TimeStamps physics_stamps;
 
   GameData &data;
 
@@ -64,7 +65,7 @@ protected:
   //QPixmap lose00,lose01;
 
   QPixmap frame;
-  QPixmap noises[10];
+  QPixmap noises[40];
   int noise_current;
 
   QPen drawingPen;

@@ -31,7 +31,7 @@ void World::initialize(const b2Vec2 &gravity)
 {
     Q_ASSERT(world==NULL);
     world = new b2World(gravity,true);
-    world->SetAutoClearForces(true);
+    world->SetAutoClearForces(false);
     world->SetContinuousPhysics(true);
     world->SetSubStepping(false);
 }
@@ -251,7 +251,10 @@ void World::stepWorld()
 {
     time += dt;
     emit preStepWorld(this);
-    world->Step(dt,6,2);
+    world->Step(dt/2.,6,2);
+    emit postStepWorld(this);
+    emit preStepWorld(this);
+    world->Step(dt/2.,6,2);
     emit postStepWorld(this);
     emit worldStepped(this);
 }

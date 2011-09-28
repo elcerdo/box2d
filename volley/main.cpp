@@ -30,8 +30,8 @@ void generateBackgroundNoise()
     qDebug() << "generating background noise";
     QPixmapCache cache;
 
-    for (int kk=0; kk<10; kk++) {
-	QImage image(400,300,QImage::Format_RGB32);
+    for (int kk=0; kk<GameManager::numberOfNoiseBackground(); kk++) {
+	QImage image(200,150,QImage::Format_RGB32);
 	image.fill(qRgb(0,0,0));
 	for (int x=0; x<image.width(); x++) {
 	    for (int y=0; y<image.height(); y++) {
@@ -80,11 +80,12 @@ int main(int argc, char *argv[]) {
 
     GameData data(sound,world);
     QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(stabilizePlayers(World*)));
-    QObject::connect(&world,SIGNAL(postStepWorld(World*)),&data,SLOT(recordBallPosition(World*)));
+    QObject::connect(&world,SIGNAL(worldStepped(World*)),&data,SLOT(recordBallPosition(World*)));
     QObject::connect(&world,SIGNAL(preStepWorld(World*)),&data,SLOT(checkState(World*)));
 
     Drawer drawer(data);
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));
+    QObject::connect(&world,SIGNAL(preStepWorld(World*)),&drawer,SLOT(recordPhysicsStamp(World*)));
     drawer.show();
 
     QObject::connect(&drawer,SIGNAL(exitButtonPressed()), &app, SLOT(quit()));

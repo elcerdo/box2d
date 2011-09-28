@@ -33,7 +33,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob.png"), rightPlayerImage(":/images/right_blob.png"),
   arrowImage(":/images/arrow.png"),
-  trajectoryImage(400,300),
+  trajectoryImage(200,150),
   //win00(":/images/win00.png"),win01(":/images/win01.png"),
   //lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
   frame(":/images/tv_frame.png")
@@ -54,7 +54,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
     { // background noise
 	noise_current = 0;
 	QPixmapCache cache;
-	for (int kk=0; kk<10; kk++) {
+	for (int kk=0; kk<GameManager::numberOfNoiseBackground(); kk++) {
 	    QString name = QString("noise%1").arg(kk);
 	    bool ok = cache.find(name,&noises[kk]);
 	    Q_ASSERT(ok);
@@ -208,13 +208,20 @@ void Drawer::drawPlayerName(const Player& player, QPainter &painter) const
     painter.drawText(QRectF(-20,-15,40,30),Qt::AlignCenter,player.getName());
 }
 
+void Drawer::recordPhysicsStamp(World* world)
+{
+  // handle timestamp
+  physics_stamps.push_front(time.elapsed());
+  while (physics_stamps.size()>60) physics_stamps.pop_back();
+}
+
 void Drawer::paintEvent(QPaintEvent* event)
 {
   if (!world) return;
 
   // handle timestamp
-  stamps.push_front(time.elapsed());
-  while (stamps.size()>30) stamps.pop_back();
+  frame_stamps.push_front(time.elapsed());
+  while (frame_stamps.size()>30) frame_stamps.pop_back();
 
   if (world->getTime()>cursorMovedTime+GameManager::cursorHideTime()) setCursor(QCursor(Qt::BlankCursor));
  
@@ -260,7 +267,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       //painter.drawPixmap(QRectF(-GameManager::courtWidth()/2,-GameManager::sceneHeight(),GameManager::courtWidth(),GameManager::sceneHeight()),trajectoryImage,trajectoryImage.rect());
       painter.restore();
       noise_current++;
-      noise_current%=10;
+      noise_current%=GameManager::numberOfNoiseBackground();
   }
 
   { // draw score
@@ -449,8 +456,10 @@ void Drawer::paintEvent(QPaintEvent* event)
 	      break;
       }
 
-      float fps = 0;
-      if (!stamps.empty()) fps = 1000.*(stamps.size()-1)/(stamps.front()-stamps.back());
+      float frame_fps = 0;
+      float physics_fps = 0;
+      if (!frame_stamps.empty()) frame_fps = 1000.*(frame_stamps.size()-1)/(frame_stamps.front()-frame_stamps.back());
+      if (!physics_stamps.empty()) physics_fps = 1000.*(physics_stamps.size()-1)/(physics_stamps.front()-physics_stamps.back());
 
       painter.save();
       painter.resetTransform();
@@ -458,7 +467,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.setPen(debugPen);
       painter.drawText(5,20,"state " + state_string);
       painter.drawText(5,40,QString("transition %1s").arg(dt,0,'f',2));
-      painter.drawText(5,60,QString("fps %1").arg(fps,0,'f',2));
+      painter.drawText(5,60,QString("fps %1 pps %2").arg(frame_fps,0,'f',2).arg(physics_fps,0,'f',2));
       painter.restore();
   }
 
