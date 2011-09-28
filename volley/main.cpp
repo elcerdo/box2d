@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     // dump key settings
     KeyManager::dumpKeys();
 
-    World world(1./50.);
+    World world(1./60.);
     world.initialize(b2Vec2(0,-GameManager::gravity()));
 
     Sound sound;

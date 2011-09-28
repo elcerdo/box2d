@@ -73,6 +73,8 @@ Drawer::Drawer(GameData& data,QWidget *parent)
 	debugFont.setBold(true);
 	debugFont.setPixelSize(20);
     }
+
+    time.start();
 }
 
 Drawer::~Drawer()
@@ -209,6 +211,10 @@ void Drawer::drawPlayerName(const Player& player, QPainter &painter) const
 void Drawer::paintEvent(QPaintEvent* event)
 {
   if (!world) return;
+
+  // handle timestamp
+  stamps.push_front(time.elapsed());
+  while (stamps.size()>30) stamps.pop_back();
 
   if (world->getTime()>cursorMovedTime+GameManager::cursorHideTime()) setCursor(QCursor(Qt::BlankCursor));
  
@@ -441,14 +447,18 @@ void Drawer::paintEvent(QPaintEvent* event)
 	  case GameData::FINISHED:
 	      state_string = "finished";
 	      break;
-      };
+      }
+
+      float fps = 0;
+      if (!stamps.empty()) fps = 1000.*(stamps.size()-1)/(stamps.front()-stamps.back());
 
       painter.save();
       painter.resetTransform();
       painter.setFont(debugFont);
       painter.setPen(debugPen);
-      painter.drawText(5,20,state_string);
-      painter.drawText(5,40,QString("%1s").arg(dt,0,'f',2));
+      painter.drawText(5,20,"state " + state_string);
+      painter.drawText(5,40,QString("transition %1s").arg(dt,0,'f',2));
+      painter.drawText(5,60,QString("fps %1").arg(fps,0,'f',2));
       painter.restore();
   }
 

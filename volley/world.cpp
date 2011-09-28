@@ -31,6 +31,9 @@ void World::initialize(const b2Vec2 &gravity)
 {
     Q_ASSERT(world==NULL);
     world = new b2World(gravity,true);
+    world->SetAutoClearForces(true);
+    world->SetContinuousPhysics(true);
+    world->SetSubStepping(false);
 }
 
 b2Joint* World::addDistanceJoint(b2Body* a, b2Body* b, const b2Vec2 &ca, const b2Vec2 &cb, bool collide)
@@ -249,7 +252,6 @@ void World::stepWorld()
     time += dt;
     emit preStepWorld(this);
     world->Step(dt,6,2);
-    world->ClearForces();
     emit postStepWorld(this);
     emit worldStepped(this);
 }

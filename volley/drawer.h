@@ -1,6 +1,7 @@
 #ifndef __DRAWER_H__
 #define __DRAWER_H__
 
+#include <QTime>
 #include <QPixmap>
 #include <QDebug>
 #include <QGLWidget>
@@ -46,6 +47,11 @@ protected:
   float scale;
   bool debugdraw;
   float cursorMovedTime;
+
+  typedef QList<int> TimeStamps;
+  QTime time;
+  TimeStamps stamps;
+
 
   GameData &data;
 
