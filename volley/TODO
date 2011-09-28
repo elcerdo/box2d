@@ -1,17 +1,24 @@
-compteur de sets (dans les coins en haut comme street fighter)
-forme des blobs (recoder un demi cercle dans box2d)
-fin de partie/ Recommencer partie
-mouettes
-bonus points
-son
-gerer Effets
-IA ordi
-double tap avec special
-champignon mario
-double saut??
-armee de moustique
-controle dynamique
-perso triangle
-filet mou
-coup special dans le ciel
-filet monte player touche le fond
+CRITICAL
+--------
+
+- mouettes / bonus style mariokart
+  - armee de moustique (vent)
+  - truc qui fait grandir (champi mario)
+  - bouclier sur le sol
+  - double tap avec special (speedup)
+  - ...
+- son / sfx (charles)
+- IA ordi
+
+IDEAS
+-----
+
+- filet monte player touche le fond
+- filet mou
+- gui
+- jeu en réseau
+- controle dynamique (impact de la balle sur le joueur). plus de kinetic body pour le joueur
+- double saut (??)
+- effets balles (rotation)
+- forme des blobs (recoder un demi cercle dans box2d)
+
