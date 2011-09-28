@@ -25,7 +25,12 @@ protected:
     };
     typedef QList<Position> Positions;
     Positions positions;
-    int nhit;
+    //int nhit;
+};
+
+class Bird : public UserData {
+public:
+    Bird(b2Body* body);
 };
 
 class Team {

@@ -26,6 +26,7 @@ public:
     static int winningScore();
 
     static int numberOfNoiseBackground();
+    static float birdSize();
 private:
     GameManager(); // not implemented
 };

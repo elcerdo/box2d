@@ -33,7 +33,7 @@ Drawer::Drawer(GameData& data,QWidget *parent)
   data(data),
   ballImage(":/images/ball.png"), leftPlayerImage(":/images/left_blob.png"), rightPlayerImage(":/images/right_blob.png"),
   arrowImage(":/images/arrow.png"),
-  trajectoryImage(200,150),
+  trajectoryImage(200,150), birdImage(":/images/bird.png"),
   //win00(":/images/win00.png"),win01(":/images/win01.png"),
   //lose00(":/images/lose00.png"),lose01(":/images/lose01.png"),
   frame(":/images/tv_frame.png")
@@ -237,12 +237,11 @@ void Drawer::paintEvent(QPaintEvent* event)
       //qglClearColor(Qt::black);
       //glClear(GL_COLOR_BUFFER_BIT);
       //painter.endNativePainting();
-	  painter.save();
-	  qglColor(Qt::yellow);
-	  painter.setPen(Qt::NoPen);
-	  painter.setBrush(Qt::black);
-	  painter.drawRect(rect());
-	  painter.restore();
+      painter.save();
+      painter.setPen(Qt::NoPen);
+      painter.setBrush(Qt::black);
+      painter.drawRect(rect());
+      painter.restore();
   }
 
   painter.setFont(drawingFont);
@@ -420,6 +419,19 @@ void Drawer::paintEvent(QPaintEvent* event)
       //if (data.getState()==GameData::STARTING || (data.getState()==GameData::PLAYING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.))) drawPlayerName(player,painter);
       if (data.getState()==GameData::STARTING && dt<1. && (dt-static_cast<int>(dt/.25)*.25<.25/2.)) drawPlayerName(player,painter);
       //if (data.getState()==GameData::STARTING) drawPlayerName(player,painter);
+      painter.restore();
+  }
+
+  { // draw bird
+      const Bird& player = data.getBird();
+      const b2Body* body = player.getBody();
+
+      painter.save();
+      painter.translate(0,GameManager::groundLevel());
+      painter.translate(toQPointF(body->GetPosition()));
+      painter.scale(1,-1);
+      painter.rotate(-body->GetAngle()*180/b2_pi);
+      painter.drawPixmap(QRectF(-GameManager::birdSize(),-GameManager::birdSize(),2*GameManager::birdSize(),2*GameManager::birdSize()),birdImage,birdImage.rect());
       painter.restore();
   }
 

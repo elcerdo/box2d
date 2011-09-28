@@ -3,9 +3,9 @@
 <file alias="images/ball.png">images/ballbw.png</file>
 <file alias="images/left_blob.png">images/left_blob_bw.png</file>
 <file alias="images/right_blob.png">images/right_blob_bw.png</file>
+<file>images/bird.png</file>
 <file>images/arrow.png</file>
 <file>images/tv_frame.png</file>
-<file>images/tv_frame2.png</file>
 <file>fonts/04b03.ttf</file>
 <file>fonts/PixelSplitter-Bold.ttf</file>
 </qresource>

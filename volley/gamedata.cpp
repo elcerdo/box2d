@@ -20,6 +20,7 @@ Team& GameData::getTeam(Team::Field field) { return field==Team::RIGHT ? *right_
 Player& GameData::getPlayer(int number) { return number ? *right_player : *left_player; }
 Player& GameData::getLeftPlayer() { return *left_player; }
 Player& GameData::getRightPlayer() { return *right_player; }
+Bird& GameData::getBird() { return *bird; }
 
 bool GameData::isLastTouchingPlayer(const Player& player) const
 {
@@ -46,6 +47,9 @@ void GameData::buildCourt(World &world)
     body_right_tack->SetUserData(NULL);
     body_net = world.addStaticBox(0,GameManager::netHeight()/2.,GameManager::netWidth(),GameManager::netHeight());
     body_net->SetUserData(NULL);
+
+    body_bird = world.addBird(0,10,GameManager::birdSize());
+    bird = new Bird(body_bird);
 
     body_ball = world.addBall(0,GameManager::ballReleaseHeight(),GameManager::ballRadius());
     ball = new Ball(body_ball);

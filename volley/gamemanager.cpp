@@ -33,3 +33,4 @@ float GameManager::cursorHideTime() { return .5; }
 int GameManager::numberOfPositions() { return 15; }
 int GameManager::winningScore() { return 15; }
 int GameManager::numberOfNoiseBackground() { return 40; }
+float GameManager::birdSize() { return .7; }

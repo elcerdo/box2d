@@ -7,7 +7,7 @@
 UserData::UserData(b2Body* body) : body(body) { Q_ASSERT(body); body->SetUserData(static_cast<void*>(this)); }
 const b2Body* UserData::getBody() const { return body; }
 
-Ball::Ball(b2Body* body) : UserData(body), nhit(0) {}
+Ball::Ball(b2Body* body) : UserData(body) {}
 
 void Ball::recordPosition()
 {
@@ -39,6 +39,7 @@ void Ball::drawPositions(QPixmap& pixmap) const
     }
 }
 
+Bird::Bird(b2Body* body) : UserData(body) {}
 
 Team::Team(const Team::Field &field) : field(field), score(0), set(0) {}
 Team::Field Team::getField() const { return field; }

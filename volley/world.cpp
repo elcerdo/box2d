@@ -188,6 +188,38 @@ b2Body* World::addPlayer(const b2Vec2 &pos, float radius)
     return body;
 }
 
+b2Body* World::addBird(float x, float y, float radius)
+{
+    return addBird(b2Vec2(x,y),radius);
+}
+
+b2Body* World::addBird(const b2Vec2 &pos, float radius)
+{
+    Q_ASSERT(world);
+
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = pos;
+
+    b2PolygonShape shape;
+    {
+	const int nverts = 3;
+	b2Vec2 verts[nverts] = {b2Vec2(-radius,-radius),b2Vec2(radius,0),b2Vec2(-radius,radius)};
+	shape.Set(verts,nverts);
+    }
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = 1;
+    //fixtureDef.friction = 0;
+    //fixtureDef.restitution = 0;
+
+    b2Body* body = world->CreateBody(&bodyDef);
+    body->CreateFixture(&fixtureDef);
+    body->SetGravityScale(0);
+    return body;
+}
+
 b2Body* World::addStaticBall(float x, float y, float radius)
 {
     return addStaticBall(b2Vec2(x,y),radius);

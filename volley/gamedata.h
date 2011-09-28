@@ -31,6 +31,7 @@ public:
     Player& getPlayer(int number);
     Player& getLeftPlayer();
     Player& getRightPlayer();
+    Bird& getBird();
 
 public slots:
     void recordBallPosition(World*);
@@ -54,12 +55,14 @@ protected:
     b2Body* body_ball;
     b2Body* body_left_player;
     b2Body* body_right_player;
+    b2Body* body_bird;
 
     Ball* ball;
     Team* left_team;
     Team* right_team;
     Player* left_player;
     Player* right_player;
+    Bird* bird;
 
     float last_transition_time;
     Team* last_scoring_team;

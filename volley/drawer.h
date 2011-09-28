@@ -61,6 +61,7 @@ protected:
   QPixmap rightPlayerImage;
   QPixmap arrowImage;
   QPixmap trajectoryImage;
+  QPixmap birdImage;
   //QPixmap win00,win01;
   //QPixmap lose00,lose01;
 
