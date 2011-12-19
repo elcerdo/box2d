@@ -48,8 +48,8 @@ void GameData::buildCourt(World &world)
     body_net = world.addStaticBox(0,GameManager::netHeight()/2.,GameManager::netWidth(),GameManager::netHeight());
     body_net->SetUserData(NULL);
 
-    body_bird = world.addBird(0,10,GameManager::birdSize());
-    bird = new Bird(body_bird);
+    //body_bird = world.addBird(0,10,GameManager::birdSize());
+    //bird = new Bird(body_bird);
 
     body_ball = world.addBall(0,GameManager::ballReleaseHeight(),GameManager::ballRadius());
     ball = new Ball(body_ball);
