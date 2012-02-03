@@ -89,6 +89,13 @@ void Drawer::keyPressEvent(QKeyEvent* event)
 		return;
     }
 
+    if (event->key() == Qt::Key_Space) {
+		state.hitBall();
+		update();
+		event->accept();
+		return;
+	}
+
     event->ignore();
 }
 

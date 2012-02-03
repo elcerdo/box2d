@@ -11,7 +11,7 @@ const Qt::Key fullscreenKey = Qt::Key_F;
 const Qt::Key resetKey = Qt::Key_R;
 const Qt::Key debugKey = Qt::Key_D;
 
-const float boardSize = 1.3;
+const float boardSize = 1.4;
 const float boardBorderWidth = .3;
 const float ballRadius = .05;
 
