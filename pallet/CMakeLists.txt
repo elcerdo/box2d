@@ -5,33 +5,26 @@ include(${QT_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR})
 
 set(sources
-    keymanager.cpp gamemanager.cpp
     world.cpp drawer.cpp
-    gamehelper.cpp gamedata.cpp
-    common.cpp
-    sound.cpp
     main.cpp
     )
 set(headers
     world.h   drawer.h
-    sound.h
-    gamedata.h
     )
 set(ressources
-    data.qrc
     )
 
 qt4_wrap_cpp(sources_moc ${headers})
 qt4_add_resources(sources_rcc ${ressources})
 
-add_executable(volley
+add_executable(pallet
     ${sources}
     ${sources_moc}
     ${sources_rcc}
     )
-target_link_libraries(volley ${QT_LIBRARIES} Box2D)
+target_link_libraries(pallet ${QT_LIBRARIES} Box2D)
 
-install(TARGETS volley
+install(TARGETS pallet
     RUNTIME DESTINATION bin
     )
 

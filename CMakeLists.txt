@@ -7,5 +7,6 @@ add_subdirectory(Box2D)
 
 #add_subdirectory(robot)
 add_subdirectory(volley)
+add_subdirectory(pallet)
 
 
