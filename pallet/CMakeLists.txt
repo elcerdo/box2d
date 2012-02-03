@@ -6,10 +6,12 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 set(sources
     world.cpp drawer.cpp
+    gamestate.cpp
     main.cpp
     )
 set(headers
     world.h   drawer.h
+    gamestate.h
     )
 set(ressources
     )

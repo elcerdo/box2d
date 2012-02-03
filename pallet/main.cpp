@@ -24,9 +24,9 @@ int main(int argc, char *argv[]) {
 	}
 
     World world(1./60.);
-    world.initialize(b2Vec2(0,0));
 
-	GameState state;
+	GameState state(world);
+    QObject::connect(&world,SIGNAL(postStepWorld(World*)),&state,SLOT(stabilizeBalls(World*)));
 
     Drawer drawer(state);
     QObject::connect(&world,SIGNAL(worldStepped(World*)),&drawer,SLOT(displayWorld(World*)));

@@ -167,7 +167,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 		painter.restore();
 	}
 
-	painter.translate(width()/2.,height());
+	painter.translate(width()/2.,height()/2.);
 	painter.translate(panningPosition);
 	if (panning) painter.translate(panningPositionCurrent-panningPositionStart);
 	painter.scale(scale,-scale);
@@ -184,6 +184,16 @@ void Drawer::paintEvent(QPaintEvent* event)
 		painter.resetTransform();
 		painter.drawText(5,20,"state " + state_string);
 		painter.drawText(5,40,QString("fps %1").arg(frame_fps,0,'f',2));
+		painter.drawText(5,60,QString("%1 bodies").arg(world->getBodyCount()));
+		painter.restore();
+	}
+
+	{
+		painter.save();
+		painter.setPen(Qt::red);
+		painter.drawLine(0,0,1,0);
+		painter.setPen(Qt::green);
+		painter.drawLine(0,0,0,1);
 		painter.restore();
 	}
 
@@ -199,7 +209,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 			painter.translate(toQPointF(body->GetPosition()));
 			painter.rotate(body->GetAngle()*180/b2_pi);
 
-			if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,1,0,.3)));
+			if (body->IsAwake()) painter.setBrush(QBrush(QColor::fromRgbF(1,0,0,.3)));
 			else painter.setBrush(QBrush(QColor::fromRgbF(0,0,1,.3)));
 
 			for (const b2Fixture* fixture=body->GetFixtureList(); fixture!=NULL; fixture=fixture->GetNext()) {
