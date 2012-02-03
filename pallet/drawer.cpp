@@ -33,6 +33,13 @@ Drawer::Drawer(GameState& state, QWidget *parent)
 		if (fullscreen) setWindowState(windowState()|Qt::WindowFullScreen);
     }
 
+	{ // setup pens and brushes
+		debugPen.setColor(Qt::red);
+		debugFont.setBold(true);
+		debugFont.setPixelSize(18);
+	}
+
+
     time.start();
 }
 
@@ -145,8 +152,6 @@ void Drawer::paintEvent(QPaintEvent* event)
 
 	if (world->getTime() > cursorMovedTime+cursorHideTime) setCursor(QCursor(Qt::BlankCursor));
 
-	static QRectF message_position(-75,-130,150,20);
-
 	QPainter painter(this);
 	painter.setRenderHints(QPainter::Antialiasing|QPainter::SmoothPixmapTransform,true);
 
@@ -157,7 +162,7 @@ void Drawer::paintEvent(QPaintEvent* event)
 		//painter.endNativePainting();
 		painter.save();
 		painter.setPen(Qt::NoPen);
-		painter.setBrush(Qt::black);
+		painter.setBrush(Qt::white);
 		painter.drawRect(rect());
 		painter.restore();
 	}
@@ -168,21 +173,25 @@ void Drawer::paintEvent(QPaintEvent* event)
 	painter.scale(scale,-scale);
 
 	if (debugdraw) { // draw state overlay
-		QString state_string = "state";
+		QString state_string = "unknown";
 
 		float frame_fps = 0;
 		if (!frame_stamps.empty()) frame_fps = 1000.*(frame_stamps.size()-1)/(frame_stamps.front()-frame_stamps.back());
 
 		painter.save();
+		painter.setPen(debugPen);
+		painter.setFont(debugFont);
 		painter.resetTransform();
 		painter.drawText(5,20,"state " + state_string);
-		painter.drawText(5,60,QString("fps %1").arg(frame_fps,0,'f',2));
+		painter.drawText(5,40,QString("fps %1").arg(frame_fps,0,'f',2));
 		painter.restore();
 	}
 
 
 	if (debugdraw) { // debug draw scene
 		painter.save();
+		painter.setPen(debugPen);
+		painter.setFont(debugFont);
 
 		// draw bodies
 		for (const b2Body* body=world->getFirstBody(); body!=NULL; body=body->GetNext()) {

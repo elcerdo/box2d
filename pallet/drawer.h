@@ -44,9 +44,12 @@ class Drawer : public QWidget {
 		bool debugdraw;
 		float cursorMovedTime;
 
-		typedef QList<float> TimeStamps;
-		QTime time;
+		QPen debugPen;
+		QFont debugFont;
+
+		typedef QList<int> TimeStamps;
 		TimeStamps frame_stamps;
+		QTime time;
 
 	signals:
 		void exitButtonPressed();
