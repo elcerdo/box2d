@@ -92,6 +92,20 @@ void Drawer::displayWorld(World* world)
   update();
 }
 
+void Drawer::resizeEvent(QResizeEvent* event)
+{
+	resetView();
+}
+
+void Drawer::resetView()
+{
+	panningPosition = QPointF(0,0);
+	const float scaleWidth = width()/GameManager::courtWidth();
+	const float scaleHeight = height()/GameManager::sceneHeight();
+	scale = scaleWidth<scaleHeight ? scaleWidth : scaleHeight;
+	update();
+}
+
 void Drawer::keyPressEvent(QKeyEvent* event)
 {
     if (event->isAutoRepeat()) {
@@ -103,6 +117,7 @@ void Drawer::keyPressEvent(QKeyEvent* event)
     if (event->key()==KeyManager::exitKey()) {
       emit exitButtonPressed();
     }
+
     if (event->key()==KeyManager::fullscreenKey()) {
 	fullscreen = !fullscreen;
 	setWindowState(windowState() ^ Qt::WindowFullScreen);
@@ -111,11 +126,7 @@ void Drawer::keyPressEvent(QKeyEvent* event)
     }
 
     if (event->key()==KeyManager::resetViewKey()) {
-	panningPosition = QPointF(0,0);
-	const float scaleWidth = width()/GameManager::courtWidth();
-	const float scaleHeight = height()/GameManager::sceneHeight();
-	scale = scaleWidth<scaleHeight ? scaleWidth : scaleHeight;
-	update();
+	resetView();
 	event->accept();
 	return;
     }

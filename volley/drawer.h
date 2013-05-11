@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QGLWidget>
 #include <QKeyEvent>
+#include <QResizeEvent>
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -31,12 +32,14 @@ protected:
   void mouseMoveEvent(QMouseEvent* event);
   void mouseReleaseEvent(QMouseEvent* event);
   void wheelEvent(QWheelEvent* event);
+  void resizeEvent(QResizeEvent* event);
 
   static bool handlePlayerKeyPress(int key, const PlayerKeys& keys, Player& player, float time);
   static bool handlePlayerKeyRelease(int key, const PlayerKeys& keys, Player& player, float time);
 
 protected:
   void drawPlayerName(const Player& player, QPainter &painter) const;
+  void resetView();
 
   World* world;
 
