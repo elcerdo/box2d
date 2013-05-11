@@ -91,7 +91,7 @@ Sound::Sound(QObject* parent)
 	printFormat(format);
     }
 
-    Q_ASSERT(info.isFormatSupported(format));
+    //Q_ASSERT(info.isFormatSupported(format));
 
     device = new QAudioOutput(format,this);
     generator = new Generator(this);

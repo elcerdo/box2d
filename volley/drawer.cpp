@@ -422,7 +422,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.restore();
   }
 
-  { // draw bird
+  /*{ // draw bird
       const Bird& player = data.getBird();
       const b2Body* body = player.getBody();
 
@@ -433,7 +433,7 @@ void Drawer::paintEvent(QPaintEvent* event)
       painter.rotate(-body->GetAngle()*180/b2_pi);
       painter.drawPixmap(QRectF(-GameManager::birdSize(),-GameManager::birdSize(),2*GameManager::birdSize(),2*GameManager::birdSize()),birdImage,birdImage.rect());
       painter.restore();
-  }
+  }*/
 
   { // draw ground and net
       painter.save();
